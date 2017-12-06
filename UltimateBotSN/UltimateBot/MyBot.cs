@@ -19,7 +19,7 @@ namespace MyBot
         Pirate collector;
         Pirate tailGuard;
         List<Pirate> bodyGuards;
-
+        //matan is a cuck
         int offsetX;
         int offsetY;
 
