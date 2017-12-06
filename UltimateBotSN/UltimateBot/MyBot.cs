@@ -10,7 +10,8 @@ namespace MyBot
     /// </summary>
     public class TutorialBot : IPirateBot
     {
-        //t sasdasd
+        
+        //comes on work with me
         /// <summary>
         /// Makes the bot run a single turn.
         /// </summary>
