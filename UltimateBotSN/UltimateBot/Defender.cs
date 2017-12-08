@@ -36,7 +36,7 @@ namespace MyBot
                 {
                     //Changed
                     //Push enemy!
-                    Location outOfBorder = TutorialBot.GetCloseEnoughToBorder(defender, defender.PushDistance, game);
+                    Location outOfBorder = MyBot.GetCloseEnoughToBorder(defender, defender.PushDistance, game);
                     if (outOfBorder != null)
                     {
                         defender.Push(enemy, outOfBorder);
