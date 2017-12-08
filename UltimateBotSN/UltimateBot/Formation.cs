@@ -16,10 +16,10 @@ namespace MyBot
         /// <summary>
         /// Constructor to create the Formation.
         /// </summary>
-        /// <param name="p1">Carrier Pirate.</param>
-        /// <param name="p2">Bodyguard Pirate one.</param>
-        /// <param name="p3">Bodyguard Pirate two.</param>
-        /// <param name="p4">Tail Pirate.</param>
+        /// <param name="p1">The Carrier Pirate.</param>
+        /// <param name="p2">The Bodyguard Pirate one.</param>
+        /// <param name="p3">The Bodyguard Pirate two.</param>
+        /// <param name="p4">The Tail Pirate.</param>
         public Formation(Pirate p1, Pirate p2, Pirate p3, Pirate p4)
         {
             this.carrier = p1;
