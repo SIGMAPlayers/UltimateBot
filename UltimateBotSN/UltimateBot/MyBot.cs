@@ -10,6 +10,7 @@ namespace MyBot
     /// </summary>
     public class TutorialBot : IPirateBot
     {
+        //Error 404 = שקד
         //ss
         //not the nazi one. sss
         //comes on work with me LOL
