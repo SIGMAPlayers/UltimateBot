@@ -241,10 +241,10 @@ namespace MyBot
 
         /// <summary>
         /// Defends the enemy Mothership with SmartDefending
-        /// </summary>        
+        /// </summary>
         /// <remarks>(For real explanation ask me, Booba, Idan (or Matan Meushar :) )</remarks>
         /// <param name="defenderList">List of all the defenders</param>
-        /// <returns>Nothing lol xd</returns>
+        /// <returns>Nothing LOL xD</returns>
         public void SmartDefending(List<Defender> defenderList)
         {
 
