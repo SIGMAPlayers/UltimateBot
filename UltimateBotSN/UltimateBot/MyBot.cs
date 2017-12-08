@@ -11,7 +11,7 @@ namespace MyBot
     public class TutorialBot : IPirateBot
     {
         //ss
-        //not the nazi one.
+        //not the nazi one. sss
         //comes on work with me LOL
         /// <summary>
         /// Makes the bot run a single turn.
