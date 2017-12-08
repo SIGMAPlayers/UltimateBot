@@ -8,14 +8,8 @@ namespace MyBot
     /// <summary>
     /// This is an example for a bot.
     /// </summary>
-    public class TutorialBot : IPirateBot
+    public class MyBot : IPirateBot
     {
-        //Error 404 = שקד
-        //ss
-        //not the nazi one. sss
-        //push1
-        //push2
-        //comes on work with me LOL
         /// <summary>
         /// Makes the bot run a single turn.
         /// </summary>
@@ -257,4 +251,3 @@ namespace MyBot
         }
     }
 }
-//THIS IS THE END

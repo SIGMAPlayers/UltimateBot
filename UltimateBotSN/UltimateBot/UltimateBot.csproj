@@ -31,7 +31,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PirateGame">
-      <HintPath>..\..\..\..\..\Downloads\jre-8u101-windows-x64\PirateGame.dll</HintPath>
+      <HintPath>.\PirateGame.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
