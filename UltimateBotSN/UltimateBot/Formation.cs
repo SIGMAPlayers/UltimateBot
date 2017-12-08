@@ -8,7 +8,6 @@ namespace MyBot
 {
     public class Formation
     {
-
         Pirate carrier;
         Pirate bodyguard;
         Pirate bodyguard2;
