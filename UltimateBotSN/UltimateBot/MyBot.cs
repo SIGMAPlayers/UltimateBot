@@ -20,7 +20,7 @@ namespace MyBot
         /// Makes the bot run a single turn.
         /// </summary>
         /// <param name="game">The current game state</param>
-        
+
         Pirate collector;
         Pirate tailGuard;
         List<Pirate> bodyGuards;
@@ -28,115 +28,68 @@ namespace MyBot
         int offsetX;
         int offsetY;
 
+        /// <summary>
+        /// Makes the bot run a single turn.
+        /// </summary>
+        /// <param name="game">The current game state</param>
+        // Changed Pirates to defenders where needed &
+        // Changed the defenders to two layer code
         public void DoTurn(PirateGame game)
         {
-
             collector = game.GetAllMyPirates().ToList()[6];
 
             tailGuard = game.GetAllMyPirates().ToList()[7];
 
-            bodyGuards = new List<Pirate>();
-            bodyGuards.Add(game.GetAllMyPirates().ToList()[5]);
-            bodyGuards.Add(game.GetAllMyPirates().ToList()[4]);
+            bodyGuards = new List<Pirate>
+            {
+                game.GetAllMyPirates().ToList()[5],
+                game.GetAllMyPirates().ToList()[4]
+            };
 
             offsetX = 300;
             offsetY = 300;
 
-            // Get one of my pirates.
+            //Get one of my pirates.
             //Pirate pirate = game.GetMyLivingPirates()[0];
-            List<Pirate> defenders = game.GetAllMyPirates().ToList();
+            List<Defender> defenders = game.GetAllMyPirates().Cast<Defender>().ToList();
             defenders.OrderBy(Pirate => Pirate.Location.Distance(game.GetEnemyCapsule().Location));
             defenders.RemoveRange(4, 4);
 
-            foreach (Pirate pirate in defenders)
+            foreach (Defender defender in defenders)
             {
-                if (pirate.IsAlive())
+                if (defender.IsAlive())
                 {
-
-                    if (!PushCarrier(pirate, game))
+                    if (!TryPush(defender, game))
                     {
                         // Enemy capsule defenders work
-
                         Location start;
-                        if ((defenders[0].Equals(pirate) || defenders[1].Equals(pirate)))
+                        if ((defenders[0].Equals(defender) || defenders[1].Equals(defender)))
                         {
-                            if (defendFrom(game) == null)
+                            defender.Layer = Roles.front;
+                            if (defender.DefendFrom(game) == null)
                             {
-                                start = generateStart(game, 0);
-                                pirate.Sail(start);
-                            }
-
-                            else pirate.Sail(defendFrom(game));
-                        }
-                        else if (defenders[2].Equals(pirate) || defenders[3].Equals(pirate))
-                        {
-                            if (defendFrom(game) == null)
-                            {
-                                start = generateStart(game, 400);
-                                pirate.Sail(start);
-                            }
-
-                            else pirate.Sail(defendFrom(game));
-
-                        }
-
-                        /*else
-                        {
-                            if (pirate.Capsule == null)
-                            {
-                                Capsule capsule = game.GetMyCapsule();
-                                pirate.Sail(capsule);
+                                start = defender.ProtectFromCarriers(0, game);
+                                defender.Sail(start);
                             }
                             else
+                                defender.Sail(defender.DefendFrom(game));
+                        }
+                        else if (defenders[2].Equals(defender) || defenders[3].Equals(defender))
+                        {
+                            defender.Layer = Roles.backup;
+                            if (defender.DefendFrom(game) == null)
                             {
-                                Mothership mothership = game.GetMyMothership();
-                                // Go towards the mothership.
-                                pirate.Sail(mothership);
+                                start = defender.ProtectFromCarriers(450, game);
+                                defender.Sail(start);
                             }
-                            
-                        }*/
+                            else
+                                defender.Sail(defender.DefendFrom(game));
+                        }
                     }
                 }
             }
 
             Formation(game);
-
-
-        }
-
-        private Location generateStart(PirateGame game, int range)
-        {
-            int row = 0;
-            int col = 0;
-            if (game.GetEnemyMothership().Location.Col > game.GetMyMothership().Location.Col)
-                col = game.GetEnemyMothership().Location.Col - 1001 + range;
-            else col = game.GetEnemyMothership().Location.Col + 1001 - range;
-
-            if (game.GetEnemyCapsule().InitialLocation.Row > game.GetMyCapsule().InitialLocation.Row)
-                row = game.GetEnemyMothership().Location.Row + 1001 - range;
-            else
-                row = game.GetEnemyMothership().Location.Row - 1001 + range;
-            return new Location(row, col);
-        }
-
-        private Pirate defendFrom(PirateGame game)
-        {
-            List<Pirate> enemiesByDistanceFromEnemyBase = game.GetEnemyLivingPirates().ToList();
-            enemiesByDistanceFromEnemyBase.OrderBy(Pirate => Pirate.Location.Distance(game.GetEnemyMothership().Location));
-            List<Pirate> potentialThreat = new List<Pirate>();
-            potentialThreat.Add(null);
-            foreach (Pirate pirate in enemiesByDistanceFromEnemyBase)
-            {
-                if (pirate.Distance(game.GetEnemyMothership()) < 2000)
-                {
-                    if (potentialThreat[0] == null) ;
-                    potentialThreat[0] = pirate;
-                }
-            }
-            if (potentialThreat != null)
-                return potentialThreat[0];
-            else return null;
-
         }
 
         /// <summary>
@@ -144,7 +97,7 @@ namespace MyBot
         /// </summary>
         /// <param name="pirate">The pushing pirate.</param>
         /// <param name="game">The current game state.</param>
-        /// <returns>true if the pirate pushed.</returns>
+        /// <returns> true if the pirate pushed. </returns>
         private bool TryPush(Pirate pirate, PirateGame game)
         {
             // Go over all enemies.
@@ -153,48 +106,29 @@ namespace MyBot
                 // Check if the pirate can push the enemy.
                 if (pirate.CanPush(enemy))
                 {
-                    // Push enemy!
-                    pirate.Push(enemy, enemy.InitialLocation);
-
-                    // Print a message.
+                    //Changed
+                    //Push enemy!
+                    Location oppositeSide = enemy.GetLocation().Subtract(game.GetEnemyMothership().GetLocation());
+                    //Vector: the distance (x,y) you need to go through to go from the mothership to the enemy
+                    oppositeSide = enemy.GetLocation().Towards(enemy.GetLocation().Add(oppositeSide), 600);
+                    pirate.Push(enemy, oppositeSide);
+                    //Print a message.
                     System.Console.WriteLine("pirate " + pirate + " pushes " + enemy + " towards " + enemy.InitialLocation);
-
-                    // Did push.
+                    //Did push.
                     return true;
                 }
             }
-
             // Didn't push.
             return false;
         }
 
-        private bool PushCarrier(Pirate pirate, PirateGame game)
+        /// <summary>
+        /// Creates the formation for the attackers
+        /// </summary>
+        /// <param name="game">The current game state.</param>
+        /// <returns> Well... Returns nothings xd </returns>
+        private void Formation(PirateGame game)
         {
-            // Go over all enemies.
-            foreach (Pirate enemy in game.GetEnemyLivingPirates())
-            {
-                // Check if the pirate can push the enemy.
-                if (pirate.CanPush(enemy) && enemy.HasCapsule())
-                {
-                    // Push enemy!
-                    pirate.Push(enemy, enemy.InitialLocation);
-
-                    // Print a message.
-                    System.Console.WriteLine("pirate " + pirate + " pushes " + enemy + " towards " + enemy.InitialLocation);
-
-                    // Did push.
-                    return true;
-                }
-            }
-
-            // Didn't push.
-            return false;
-        }
-
-
-        void Formation(PirateGame game)
-        {
-
             if (collector.IsAlive())
             {
                 if (collector.Capsule == null)
@@ -203,7 +137,6 @@ namespace MyBot
                     {
                         collector.Sail(game.GetMyCapsule());
                     }
-
                 }
                 else
                 {
@@ -211,15 +144,14 @@ namespace MyBot
                     {
                         collector.Sail(game.GetMyMothership().Location);
                     }
-
                 }
             }
             else
             {
                 Pirate temp = collector;
+
                 for (int i = 0; i < 2; i++)
                 {
-
                     if (bodyGuards[i].IsAlive() && !collector.IsAlive())
                     {
                         collector = bodyGuards[i];
@@ -227,27 +159,100 @@ namespace MyBot
                         break;
                     }
                 }
-
             }
             if (bodyGuards[0].IsAlive())
             {
                 if (!TryPush(bodyGuards[0], game))
-
-                    bodyGuards[0].Sail(new Location(collector.Location.Row + offsetY, collector.Location.Col - offsetX));
-
+                    bodyGuards[0].Sail(new Location(collector.Location.Row + offsetY, collector.Location.Col + offsetX));
             }
             if (bodyGuards[1].IsAlive())
             {
                 if (!TryPush(bodyGuards[1], game))
-
-                    bodyGuards[1].Sail(new Location(collector.Location.Row + offsetY, collector.Location.Col + offsetX));
+                    bodyGuards[1].Sail(new Location(collector.Location.Row + offsetY, collector.Location.Col - offsetX));
             }
             if (tailGuard.IsAlive())
             {
-                if (!TryPush(tailGuard, game))
-
-                    tailGuard.Sail(new Location(collector.Location.Row + offsetY, collector.Location.Col));
+                if (tailGuard.PushDistance + 600 >= collector.Distance(game.GetMyMothership()) && collector.Capsule != null)
+                {
+                    // bodyGuards[0].Push(collector,game.GetMyMothership());
+                    tailGuard.Push(collector, game.GetMyMothership());
+                }
+                else
+                {
+                    if (!TryPush(tailGuard, game))
+                        tailGuard.Sail(new Location(collector.Location.Row, collector.Location.Col));
+                }
             }
+        }
+
+        /// <summary>
+        /// Checks if the enemy pirate is close enough to the border to kill him. 
+        /// Returns the location that if you push it towards it, the pirate will die or null if you can't kill it.
+        /// </summary>
+        /// <param name="enemyPirate">The enemy pirate to be checked.</param>
+        /// <param name="range">The range that will be checked if you can throw it</param>
+        /// <param name="game">The current game state.</param>
+        /// <returns>Returns the location that if you push it towards it, the pirate will die or null if you can't kill it.</returns>
+        public static Location GetCloseEnoughToBorder(Pirate enemyPirate, int range, PirateGame game)
+        {
+            Location center = new Location(game.Rows / 2, game.Cols / 2);
+
+            if (center.Col > enemyPirate.Location.Col && center.Row > enemyPirate.Location.Row)
+            {
+                int colDistance = enemyPirate.Distance(new Location(0, enemyPirate.Location.Col));
+                int rowDistance = enemyPirate.Distance(new Location(enemyPirate.Location.Row, game.Cols));
+                if (colDistance > rowDistance)
+                    if (rowDistance <= range)
+                        return new Location(0, enemyPirate.Location.Col);
+                    else if (colDistance < range)
+                        return new Location(enemyPirate.Location.Row, game.Cols);
+                return null;
+            }
+            else if (center.Col > enemyPirate.Location.Col && center.Row < enemyPirate.Location.Row)
+            {
+                int colDistance = enemyPirate.Distance(new Location(game.Cols, enemyPirate.Location.Row));
+                int rowDistance = enemyPirate.Distance(new Location(enemyPirate.Location.Col, game.Rows));
+                if (colDistance > rowDistance)
+                    if (rowDistance <= range)
+                        return new Location(game.Cols, enemyPirate.Location.Row);
+                    else if (colDistance < range)
+                        return new Location(enemyPirate.Location.Col, game.Rows);
+                return null;
+            }
+            else if (center.Col < enemyPirate.Location.Col && center.Row < enemyPirate.Location.Row)
+            {
+                int colDistance = enemyPirate.Distance(new Location(0, enemyPirate.Location.Col));
+                int rowDistance = enemyPirate.Distance(new Location(enemyPirate.Location.Row, 0));
+                if (colDistance > rowDistance)
+                    if (rowDistance <= range)
+                        return new Location(0, enemyPirate.Location.Col);
+                    else if (colDistance < range)
+                        return new Location(enemyPirate.Location.Row, 0);
+                return null;
+            }
+            else if (center.Col < enemyPirate.Location.Col && center.Row > enemyPirate.Location.Row)
+            {
+                int colDistance = enemyPirate.Distance(new Location(enemyPirate.Location.Row, 0));
+                int rowDistance = enemyPirate.Distance(new Location(game.Rows, enemyPirate.Location.Col));
+                if (colDistance > rowDistance)
+                    if (rowDistance <= range)
+                        return new Location(enemyPirate.Location.Row, 0);
+                    else if (colDistance < range)
+                        return new Location(game.Rows, enemyPirate.Location.Col);
+                return null;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Defends the enemy Mothership with SmartDefending
+        /// </summary>        
+        /// <remarks>(For real explanation ask me, Booba, Idan (or Matan Meushar :) )</remarks>
+        /// <param name="defenderList">List of all the defenders</param>
+        /// <returns>Nothing lol xd</returns>
+        public void SmartDefending(List<Defender> defenderList)
+        {
 
         }
     }
