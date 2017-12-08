@@ -21,7 +21,7 @@ namespace MyBot
             this.tail = p4;
         }
         /// <summary>
-        /// form up in 4 pirates formation and sail the the given target
+        /// form up in 4 pirates formation and sail the the given target.
         /// </summary>
         /// <param name="target"> a given location the formation is wanted to head for</param>
         public void FormUpAndSail(Location target)
