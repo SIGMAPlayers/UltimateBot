@@ -6,7 +6,7 @@ using Pirates;
 
 namespace MyBot
 {
-    public enum Roles { front, backup};
+    public enum Roles { front, backup };
 
     public class Defender : Pirate
     {
@@ -100,7 +100,7 @@ namespace MyBot
             //To follow the enemy carrier/the capsule
             Pirate enemyCarrier = null;
 
-            foreach(Pirate enemy in game.GetEnemyLivingPirates())
+            foreach (Pirate enemy in game.GetEnemyLivingPirates())
             {
                 if (enemy.Capsule != null)
                     enemyCarrier = enemy;
@@ -132,6 +132,6 @@ namespace MyBot
             //return new Location(row, col);
         }
 
-        
+
     }
 }

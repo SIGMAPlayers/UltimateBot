@@ -8,11 +8,18 @@ namespace MyBot
 {
     public class Formation
     {
-
         Pirate carrier;
         Pirate bodyguard;
         Pirate bodyguard2;
         Pirate tail;
+
+        /// <summary>
+        /// Constructor to create the Formation.
+        /// </summary>
+        /// <param name="p1">The Carrier Pirate.</param>
+        /// <param name="p2">The Bodyguard Pirate one.</param>
+        /// <param name="p3">The Bodyguard Pirate two.</param>
+        /// <param name="p4">The Tail Pirate.</param>
         public Formation(Pirate p1, Pirate p2, Pirate p3, Pirate p4)
         {
             this.carrier = p1;
@@ -20,10 +27,12 @@ namespace MyBot
             this.bodyguard2 = p3;
             this.tail = p4;
         }
+
         /// <summary>
-        /// form up in 4 pirates formation and sail the the given target.
+        /// Form up in 4 pirates formation and sail the the given target.
         /// </summary>
-        /// <param name="target"> a given location the formation is wanted to head for</param>
+        /// <remarks> This code was created by @Idan, for any question about wtf this code is for just ask him :)</remarks>
+        /// <param name="target"> A given location the formation is wanted to head for.</param>
         public void FormUpAndSail(Location target)
         {
             Location upperDot = target.Towards(carrier, carrier.PushRange / 3);

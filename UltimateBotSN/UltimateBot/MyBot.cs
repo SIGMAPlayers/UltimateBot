@@ -6,7 +6,7 @@ using Pirates;
 namespace MyBot
 {
     /// <summary>
-    /// This is an example for a bot.a
+    /// This is an example for a bot.
     /// </summary>
     public class MyBot : IPirateBot
     {
