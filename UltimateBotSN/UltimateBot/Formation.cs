@@ -121,7 +121,7 @@ namespace MyBot
         {
            if (Carrier.InRange(target, (bodyguard.PushDistance + Carrier.MaxSpeed)))
            {
-                if (!UnderThreat(Carrier, 600))
+                if (!GeneralMethods.UnderThreat(Carrier, 600))
                 {
                     Bodyguard.Sail(Carrier);
                 }
@@ -135,15 +135,8 @@ namespace MyBot
                 Bodyguard.Push(Carrier, target);
            }
         }
-        public bool UnderThreat(MapObject mapObject, int rangeOfDanger)
-        {
-            foreach(Pirate enemy in MyBot.game.GetEnemyLivingPirates())
-            {
-                if (enemy.InRange(mapObject, rangeOfDanger))
-                    return true;
-            }
-            return false;
-        }
+
+       
 
     }
 }
