@@ -8,6 +8,9 @@ namespace MyBot
 {
     public class Formation
     {
+        //for tomorrow:
+        // - add targeting syncronization
+        // - think on defenxe and farther more on offence 
 
         List<Pirate> FreeForTargetingPirates;
 
@@ -44,6 +47,7 @@ namespace MyBot
         /// <param name="target"> A given location the formation is wanted to head for.</param>
         public void FormUpAndSail4Pos(Location target)
         {
+            
             
             Location upperDot = target.Towards(Carrier, Carrier.PushRange / 3);
             int x, y;
