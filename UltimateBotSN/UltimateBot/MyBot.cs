@@ -14,7 +14,7 @@ namespace MyBot
         /// Makes the bot run a single turn.
         /// </summary>
         /// <param name="game">The current game state</param>
-
+        public static PirateGame game;
         Pirate collector;
         Pirate tailGuard;
         List<Pirate> bodyGuards;
@@ -30,6 +30,7 @@ namespace MyBot
         // Changed the defenders to two layer code
         public void DoTurn(PirateGame game)
         {
+            MyBot.game = game;
             collector = game.GetAllMyPirates().ToList()[6];
 
             tailGuard = game.GetAllMyPirates().ToList()[7];
@@ -53,7 +54,7 @@ namespace MyBot
             {
                 if (defender.IsAlive())
                 {
-                    if (!TryPush(defender, game))
+                    if (!TryPush(defender))
                     {
                         // Enemy capsule defenders work
                         Location start;
@@ -92,7 +93,7 @@ namespace MyBot
         /// <param name="pirate">The pushing pirate.</param>
         /// <param name="game">The current game state.</param>
         /// <returns> true if the pirate pushed. </returns>
-        private bool TryPush(Pirate pirate, PirateGame game)
+        private bool TryPush(Pirate pirate)
         {
             // Go over all enemies.
             foreach (Pirate enemy in game.GetEnemyLivingPirates())
@@ -127,14 +128,14 @@ namespace MyBot
             {
                 if (collector.Capsule == null)
                 {
-                    if (!TryPush(collector, game))
+                    if (!TryPush(collector))
                     {
                         collector.Sail(game.GetMyCapsule());
                     }
                 }
                 else
                 {
-                    if (!TryPush(collector, game))
+                    if (!TryPush(collector))
                     {
                         collector.Sail(game.GetMyMothership().Location);
                     }
@@ -156,12 +157,12 @@ namespace MyBot
             }
             if (bodyGuards[0].IsAlive())
             {
-                if (!TryPush(bodyGuards[0], game))
+                if (!TryPush(bodyGuards[0]))
                     bodyGuards[0].Sail(new Location(collector.Location.Row + offsetY, collector.Location.Col + offsetX));
             }
             if (bodyGuards[1].IsAlive())
             {
-                if (!TryPush(bodyGuards[1], game))
+                if (!TryPush(bodyGuards[1]))
                     bodyGuards[1].Sail(new Location(collector.Location.Row + offsetY, collector.Location.Col - offsetX));
             }
             if (tailGuard.IsAlive())
@@ -173,7 +174,7 @@ namespace MyBot
                 }
                 else
                 {
-                    if (!TryPush(tailGuard, game))
+                    if (!TryPush(tailGuard))
                         tailGuard.Sail(new Location(collector.Location.Row, collector.Location.Col));
                 }
             }
