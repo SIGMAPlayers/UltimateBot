@@ -33,7 +33,7 @@ namespace MyBot
         /// </summary>
         /// <remarks> This code was created by @Idan, for any question about wtf this code is for just ask him :)</remarks>
         /// <param name="target"> A given location the formation is wanted to head for.</param>
-        public void FormUpAndSail(Location target)
+        public void FormUpAndSail4Pos(Location target)
         {
             Location upperDot = target.Towards(carrier, carrier.PushRange / 3);
             int x, y;
@@ -50,5 +50,25 @@ namespace MyBot
                 bodyguard2.Distance(upperDot.Subtract(V)) < 50)
                 carrier.Sail(target);
         }
+        public FormUpAndSail3Pos(Location target)
+        {
+            Location upperDot = target.Towards(carrier, carrier.PushRange / 3);
+            int x, y;
+            Location U = upperDot.Subtract(carrier.GetLocation());
+            y = (int)Sqrt((200 ^ 2) / ((U.Row ^ 2) / U.Col ^ 2) + 1);
+            x = ((-1) * U.Row * y) / (U.Col);
+            Location V = new Location(x, y);
+            bodyguard.Sail(upperDot.Add(V));
+            bodyguard2.Sail(upperDot.Subtract(V));
+            
+
+            if (tail.Distance(carrier.GetLocation().Subtract(U)) <= 50 &&
+                bodyguard.Distance(upperDot.Add(V)) <= 50 &&
+                bodyguard2.Distance(upperDot.Subtract(V)) < 50)
+                carrier.Sail(target);
+
+        }
+
+
     }
 }
