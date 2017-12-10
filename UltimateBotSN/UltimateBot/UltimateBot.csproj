@@ -32,7 +32,7 @@
   <ItemGroup>
     <Reference Include="PirateGame, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Downloads\jre-8u101-windows-x64\PirateGame.dll</HintPath>
+      <HintPath>.\PirateGame.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
