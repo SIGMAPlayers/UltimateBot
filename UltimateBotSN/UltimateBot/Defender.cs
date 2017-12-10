@@ -20,6 +20,7 @@ namespace MyBot
             this.Layer = layer;
         }
 
+
         /// <summary>
         /// Makes the defender try to push an enemy pirate. Returns true if it did.
         /// If can be pushed out of the map, else push againts the motherboard.

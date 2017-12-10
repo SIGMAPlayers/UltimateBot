@@ -8,12 +8,16 @@ namespace MyBot
 {
     public class Formation
     {
+
+        List<Pirate> FreeForTargetingPirates;
+
         Pirate carrier;
         Pirate bodyguard;
         Pirate bodyguard2;
         Pirate tail;
 
         public Pirate Carrier { get => carrier; set => carrier = value; }
+       
         public Pirate Bodyguard { get => bodyguard; set => bodyguard = value; }
         public Pirate Bodyguard2 { get => bodyguard2; set => bodyguard2 = value; }
         public Pirate Tail { get => tail; set => tail = value; }
@@ -40,6 +44,7 @@ namespace MyBot
         /// <param name="target"> A given location the formation is wanted to head for.</param>
         public void FormUpAndSail4Pos(Location target)
         {
+            
             Location upperDot = target.Towards(Carrier, Carrier.PushRange / 3);
             int x, y;
             Location U = upperDot.Subtract(Carrier.GetLocation());
@@ -128,6 +133,7 @@ namespace MyBot
                 else
                 {
                     Bodyguard.Push(Carrier, target);
+
                 }
            }
            else
