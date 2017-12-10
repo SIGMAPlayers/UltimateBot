@@ -55,5 +55,22 @@ namespace MyBot
             // Didn't push.
             return false;
         }
+
+        /// <summary>
+        /// Face towards an enemy
+        /// </summary>
+        /// <param name="range">The range you want to be FROM the enemyPirate</param>
+        /// <param name="enemyPirate">The enemy you want to face towards him</param>
+        /// <param name="myPirate">The pirate thats gonna face towards the enemyPirate</param>
+        /// <returns>The location you are going to face towards the enemy pirate</returns>
+        public static Location FaceTo(int range, Pirate enemyPirate, Pirate myPirate)
+        {
+            //int scale = range
+            Location faceTo;
+
+            faceTo = enemyPirate.Location.Towards(myPirate, range);
+
+            return faceTo;
+        }
     }
 }

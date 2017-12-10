@@ -76,7 +76,7 @@ namespace MyBot
                 if (
                     Bodyguard.Distance(upperDot.Add(V)) <= 50 &&
                     Bodyguard2.Distance(upperDot.Subtract(V)) < 50)
-                    Carrier.Sail(target);
+                        Carrier.Sail(target);
                 Bodyguard.Sail(upperDot.Add(V));
                 Bodyguard2.Sail(upperDot.Subtract(V));
             }
@@ -119,7 +119,7 @@ namespace MyBot
         /// <param name="target"></param>
         public void FormUpAndSail2Pos(Location target)
         {
-           if (Carrier.InRange(target, (bodyguard.PushDistance + Carrier.MaxSpeed)))
+           if(Carrier.InRange(target, (bodyguard.PushDistance + Carrier.MaxSpeed)))
            {
                 if (!GeneralMethods.UnderThreat(Carrier, 600))
                 {

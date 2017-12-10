@@ -117,20 +117,9 @@ namespace MyBot
             guardLocation = game.GetEnemyCapsule().Location.Towards(game.GetEnemyMothership(), scale - range);
 
             return guardLocation;
-
-            //int row = 0;
-            //int col = 0;
-            //if (game.GetEnemyMothership().Location.Col > game.GetMyMothership().Location.Col)
-            //    col = game.GetEnemyMothership().Location.Col - 1001 + range;
-            //else
-            //    col = game.GetEnemyMothership().Location.Col + 1001 - range;
-
-            //if (game.GetEnemyCapsule().InitialLocation.Row > game.GetMyCapsule().InitialLocation.Row)
-            //    row = game.GetEnemyMothership().Location.Row + 1001 - range;
-            //else
-            //    row = game.GetEnemyMothership().Location.Row - 1001 + range;
-            //return new Location(row, col);
         }
+
+
 
 
     }

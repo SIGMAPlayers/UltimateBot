@@ -190,65 +190,56 @@ namespace MyBot
         /// <returns>Returns the location that if you push it towards it, the pirate will die or null if you can't kill it.</returns>
         public static Location GetCloseEnoughToBorder(Pirate enemyPirate, int range, PirateGame game)
         {
-            Location center = new Location(game.Rows / 2, game.Cols / 2);
 
-            if (center.Col > enemyPirate.Location.Col && center.Row > enemyPirate.Location.Row)
-            {
-                int colDistance = enemyPirate.Distance(new Location(0, enemyPirate.Location.Col));
-                int rowDistance = enemyPirate.Distance(new Location(enemyPirate.Location.Row, game.Cols));
-                if (colDistance > rowDistance)
-                    if (rowDistance <= range)
-                        return new Location(0, enemyPirate.Location.Col);
-                    else if (colDistance < range)
-                        return new Location(enemyPirate.Location.Row, game.Cols);
-                return null;
-            }
-            else if (center.Col > enemyPirate.Location.Col && center.Row < enemyPirate.Location.Row)
-            {
-                int colDistance = enemyPirate.Distance(new Location(game.Cols, enemyPirate.Location.Row));
-                int rowDistance = enemyPirate.Distance(new Location(enemyPirate.Location.Col, game.Rows));
-                if (colDistance > rowDistance)
-                    if (rowDistance <= range)
-                        return new Location(game.Cols, enemyPirate.Location.Row);
-                    else if (colDistance < range)
-                        return new Location(enemyPirate.Location.Col, game.Rows);
-                return null;
-            }
-            else if (center.Col < enemyPirate.Location.Col && center.Row < enemyPirate.Location.Row)
-            {
-                int colDistance = enemyPirate.Distance(new Location(0, enemyPirate.Location.Col));
-                int rowDistance = enemyPirate.Distance(new Location(enemyPirate.Location.Row, 0));
-                if (colDistance > rowDistance)
-                    if (rowDistance <= range)
-                        return new Location(0, enemyPirate.Location.Col);
-                    else if (colDistance < range)
-                        return new Location(enemyPirate.Location.Row, 0);
-                return null;
-            }
-            else if (center.Col < enemyPirate.Location.Col && center.Row > enemyPirate.Location.Row)
-            {
-                int colDistance = enemyPirate.Distance(new Location(enemyPirate.Location.Row, 0));
-                int rowDistance = enemyPirate.Distance(new Location(game.Rows, enemyPirate.Location.Col));
-                if (colDistance > rowDistance)
-                    if (rowDistance <= range)
-                        return new Location(enemyPirate.Location.Row, 0);
-                    else if (colDistance < range)
-                        return new Location(game.Rows, enemyPirate.Location.Col);
-                return null;
-            }
 
-            return null;
-        }
+        //    Location center = new Location(game.Rows / 2, game.Cols / 2);
 
-        /// <summary>
-        /// Defends the enemy Mothership with SmartDefending
-        /// </summary>
-        /// <remarks>(For real explanation ask me, Booba, Idan (or Matan Meushar :) )</remarks>
-        /// <param name="defenderList">List of all the defenders</param>
-        /// <returns>Nothing LOL xD</returns>
-        public void SmartDefending(List<Defender> defenderList)
-        {
+        //    if (center.Col > enemyPirate.Location.Col && center.Row > enemyPirate.Location.Row)
+        //    {
+        //        int colDistance = enemyPirate.Distance(new Location(0, enemyPirate.Location.Col));
+        //        int rowDistance = enemyPirate.Distance(new Location(enemyPirate.Location.Row, game.Cols));
+        //        if (colDistance > rowDistance)
+        //            if (rowDistance <= range)
+        //                return new Location(0, enemyPirate.Location.Col);
+        //            else if (colDistance < range)
+        //                return new Location(enemyPirate.Location.Row, game.Cols);
+        //        return null;
+        //    }
+        //    else if (center.Col > enemyPirate.Location.Col && center.Row < enemyPirate.Location.Row)
+        //    {
+        //        int colDistance = enemyPirate.Distance(new Location(game.Cols, enemyPirate.Location.Row));
+        //        int rowDistance = enemyPirate.Distance(new Location(enemyPirate.Location.Col, game.Rows));
+        //        if (colDistance > rowDistance)
+        //            if (rowDistance <= range)
+        //                return new Location(game.Cols, enemyPirate.Location.Row);
+        //            else if (colDistance < range)
+        //                return new Location(enemyPirate.Location.Col, game.Rows);
+        //        return null;
+        //    }
+        //    else if (center.Col < enemyPirate.Location.Col && center.Row < enemyPirate.Location.Row)
+        //    {
+        //        int colDistance = enemyPirate.Distance(new Location(0, enemyPirate.Location.Col));
+        //        int rowDistance = enemyPirate.Distance(new Location(enemyPirate.Location.Row, 0));
+        //        if (colDistance > rowDistance)
+        //            if (rowDistance <= range)
+        //                return new Location(0, enemyPirate.Location.Col);
+        //            else if (colDistance < range)
+        //                return new Location(enemyPirate.Location.Row, 0);
+        //        return null;
+        //    }
+        //    else if (center.Col < enemyPirate.Location.Col && center.Row > enemyPirate.Location.Row)
+        //    {
+        //        int colDistance = enemyPirate.Distance(new Location(enemyPirate.Location.Row, 0));
+        //        int rowDistance = enemyPirate.Distance(new Location(game.Rows, enemyPirate.Location.Col));
+        //        if (colDistance > rowDistance)
+        //            if (rowDistance <= range)
+        //                return new Location(enemyPirate.Location.Row, 0);
+        //            else if (colDistance < range)
+        //                return new Location(game.Rows, enemyPirate.Location.Col);
+        //        return null;
+        //    }
 
-        }
+        //    return null;
+        //}
     }
 }
