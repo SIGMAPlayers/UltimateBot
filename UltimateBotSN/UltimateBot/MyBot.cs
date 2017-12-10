@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text;
 using Pirates;
-//idan is gay lmao
+
 namespace MyBot
 {
     /// <summary>
