@@ -54,7 +54,7 @@ namespace MyBot
             {
                 if (defender.IsAlive())
                 {
-                    if (!TryPush(defender))
+                    if (!GeneralMethods.TryPush(defender))
                     {
                         // Enemy capsule defenders work
                         Location start;
@@ -84,101 +84,10 @@ namespace MyBot
                 }
             }
 
-            Formation(game);
+            
         }
 
-        /// <summary>
-        /// Makes the pirate try to push an enemy pirate. Returns true if it did.
-        /// </summary>
-        /// <param name="pirate">The pushing pirate.</param>
-        /// <param name="game">The current game state.</param>
-        /// <returns> true if the pirate pushed. </returns>
-        private bool TryPush(Pirate pirate)
-        {
-            // Go over all enemies.
-            foreach (Pirate enemy in game.GetEnemyLivingPirates())
-            {
-                // Check if the pirate can push the enemy.
-                if (pirate.CanPush(enemy))
-                {
-                    //Changed
-                    //Push enemy!
-                    Location oppositeSide = enemy.GetLocation().Subtract(game.GetEnemyMothership().GetLocation());
-                    //Vector: the distance (x,y) you need to go through to go from the mothership to the enemy
-                    oppositeSide = enemy.GetLocation().Towards(enemy.GetLocation().Add(oppositeSide), 600);
-                    pirate.Push(enemy, oppositeSide);
-                    //Print a message.
-                    System.Console.WriteLine("pirate " + pirate + " pushes " + enemy + " towards " + enemy.InitialLocation);
-                    //Did push.
-                    return true;
-                }
-            }
-            // Didn't push.
-            return false;
-        }
-
-        /// <summary>
-        /// Creates the formation for the attackers
-        /// </summary>
-        /// <param name="game">The current game state.</param>
-        /// <returns> Well... Returns nothings xd </returns>
-        private void Formation(PirateGame game)
-        {
-            if (collector.IsAlive())
-            {
-                if (collector.Capsule == null)
-                {
-                    if (!TryPush(collector))
-                    {
-                        collector.Sail(game.GetMyCapsule());
-                    }
-                }
-                else
-                {
-                    if (!TryPush(collector))
-                    {
-                        collector.Sail(game.GetMyMothership().Location);
-                    }
-                }
-            }
-            else
-            {
-                Pirate temp = collector;
-
-                for (int i = 0; i < 2; i++)
-                {
-                    if (bodyGuards[i].IsAlive() && !collector.IsAlive())
-                    {
-                        collector = bodyGuards[i];
-                        bodyGuards[i] = temp;
-                        break;
-                    }
-                }
-            }
-            if (bodyGuards[0].IsAlive())
-            {
-                if (!TryPush(bodyGuards[0]))
-                    bodyGuards[0].Sail(new Location(collector.Location.Row + offsetY, collector.Location.Col + offsetX));
-            }
-            if (bodyGuards[1].IsAlive())
-            {
-                if (!TryPush(bodyGuards[1]))
-                    bodyGuards[1].Sail(new Location(collector.Location.Row + offsetY, collector.Location.Col - offsetX));
-            }
-            if (tailGuard.IsAlive())
-            {
-                if (tailGuard.PushDistance + 600 >= collector.Distance(game.GetMyMothership()) && collector.Capsule != null)
-                {
-                    // bodyGuards[0].Push(collector,game.GetMyMothership());
-                    tailGuard.Push(collector, game.GetMyMothership());
-                }
-                else
-                {
-                    if (!TryPush(tailGuard))
-                        tailGuard.Sail(new Location(collector.Location.Row, collector.Location.Col));
-                }
-            }
-        }
+       
 
         /// <summary>
         /// Checks if the enemy pirate is close enough to the border to kill him. 
