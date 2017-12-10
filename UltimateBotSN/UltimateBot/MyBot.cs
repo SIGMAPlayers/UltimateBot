@@ -3,24 +3,222 @@ using System.Linq;
 using System.Text;
 using Pirates;
 
+
+
 namespace MyBot
 {
+    //enums containing 
+    public enum Attackers { Collector, BodyGuard, TailGuard };
+    public enum Defenders { Front, Back };
+    public static class GameSettings
+    {
+    public static AllPirates allPirates;
+    public static DefenderList defList;
+    public static AttackerList AtkList;
+    public static PirateGame game;
+    public const int FORMATION_COUNT = 1;
+    public const int OFFSET_X = 300;
+    public const int OFFSET_Y = 300;
+    public static bool START = false;
+    }
+    //A list of pirates 
+    public class PirateList : List<Pirate>
+    {
+        public PirateList() { }
+
+        public PirateList(IEnumerable<Pirate> list) : base(list) { }
+
+
+
+    }
+    //A defender pirate
+    public class Defender
+    {
+        private Defenders duty;
+        private Pirate pirate;
+
+        public Defender(Pirate pirate, Defenders role)
+        {
+            this.duty = role;
+            this.pirate = pirate;
+        }
+
+
+        public Defenders Duty
+        {
+            get
+            {
+                return duty;
+            }
+
+            set
+            {
+                duty = value;
+            }
+        }
+
+        public Pirate Pirate
+        {
+            get
+            {
+                return pirate;
+            }
+
+            set
+            {
+                pirate = value;
+            }
+        }
+
+        public override bool IsAlive()
+        {
+            return this.pirate.IsAlive();
+        }
+       
+    }
+    //An attacker pirate
+    public class Attacker
+    {
+        private Pirate pirate;
+        private Attackers duty;
+
+        public Attacker(Pirate pirate, Attackers role)
+        {
+            this.duty = role;
+            this.pirate = pirate;
+        }
+
+        public void SwitchRoles(Attacker a, Attacker b)
+        {
+            Attackers tempDuty = b.duty;
+            b.duty = a.duty;
+            a.duty = tempDuty;
+        }
+
+        public void BecomeCollector(Attacker replacer, Attacker Collector)
+        {
+            if (replacer.pirate.IsAlive())
+            {
+                SwitchRoles(replacer, Collector);
+            }
+        }
+
+        public bool IsAlive()
+        {
+            return this.pirate.IsAlive();
+        }
+    }
+    //A list of all attackers
+    public class AttackerList : List<Attacker>
+    {
+        public AttackerList(PirateGame game)
+        {
+            PirateList all = new PirateList(game.GetAllMyPirates().OrderBy(Pirate => Pirate.Location.Distance(game.GetMyCapsule().Location)));
+            for (int i = 0; i < GameSettings.FORMATION_COUNT / 4; i++)
+            {
+                this.Add(new Attacker(all[0], Attackers.BodyGuard));
+                this.Add(new Attacker(all[1], Attackers.BodyGuard));
+                this.Add(new Attacker(all[2], Attackers.Collector));
+                this.Add(new Attacker(all[3], Attackers.TailGuard));
+            }
+
+        }
+
+        public AttackerList() { }
+
+        public AttackerList(IEnumerable<Attacker> list) : base(list) { }
+
+
+
+    }
+    //A list of all defenders
+    public class DefenderList : List<Defender>
+    {
+        public DefenderList(PirateGame game)
+        {
+            PirateList def = new PirateList(game.GetAllMyPirates().OrderBy(Pirate => Pirate.Location.Distance(game.GetMyCapsule().Location)));
+            def.RemoveRange(0, 4);
+            for (int i = 0; i < (def.Count / 2); i++)
+            {
+                this.Add(new Defender(def[i], Defenders.Front));
+            }
+            for (int i = 0; i < def.Count - (def.Count / 2); i++)
+            {
+                this.Add(new Defender(def[i], Defenders.Back));
+            }
+
+
+        }
+        public DefenderList() { }
+
+        public DefenderList(IEnumerable<Defender> list) : base(list) { }
+
+
+
+    }
+    //2 lists of attackers and defenders
+    public class AllPirates
+    {
+        private AttackerList Alist;
+        private DefenderList Dlist;
+
+        public AllPirates()
+        {
+           
+        }
+
+        public AllPirates(PirateGame game)
+        {
+            this.Alist1 = new AttackerList(game);
+            this.Dlist = new DefenderList(game);
+        }
+
+        public AllPirates(AttackerList Alist, DefenderList Dlist)
+        {
+            this.Alist1 = Alist;
+            this.Dlist = Dlist;
+        }
+
+        public AttackerList Alist1
+        {
+            get
+            {
+                return Alist;
+            }
+
+            set
+            {
+                Alist = value;
+            }
+        }
+
+        public DefenderList Dlist1
+        {
+            get
+            {
+                return Dlist;
+            }
+
+            set
+            {
+                Dlist = value;
+            }
+        }
+    }
+
     /// <summary>
     /// This is an example for a bot.
     /// </summary>
     public class MyBot : IPirateBot
     {
+       
+     
+        
         /// <summary>
         /// Makes the bot run a single turn.
         /// </summary>
         /// <param name="game">The current game state</param>
 
-        Pirate collector;
-        Pirate tailGuard;
-        List<Pirate> bodyGuards;
-
-        int offsetX;
-        int offsetY;
 
         /// <summary>
         /// Makes the bot run a single turn.
@@ -28,38 +226,38 @@ namespace MyBot
         /// <param name="game">The current game state</param>
         // Changed Pirates to defenders where needed &
         // Changed the defenders to two layer code
+
+        //a function to start the game
+        public AllPirates OnGameStart(PirateGame game)
+        {
+            AllPirates allPirates = new AllPirates(game);
+            return allPirates;
+        }
+
         public void DoTurn(PirateGame game)
         {
-            collector = game.GetAllMyPirates().ToList()[6];
-
-            tailGuard = game.GetAllMyPirates().ToList()[7];
-
-            bodyGuards = new List<Pirate>
+           
+            GameSettings.game = game;
+            if (!GameSettings.START)
             {
-                game.GetAllMyPirates().ToList()[5],
-                game.GetAllMyPirates().ToList()[4]
-            };
+                GameSettings.allPirates = OnGameStart(game);
+                GameSettings.defList = GameSettings.allPirates.Dlist1;
+                GameSettings.AtkList = GameSettings.allPirates.Alist1;
+                GameSettings.START = true;
+            }
 
-            offsetX = 300;
-            offsetY = 300;
 
-            //Get one of my pirates.
-            //Pirate pirate = game.GetMyLivingPirates()[0];
-            List<Defender> defenders = game.GetAllMyPirates().Cast<Defender>().ToList();
-            defenders.OrderBy(Pirate => Pirate.Location.Distance(game.GetEnemyCapsule().Location));
-            defenders.RemoveRange(4, 4);
-
-            foreach (Defender defender in defenders)
+            foreach (Defender defender in GameSettings.allPirates.Dlist1)
             {
                 if (defender.IsAlive())
                 {
-                    if (!TryPush(defender, game))
+                    if (!TryPush(defender.Pirate, game))
                     {
                         // Enemy capsule defenders work
                         Location start;
-                        if ((defenders[0].Equals(defender) || defenders[1].Equals(defender)))
+                        if ((GameSettings.defList[0].Equals(defender) || GameSettings.defList[1].Equals(defender)))
                         {
-                            defender.Layer = Roles.front;
+                            defender.Duty = Defenders.Front;
                             if (defender.DefendFrom(game) == null)
                             {
                                 start = defender.ProtectFromCarriers(0, game);
