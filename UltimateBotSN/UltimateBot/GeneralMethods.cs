@@ -16,14 +16,14 @@ namespace MyBot
         /// <param name="mapObject"></param>
         /// <param name="rangeOfDanger"></param>
         /// <returns>true if the object is under a threat and false if it isnt</returns>
-        public static bool UnderThreat(MapObject mapObject, int rangeOfDanger)
+        public static Pirate UnderThreat(MapObject mapObject, int rangeOfDanger)
         {
             foreach (Pirate enemy in MyBot.game.GetEnemyLivingPirates())
             {
                 if (enemy.InRange(mapObject, rangeOfDanger))
-                    return true;
+                    return enemy;
             }
-            return false;
+            return null;
         }
 
         /// <summary>

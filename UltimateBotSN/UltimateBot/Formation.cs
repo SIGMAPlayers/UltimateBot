@@ -121,7 +121,7 @@ namespace MyBot
         {
            if(Carrier.InRange(target, (bodyguard.PushDistance + Carrier.MaxSpeed)))
            {
-                if (!GeneralMethods.UnderThreat(Carrier, 600))
+                if (GeneralMethods.UnderThreat(Carrier, 600).Equals(null))
                 {
                     Bodyguard.Sail(Carrier);
                 }
