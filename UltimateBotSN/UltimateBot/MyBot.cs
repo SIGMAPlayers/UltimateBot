@@ -47,7 +47,7 @@ namespace MyBot
             //Get one of my pirates.
             //Pirate pirate = game.GetMyLivingPirates()[0];
             List<Defender> defenders = game.GetAllMyPirates().Cast<Defender>().ToList();
-            defenders.OrderBy(Pirate => Pirate.Location.Distance(game.GetEnemyCapsule().Location));
+            defenders.OrderBy(Pirate => Pirate.Pirate.Location.Distance(game.GetEnemyCapsule().Location));
             defenders.RemoveRange(4, 4);
 
             foreach (Defender defender in defenders)
@@ -64,10 +64,10 @@ namespace MyBot
                             if (defender.DefendFrom(game) == null)
                             {
                                 start = defender.ProtectFromCarriers(0, game);
-                                defender.Sail(start);
+                                defender.Pirate.Sail(start);
                             }
                             else
-                                defender.Sail(defender.DefendFrom(game));
+                                defender.Pirate.Sail(defender.DefendFrom(game));
                         }
                         else if (defenders[2].Equals(defender) || defenders[3].Equals(defender))
                         {
@@ -75,16 +75,16 @@ namespace MyBot
                             if (defender.DefendFrom(game) == null)
                             {
                                 start = defender.ProtectFromCarriers(450, game);
-                                defender.Sail(start);
+                                defender.Pirate.Sail(start);
                             }
                             else
-                                defender.Sail(defender.DefendFrom(game));
+                                defender.Pirate.Sail(defender.DefendFrom(game));
                         }
                     }
                 }
             }
 
-            
+
         }
 
        
