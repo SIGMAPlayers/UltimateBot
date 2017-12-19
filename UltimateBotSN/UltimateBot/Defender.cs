@@ -12,7 +12,7 @@ namespace MyBot
     {
         //First layer = 1, Second layer (Backup layer) = 2
         private Roles layer;
-
+        
         public Roles Layer { get => layer; set => layer = value; }
 
         public Defender(Roles layer) : base()
