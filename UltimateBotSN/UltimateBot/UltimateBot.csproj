@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="Defender.cs" />
     <Compile Include="Formation.cs" />
+    <Compile Include="GeneralMethodes.cs" />
     <Compile Include="MyBot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

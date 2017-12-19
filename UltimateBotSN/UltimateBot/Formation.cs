@@ -50,7 +50,7 @@ namespace MyBot
                 bodyguard2.Distance(upperDot.Subtract(V)) < 50)
                 carrier.Sail(target);
         }
-        public FormUpAndSail3Pos(Location target)
+        public void FormUpAndSail3Pos(Location target)
         {
             Location upperDot = target.Towards(carrier, carrier.PushRange / 3);
             int x, y;
