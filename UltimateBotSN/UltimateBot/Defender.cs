@@ -6,7 +6,6 @@ using Pirates;
 namespace MyBot
 {
     public enum Roles { front, backup };
-
     public class Defender
     {
         //First layer = 1, Second layer (Backup layer) = 2
