@@ -207,7 +207,7 @@ namespace MyBot
             {
                 if (defender.IsAlive())
                 {
-                    if (!GeneralMethods.TryPush(defender))
+                    if (!GeneralMethods.TryPush(defender.Pirate))
                     {
                         // Enemy capsule defenders work
                         Location start;
