@@ -56,8 +56,6 @@ namespace MyBot
             //Get one of my pirates.
             //Pirate pirate = game.GetMyLivingPirates()[0];
             List<Defender> defenders = GameSettings.allPirates.Dlist1;
-            defenders.OrderBy(Pirate => Pirate.Pirate.Location.Distance(game.GetEnemyCapsule().Location));
-            defenders.RemoveRange(4, 4);
 
             foreach (Defender defender in defenders)
             {
