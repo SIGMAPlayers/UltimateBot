@@ -55,7 +55,7 @@ namespace MyBot
                 {
                     //Changed
                     //Push enemy!
-                    Location outOfBorder = MyBot.GetCloseEnoughToBorder(pirate, pirate.PushDistance, game);
+                    Location outOfBorder = MyBot.GetCloseEnoughToBorder(enemy, pirate.PushDistance);
                     if (outOfBorder != null)
                     {   
                         pirate.Push(enemy, outOfBorder);

@@ -19,9 +19,6 @@ namespace MyBot
         Pirate tailGuard;
         List<Pirate> bodyGuards;
 
-        int offsetX;
-        int offsetY;
-
         /// <summary>
         /// Makes the bot run a single turn.
         /// </summary>
@@ -57,9 +54,6 @@ namespace MyBot
                 game.GetAllMyPirates().ToList()[4]
             };
 
-            offsetX = 300;
-            offsetY = 300;
-
             //Get one of my pirates.
             //Pirate pirate = game.GetMyLivingPirates()[0];
             List<Defender> defenders = game.GetAllMyPirates().Cast<Defender>().ToList();
@@ -70,7 +64,7 @@ namespace MyBot
             {
                 if (defender.IsAlive())
                 {
-                    if (!GeneralMethods.TryPush(defender))
+                    if (!GeneralMethods.TryPush(defender.Pirate))
                     {
                         // Enemy capsule defenders work
                         Location start;
