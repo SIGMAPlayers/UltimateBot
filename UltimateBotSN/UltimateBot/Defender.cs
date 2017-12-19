@@ -6,7 +6,7 @@ using Pirates;
 
 namespace MyBot
 {
-    public enum Roles { front, backup};
+    public enum Roles { front, backup };
 
     public class Defender : Pirate
     {
@@ -19,6 +19,7 @@ namespace MyBot
         {
             this.Layer = layer;
         }
+
 
         /// <summary>
         /// Makes the defender try to push an enemy pirate. Returns true if it did.
@@ -36,7 +37,7 @@ namespace MyBot
                 {
                     //Changed
                     //Push enemy!
-                    Location outOfBorder = TutorialBot.GetCloseEnoughToBorder(defender, defender.PushDistance, game);
+                    Location outOfBorder = MyBot.GetCloseEnoughToBorder(defender, defender.PushDistance);
                     if (outOfBorder != null)
                     {
                         defender.Push(enemy, outOfBorder);
@@ -100,7 +101,7 @@ namespace MyBot
             //To follow the enemy carrier/the capsule
             Pirate enemyCarrier = null;
 
-            foreach(Pirate enemy in game.GetEnemyLivingPirates())
+            foreach (Pirate enemy in game.GetEnemyLivingPirates())
             {
                 if (enemy.Capsule != null)
                     enemyCarrier = enemy;
@@ -117,21 +118,10 @@ namespace MyBot
             guardLocation = game.GetEnemyCapsule().Location.Towards(game.GetEnemyMothership(), scale - range);
 
             return guardLocation;
-
-            //int row = 0;
-            //int col = 0;
-            //if (game.GetEnemyMothership().Location.Col > game.GetMyMothership().Location.Col)
-            //    col = game.GetEnemyMothership().Location.Col - 1001 + range;
-            //else
-            //    col = game.GetEnemyMothership().Location.Col + 1001 - range;
-
-            //if (game.GetEnemyCapsule().InitialLocation.Row > game.GetMyCapsule().InitialLocation.Row)
-            //    row = game.GetEnemyMothership().Location.Row + 1001 - range;
-            //else
-            //    row = game.GetEnemyMothership().Location.Row - 1001 + range;
-            //return new Location(row, col);
         }
 
-        
+
+
+
     }
 }
