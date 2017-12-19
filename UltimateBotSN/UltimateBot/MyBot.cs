@@ -5,10 +5,163 @@ using Pirates;
 
 namespace MyBot
 {
-    /// <summary>
-    /// This is an example for a bot.
-    /// </summary>
-    public class MyBot : IPirateBot
+    public enum Attackers { Collector, BodyGuard, TailGuard };
+    public enum Defenders { Front, Back };
+    public static class GameSettings
+    {
+        public static AllPirates allPirates;
+        public static DefenderList defList;
+        public static AttackerList AtkList;
+        public static PirateGame game;
+        public const int FORMATION_COUNT = 1;
+        public const int OFFSET_X = 300;
+        public const int OFFSET_Y = 300;
+        public static bool START = false;
+    }
+
+    //A list of pirates 
+    public class PirateList : List<Pirate>
+    {
+        public PirateList() { }
+
+        public PirateList(IEnumerable<Pirate> list) : base(list) { }
+    }
+
+        //An attacker pirate
+    public class Attacker
+    {
+        private Pirate pirate;
+        private Attackers duty;
+
+        public Attacker(Pirate pirate, Attackers role)
+        {
+            this.duty = role;
+            this.pirate = pirate;
+        }
+
+        public void SwitchRoles(Attacker a, Attacker b)
+        {
+            Attackers tempDuty = b.duty;
+            b.duty = a.duty;
+            a.duty = tempDuty;
+        }
+
+        public void BecomeCollector(Attacker replacer, Attacker Collector)
+        {
+            if (replacer.pirate.IsAlive())
+            {
+                SwitchRoles(replacer, Collector);
+            }
+        }
+
+        public bool IsAlive()
+        {
+            return this.pirate.IsAlive();
+        }
+    }
+        //A list of all attackers
+        public class AttackerList : List<Attacker>
+        {
+            public AttackerList(PirateGame game)
+            {
+                PirateList all = new PirateList(game.GetAllMyPirates().OrderBy(Pirate => Pirate.Location.Distance(game.GetMyCapsule().Location)));
+                for (int i = 0; i < GameSettings.FORMATION_COUNT / 4; i++)
+                {
+                    this.Add(new Attacker(all[0], Attackers.BodyGuard));
+                    this.Add(new Attacker(all[1], Attackers.BodyGuard));
+                    this.Add(new Attacker(all[2], Attackers.Collector));
+                    this.Add(new Attacker(all[3], Attackers.TailGuard));
+                }
+
+            }
+
+            public AttackerList() { }
+
+            public AttackerList(IEnumerable<Attacker> list) : base(list) { }
+
+
+
+        }
+        //A list of all defenders
+        public class DefenderList : List<Defender>
+        {
+            public DefenderList(PirateGame game)
+            {
+                PirateList def = new PirateList(game.GetAllMyPirates().OrderBy(Pirate => Pirate.Location.Distance(game.GetMyCapsule().Location)));
+                def.RemoveRange(0, 4);
+                for (int i = 0; i < (def.Count / 2); i++)
+                {
+                    this.Add(new Defender(def[i], Roles.front));
+                }
+                for (int i = 0; i < def.Count - (def.Count / 2); i++)
+                {
+                    this.Add(new Defender(def[i], Roles.backup));
+                }
+
+
+            }
+            public DefenderList() { }
+
+            public DefenderList(IEnumerable<Defender> list) : base(list) { }
+
+
+
+        }
+        //2 lists of attackers and defenders
+        public class AllPirates
+        {
+            private AttackerList Alist;
+            private DefenderList Dlist;
+
+            public AllPirates()
+            {
+
+            }
+
+            public AllPirates(PirateGame game)
+            {
+                this.Alist1 = new AttackerList(game);
+                this.Dlist = new DefenderList(game);
+            }
+
+            public AllPirates(AttackerList Alist, DefenderList Dlist)
+            {
+                this.Alist1 = Alist;
+                this.Dlist = Dlist;
+            }
+
+            public AttackerList Alist1
+            {
+                get
+                {
+                    return Alist;
+                }
+
+                set
+                {
+                    Alist = value;
+                }
+            }
+
+            public DefenderList Dlist1
+            {
+                get
+                {
+                    return Dlist;
+                }
+
+                set
+                {
+                    Dlist = value;
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// This is an example for a bot.
+        /// </summary>
+        public class MyBot : IPirateBot
     {
         /// <summary>
         /// Makes the bot run a single turn.
