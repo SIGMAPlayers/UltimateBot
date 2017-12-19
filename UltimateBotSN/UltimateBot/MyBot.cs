@@ -32,6 +32,11 @@ namespace MyBot
             return allPirates;
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="game"></param>
         public void DoTurn(PirateGame game)
         {
             GameSettings.game = game;
