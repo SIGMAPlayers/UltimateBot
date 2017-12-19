@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using static System.Math;
 
 using Pirates;
 
@@ -52,7 +51,7 @@ namespace MyBot
             Location upperDot = target.Towards(Carrier, Carrier.PushRange / 3);
             int x, y;
             Location U = upperDot.Subtract(Carrier.GetLocation());
-            y = (int)Sqrt((200 ^ 2) / ((U.Row ^ 2) / U.Col ^ 2) + 1);
+            y = (int)System.Math.Sqrt((200 ^ 2) / ((U.Row ^ 2) / U.Col ^ 2) + 1);
             x = ((-1) * U.Row * y) / (U.Col);
             Location V = new Location(x, y);
 
@@ -78,7 +77,7 @@ namespace MyBot
                 Location upperDot = target.Towards(Carrier, Carrier.PushRange / 3);
                 int x, y;
                 Location U = upperDot.Subtract(Carrier.GetLocation());
-                y = (int)Sqrt((200 ^ 2) / ((U.Row ^ 2) / U.Col ^ 2) + 1);
+                y = (int)System.Math.Sqrt((200 ^ 2) / ((U.Row ^ 2) / U.Col ^ 2) + 1);
                 x = ((-1) * U.Row * y) / (U.Col);
                 Location V = new Location(x, y);
                
@@ -94,7 +93,7 @@ namespace MyBot
                 Location upperDot = target.Towards(carrier, Carrier.PushRange / 3);
                 int x, y;
                 Location U = (upperDot.Subtract(Carrier.GetLocation())).Multiply(-1);
-                y = (int)Sqrt((200 ^ 2) / ((U.Row ^ 2) / U.Col ^ 2) + 1);
+                y = (int)System.Math.Sqrt((200 ^ 2) / ((U.Row ^ 2) / U.Col ^ 2) + 1);
                 x = ((-1) * U.Row * y) / (U.Col);
                 Location V = new Location(x, y);
                 
