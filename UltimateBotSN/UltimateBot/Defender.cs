@@ -5,19 +5,39 @@ using Pirates;
 
 namespace MyBot
 {
-    public enum Roles { front, backup };
+ public enum Roles { front, backup };
 
-    public class Defender : Pirate
+    public class Defender
     {
-        //First layer = 1, Second layer (Backup layer) = 2
+            //First layer = 1, Second layer (Backup layer) = 2
         private Roles layer;
+        private Pirate pirate;
+
+        public Defender(Pirate pirate, Roles role)
+        {
+            this.layer = role;
+            this.pirate = pirate;
+        }
+
+        public Pirate Pirate
+        {
+            get
+            {
+                return pirate;
+            }
+
+            set
+            {
+                pirate = value;
+            }
+        }
+
+        public bool IsAlive()
+        {
+            return this.pirate.IsAlive();
+        }
 
         public Roles Layer { get => layer; set => layer = value; }
-
-        public Defender(Roles layer) : base()
-        {
-            this.Layer = layer;
-        }
 
         /// <summary>
         /// Makes the defender try to push an enemy pirate. Returns true if it did.
@@ -31,14 +51,14 @@ namespace MyBot
             foreach (Pirate enemy in game.GetEnemyLivingPirates())
             {
                 // Check if the pirate can push the enemy.
-                if (defender.CanPush(enemy) && enemy.HasCapsule())
+                if (pirate.CanPush(enemy) && enemy.HasCapsule())
                 {
                     //Changed
                     //Push enemy!
-                    Location outOfBorder = MyBot.GetCloseEnoughToBorder(defender, defender.PushDistance, game);
+                    Location outOfBorder = MyBot.GetCloseEnoughToBorder(pirate, pirate.PushDistance, game);
                     if (outOfBorder != null)
-                    {
-                        defender.Push(enemy, outOfBorder);
+                    {   
+                        pirate.Push(enemy, outOfBorder);
                         return true;
                     }
                     else
@@ -46,7 +66,7 @@ namespace MyBot
                         Location oppositeSide = enemy.GetLocation().Subtract(game.GetEnemyMothership().GetLocation());
                         //Vector: the distance (x,y) you need to go through to go from the mothership to the enemy
                         oppositeSide = enemy.GetLocation().Towards(enemy.GetLocation().Add(oppositeSide), 600);
-                        defender.Push(enemy, oppositeSide);
+                        pirate.Push(enemy, oppositeSide);
                         //Print a message.
                         System.Console.WriteLine("defender " + defender + " pushes " + enemy + " towards " + enemy.InitialLocation);
                         //Did push.
@@ -130,7 +150,5 @@ namespace MyBot
             //    row = game.GetEnemyMothership().Location.Row - 1001 + range;
             //return new Location(row, col);
         }
-
-
     }
 }

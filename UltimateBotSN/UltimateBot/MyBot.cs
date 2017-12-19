@@ -34,48 +34,7 @@ namespace MyBot
     //A defender pirate
     public class Defender
     {
-        private Defenders duty;
-        private Pirate pirate;
-
-        public Defender(Pirate pirate, Defenders role)
-        {
-            this.duty = role;
-            this.pirate = pirate;
-        }
-
-
-        public Defenders Duty
-        {
-            get
-            {
-                return duty;
-            }
-
-            set
-            {
-                duty = value;
-            }
-        }
-
-        public Pirate Pirate
-        {
-            get
-            {
-                return pirate;
-            }
-
-            set
-            {
-                pirate = value;
-            }
-        }
-
-        public override bool IsAlive()
-        {
-            return this.pirate.IsAlive();
-        }
-       
-    }
+        
     //An attacker pirate
     public class Attacker
     {
@@ -140,11 +99,11 @@ namespace MyBot
             def.RemoveRange(0, 4);
             for (int i = 0; i < (def.Count / 2); i++)
             {
-                this.Add(new Defender(def[i], Defenders.Front));
+                this.Add(new Defender(def[i], Roles.front));
             }
             for (int i = 0; i < def.Count - (def.Count / 2); i++)
             {
-                this.Add(new Defender(def[i], Defenders.Back));
+                this.Add(new Defender(def[i], Roles.backup));
             }
 
 
@@ -245,8 +204,7 @@ namespace MyBot
                 GameSettings.AtkList = GameSettings.allPirates.Alist1;
                 GameSettings.START = true;
             }
-
-
+            
             foreach (Defender defender in GameSettings.allPirates.Dlist1)
             {
                 if (defender.IsAlive())
