@@ -34,7 +34,7 @@ namespace MyBot
 
 
         /// <summary>
-        /// 
+        /// yaya
         /// </summary>
         /// <param name="game"></param>
         public void DoTurn(PirateGame game)
