@@ -67,11 +67,46 @@ namespace MyBot
         public static Location FaceTo(int range, Pirate enemyPirate, Pirate myPirate)
         {
             //int scale = range
-            Location faceTo;
+            return enemyPirate.Location.Towards(myPirate, range);
+        }
 
-            faceTo = enemyPirate.Location.Towards(myPirate, range);
 
-            return faceTo;
+        /// <summary>
+        /// Checks if the enemy pirate is close enough to the border to kill him. 
+        /// Returns the location that if you push it towards it, the pirate will die or null if you can't kill it.
+        /// </summary>
+        /// <param name="enemyPirate">The enemy pirate to be checked.</param>
+        /// <param name="range">The range that will be checked if you can throw it</param>
+        /// <returns>Returns the location that if you push it towards it, the pirate will die or null if you can't kill it.</returns>
+        public static Location GetCloseEnoughToBorder(Pirate enemyPirate, int range)
+        {
+            GameSettings.game.Debug("Range is: " + range);
+            Location up = new Location(0, enemyPirate.Location.Col);
+            Location right = new Location(enemyPirate.Location.Row, GameSettings.game.Cols);
+            Location left = new Location(enemyPirate.Location.Row, 0);
+            Location down = new Location(GameSettings.game.Rows, enemyPirate.Location.Col);
+            int upDistance = enemyPirate.Distance(up);
+            int rightDistance = enemyPirate.Distance(right);
+            int leftDistance = enemyPirate.Distance(left);
+            int downDistance = enemyPirate.Distance(down);
+
+            GameSettings.game.Debug("Up Distance = " + upDistance + ", right distance = " + rightDistance + ", left distance = " + leftDistance + ", down distance " + downDistance);
+
+            if (upDistance < rightDistance && upDistance < leftDistance && upDistance < downDistance)
+                if (upDistance < range)
+                    return up;
+                else if (rightDistance < upDistance && rightDistance < leftDistance && rightDistance < downDistance)
+                    if (rightDistance < range)
+                        return right;
+                    else if (leftDistance < upDistance && leftDistance < rightDistance && leftDistance < downDistance)
+                        if (leftDistance < range)
+                            return down;
+                        else if (downDistance < upDistance && downDistance < rightDistance && downDistance < leftDistance)
+                            if (downDistance < range)
+                                return left;
+
+            //Returns null if not close enough to a border
+            return null;
         }
     }
 }

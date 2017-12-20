@@ -54,7 +54,7 @@ namespace MyBot
                 {
                     //Changed
                     //Push enemy!
-                    Location outOfBorder = MyBot.GetCloseEnoughToBorder(enemy, pirate.PushDistance);
+                    Location outOfBorder = GeneralMethods.GetCloseEnoughToBorder(enemy, pirate.PushDistance);
                     if (outOfBorder != null)
                     {   
                         pirate.Push(enemy, outOfBorder);
@@ -124,12 +124,12 @@ namespace MyBot
             Location guardLocation;
             if (enemyCarrier != null)
             {
-                guardLocation = enemyCarrier.Location.Towards(game.GetEnemyMothership(), scale - range);
+                guardLocation = game.GetEnemyMothership().Location.Towards(enemyCarrier, scale - range);
                 game.Debug("Location from ProtectFromCarrier" + guardLocation);
                 return guardLocation;
             }
 
-            guardLocation = game.GetEnemyCapsule().Location.Towards(game.GetEnemyMothership(), scale - range);
+            guardLocation = game.GetEnemyMothership().Location.Towards(game.GetEnemyCapsule(), scale - range);
             game.Debug("Location from ProtectFromCarrier" + guardLocation);
             return guardLocation;
 

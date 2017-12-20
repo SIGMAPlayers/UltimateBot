@@ -17,12 +17,10 @@ namespace MyBot
             {
                 this.Add(new Defender(def[i], Roles.front));
             }
-            for (int i = 0; i < def.Count - (def.Count / 2); i++)
+            for (int i = (def.Count / 2); i < def.Count; i++)
             {
                 this.Add(new Defender(def[i], Roles.backup));
             }
-
-
         }
         public DefenderList() { }
 
