@@ -39,6 +39,25 @@ namespace MyBot
         public Roles Layer { get => layer; set => layer = value; }
 
         /// <summary>
+        /// Checks if an enemy pirate can be pushed by multiple defenders
+        /// and returns the maximum push range
+        /// </summary>
+        /// <param name="enemyPirate">The enemy pirate you want to push</param>
+        /// <returns>The maximum range the enemy pirate can be pushed</returns>
+        public int CheckHowManyCanPush(Pirate enemyPirate)
+        {
+            int range = 0;
+
+            foreach(Defender defender in GameSettings.defList)
+            {
+                if (defender.Pirate.CanPush(enemyPirate))
+                    range += defender.Pirate.PushRange;
+            }
+
+            return range;
+        }
+
+        /// <summary>
         /// Makes the defender try to push an enemy pirate. Returns true if it did.
         /// If can be pushed out of the map, else push againts the motherboard.
         /// </summary>
@@ -54,7 +73,8 @@ namespace MyBot
                 {
                     //Changed
                     //Push enemy!
-                    Location outOfBorder = GeneralMethods.GetCloseEnoughToBorder(enemy, pirate.PushDistance);
+                    int range = CheckHowManyCanPush(enemy);
+                    Location outOfBorder = GeneralMethods.GetCloseEnoughToBorder(enemy, range);
                     if (outOfBorder != null)
                     {   
                         pirate.Push(enemy, outOfBorder);
@@ -132,19 +152,6 @@ namespace MyBot
             guardLocation = game.GetEnemyMothership().Location.Towards(game.GetEnemyCapsule(), scale - range);
             game.Debug("Location from ProtectFromCarrier" + guardLocation);
             return guardLocation;
-
-            //int row = 0;
-            //int col = 0;
-            //if (game.GetEnemyMothership().Location.Col > game.GetMyMothership().Location.Col)
-            //    col = game.GetEnemyMothership().Location.Col - 1001 + range;
-            //else
-            //    col = game.GetEnemyMothership().Location.Col + 1001 - range;
-
-            //if (game.GetEnemyCapsule().InitialLocation.Row > game.GetMyCapsule().InitialLocation.Row)
-            //    row = game.GetEnemyMothership().Location.Row + 1001 - range;
-            //else
-            //    row = game.GetEnemyMothership().Location.Row - 1001 + range;
-            //return new Location(row, col);
         }
     }
 }

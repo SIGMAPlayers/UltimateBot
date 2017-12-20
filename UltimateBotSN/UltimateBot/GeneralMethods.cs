@@ -70,7 +70,6 @@ namespace MyBot
             return enemyPirate.Location.Towards(myPirate, range);
         }
 
-
         /// <summary>
         /// Checks if the enemy pirate is close enough to the border to kill him. 
         /// Returns the location that if you push it towards it, the pirate will die or null if you can't kill it.
@@ -93,18 +92,25 @@ namespace MyBot
             GameSettings.game.Debug("Up Distance = " + upDistance + ", right distance = " + rightDistance + ", left distance = " + leftDistance + ", down distance " + downDistance);
 
             if (upDistance < rightDistance && upDistance < leftDistance && upDistance < downDistance)
+            {
                 if (upDistance < range)
                     return up;
-                else if (rightDistance < upDistance && rightDistance < leftDistance && rightDistance < downDistance)
-                    if (rightDistance < range)
-                        return right;
-                    else if (leftDistance < upDistance && leftDistance < rightDistance && leftDistance < downDistance)
-                        if (leftDistance < range)
-                            return down;
-                        else if (downDistance < upDistance && downDistance < rightDistance && downDistance < leftDistance)
-                            if (downDistance < range)
-                                return left;
-
+            }
+            else if (rightDistance < upDistance && rightDistance < leftDistance && rightDistance < downDistance)
+            {
+                if (rightDistance < range)
+                    return right;
+            }
+            else if (leftDistance < upDistance && leftDistance < rightDistance && leftDistance < downDistance)
+            {
+                if (leftDistance < range)
+                    return down;
+            }
+            else if (downDistance < upDistance && downDistance < rightDistance && downDistance < leftDistance)
+            {
+                if (downDistance < range)
+                    return left;
+            }
             //Returns null if not close enough to a border
             return null;
         }
