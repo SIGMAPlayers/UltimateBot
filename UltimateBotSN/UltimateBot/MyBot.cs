@@ -10,8 +10,6 @@ namespace MyBot
     /// </summary>
     public class MyBot : IPirateBot
     {
-
-
         /// <summary>
         /// Makes the bot run a single turn.
         /// </summary>
@@ -60,36 +58,37 @@ namespace MyBot
                         Location start;
                         if ((defenders[0].Equals(defender) || defenders[1].Equals(defender)))
                         {
+                            game.Debug("Entered defender 0 / 1");
                             defender.Layer = Roles.front;
-                            if (defender.DefendFrom(game) == null)
+                            Pirate pirate = defender.DefendFrom(game);
+                            game.Debug("Pirate to DefendFrom: "+pirate);
+                            if (pirate == null)
                             {
                                 start = defender.ProtectFromCarriers(0, game);
                                 defender.Pirate.Sail(start);
                             }
                             else
-                                defender.Pirate.Sail(defender.DefendFrom(game));
+                                defender.Pirate.Sail(pirate);
                         }
-                        else if (defenders[2].Equals(defender) || defenders[3].Equals(defender))
+                        else //if (defenders[2].Equals(defender) || defenders[3].Equals(defender))
                         {
+                            game.Debug("Entered defender 2 / 3");
                             defender.Layer = Roles.backup;
-                            if (defender.DefendFrom(game) == null)
+                            Pirate pirate = defender.DefendFrom(game);
+                            if (pirate == null)
                             {
                                 start = defender.ProtectFromCarriers(450, game);
                                 defender.Pirate.Sail(start);
                             }
                             else
-                                defender.Pirate.Sail(defender.DefendFrom(game));
+                                defender.Pirate.Sail(pirate);
                         }
                     }
                 }
             }
 
-
-
-
             if (GameSettings.game.GetMyCapsule().Holder != null)
             {
-
                 AttackerList list = GameSettings.allPirates.Alist1;
                 Pirate carrier = GameSettings.game.GetMyCapsule().Holder;
                 form.RoleAssign(carrier);
@@ -101,11 +100,9 @@ namespace MyBot
                         a.Pirate.Sail(carrier);
                 }
                 form.FormUpAndSail4Pos(GameSettings.game.GetMyMothership().Location);
-
             }
             else
             {
-
                 foreach (Attacker a in GameSettings.allPirates.Alist1)
                 {
                     if (!GeneralMethods.TryPush(a.Pirate))
@@ -114,8 +111,6 @@ namespace MyBot
                     }
                 }
             }
-
-
         }
 
 

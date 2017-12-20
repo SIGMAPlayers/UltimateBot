@@ -67,7 +67,7 @@ namespace MyBot
                         oppositeSide = enemy.GetLocation().Towards(enemy.GetLocation().Add(oppositeSide), 600);
                         pirate.Push(enemy, oppositeSide);
                         //Print a message.
-                        System.Console.WriteLine("defender " + defender + " pushes " + enemy + " towards " + enemy.InitialLocation);
+                        game.Debug("defender " + defender + " pushes " + enemy + " towards " + enemy.InitialLocation);
                         //Did push.
                         return true;
                     }
@@ -112,9 +112,6 @@ namespace MyBot
         /// Changed to work with two layers
         public Location ProtectFromCarriers(int range, PirateGame game)
         {
-            //Try to use only 
-            //game.GetEnemyCapsule().Location.Towards(game.GetEnemyMothership(), scale - range);
-            //To follow the enemy carrier/the capsule
             Pirate enemyCarrier = null;
 
             foreach (Pirate enemy in game.GetEnemyLivingPirates())
@@ -128,11 +125,12 @@ namespace MyBot
             if (enemyCarrier != null)
             {
                 guardLocation = enemyCarrier.Location.Towards(game.GetEnemyMothership(), scale - range);
+                game.Debug("Location from ProtectFromCarrier" + guardLocation);
                 return guardLocation;
             }
 
             guardLocation = game.GetEnemyCapsule().Location.Towards(game.GetEnemyMothership(), scale - range);
-
+            game.Debug("Location from ProtectFromCarrier" + guardLocation);
             return guardLocation;
 
             //int row = 0;
