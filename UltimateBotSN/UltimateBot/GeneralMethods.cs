@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
 using Pirates;
 
 namespace MyBot
@@ -18,7 +18,7 @@ namespace MyBot
         public static List<Pirate> UnderThreat(MapObject mapObject, int rangeOfDanger)
         {
             List<Pirate> toReturn = new List<Pirate>();
-            foreach (Pirate enemy in MyBot.game.GetEnemyLivingPirates())
+            foreach (Pirate enemy in GameSettings.game.GetEnemyLivingPirates())
             {
                 if (enemy.InRange(mapObject, rangeOfDanger))
                     toReturn.Add(enemy);
@@ -36,14 +36,14 @@ namespace MyBot
         public static bool TryPush(Pirate pirate)
         {
             // Go over all enemies.
-            foreach (Pirate enemy in MyBot.game.GetEnemyLivingPirates())
+            foreach (Pirate enemy in GameSettings.game.GetEnemyLivingPirates())
             {
                 // Check if the pirate can push the enemy.
                 if (pirate.CanPush(enemy))
                 {
                     //Changed
                     //Push enemy!
-                    Location oppositeSide = enemy.GetLocation().Subtract(MyBot.game.GetEnemyMothership().GetLocation());
+                    Location oppositeSide = enemy.GetLocation().Subtract(GameSettings.game.GetEnemyMothership().GetLocation());
                     //Vector: the distance (x,y) you need to go through to go from the mothership to the enemy
                     oppositeSide = enemy.GetLocation().Towards(enemy.GetLocation().Add(oppositeSide), 600);
                     pirate.Push(enemy, oppositeSide);

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using static System.Math;
+
 
 using Pirates;
 
@@ -13,6 +13,10 @@ namespace MyBot
         Pirate bodyguard2;
         Pirate tail;
 
+        public Pirate Tail { get => tail; set => tail = value; }
+        public Pirate Bodyguard2 { get => bodyguard2; set => bodyguard2 = value; }
+        public Pirate Bodyguard { get => bodyguard; set => bodyguard = value; }
+        public Pirate Carrier { get => carrier; set => carrier = value; }
         /// <summary>
         /// Constructor to create the Formation.
         /// </summary>
@@ -27,6 +31,24 @@ namespace MyBot
             this.bodyguard2 = p3;
             this.tail = p4;
         }
+        public Formation()
+        {
+
+        }
+
+
+        public void RoleAssign(Pirate pirate)
+        {
+            if (Carrier == null)
+                Carrier = pirate;
+            else if (Bodyguard == null)
+                Bodyguard = pirate;
+            else if (Bodyguard2 == null)
+                Bodyguard2 = pirate;
+            else if (Tail == null)
+                Tail = pirate;
+
+        }
 
         /// <summary>
         /// Form up in 4 pirates formation and sail the the given target.
@@ -38,7 +60,7 @@ namespace MyBot
             Location upperDot = target.Towards(carrier, carrier.PushRange / 3);
             int x, y;
             Location U = upperDot.Subtract(carrier.GetLocation());
-            y = (int)Sqrt((200 ^ 2) / ((U.Row ^ 2) / U.Col ^ 2) + 1);
+            y = (int)System.Math.Sqrt((200 ^ 2) / ((U.Row ^ 2) / U.Col ^ 2) + 1);
             x = ((-1) * U.Row * y) / (U.Col);
             Location V = new Location(x, y);
             bodyguard.Sail(upperDot.Add(V));
@@ -55,12 +77,12 @@ namespace MyBot
             Location upperDot = target.Towards(carrier, carrier.PushRange / 3);
             int x, y;
             Location U = upperDot.Subtract(carrier.GetLocation());
-            y = (int)Sqrt((200 ^ 2) / ((U.Row ^ 2) / U.Col ^ 2) + 1);
+            y = (int)System.Math.Sqrt((200 ^ 2) / ((U.Row ^ 2) / U.Col ^ 2) + 1);
             x = ((-1) * U.Row * y) / (U.Col);
             Location V = new Location(x, y);
             bodyguard.Sail(upperDot.Add(V));
             bodyguard2.Sail(upperDot.Subtract(V));
-            
+
 
             if (tail.Distance(carrier.GetLocation().Subtract(U)) <= 50 &&
                 bodyguard.Distance(upperDot.Add(V)) <= 50 &&
