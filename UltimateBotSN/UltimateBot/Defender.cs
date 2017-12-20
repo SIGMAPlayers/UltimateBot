@@ -81,7 +81,6 @@ namespace MyBot
         /// </summary>
         /// <param name="game">The current game state.</param>
         /// <returns> Returns the closest pirate to attack. </returns>
-        // Changed Pirates to defenders where needed
         public Pirate DefendFrom(PirateGame game)
         {
             //Carries to city - 100;

@@ -63,29 +63,32 @@ namespace MyBot
                 {
                     if (!GeneralMethods.TryPush(defender.Pirate))
                     {
-                        // Enemy capsule defenders work
+                        //Enemy capsule defenders work
                         Location start;
                         if ((defenders[0].Equals(defender) || defenders[1].Equals(defender)))
                         {
                             defender.Layer = Roles.front;
-                            if (defender.DefendFrom(game) == null)
+
+                            Pirate pirate = defender.DefendFrom(game);
+                            if (pirate == null)
                             {
                                 start = defender.ProtectFromCarriers(0, game);
                                 defender.Pirate.Sail(start);
                             }
                             else
-                                defender.Pirate.Sail(defender.DefendFrom(game));
+                                defender.Pirate.Sail(pirate);
                         }
                         else if (defenders[2].Equals(defender) || defenders[3].Equals(defender))
                         {
                             defender.Layer = Roles.backup;
-                            if (defender.DefendFrom(game) == null)
+                            Pirate pirate = defender.DefendFrom(game);
+                            if (pirate == null)
                             {
                                 start = defender.ProtectFromCarriers(450, game);
                                 defender.Pirate.Sail(start);
                             }
                             else
-                                defender.Pirate.Sail(defender.DefendFrom(game));
+                                defender.Pirate.Sail(pirate);
                         }
                     }
                 }
