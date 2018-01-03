@@ -37,14 +37,14 @@ namespace MyBot
                 GameSettings.game = game;
 
                 GameSettings.allPirates = OnGameStart(game);
-                GameSettings.defList = GameSettings.allPirates.Dlist1;
-                GameSettings.AtkList = GameSettings.allPirates.Alist1;
+                GameSettings.defList = GameSettings.allPirates.DefenderList;
+                GameSettings.AtkList = GameSettings.allPirates.AttackerList;
                 form = new Formation();
 
                 GameSettings.START = true;
             }
 
-            List<Defender> defenders = GameSettings.allPirates.Dlist1;
+            List<Defender> defenders = GameSettings.allPirates.DefenderList;
 
             foreach (Defender defender in defenders)
             {
@@ -87,7 +87,7 @@ namespace MyBot
 
             if (GameSettings.game.GetMyCapsule().Holder != null)
             {
-                AttackerList list = GameSettings.allPirates.Alist1;
+                AttackerList list = GameSettings.allPirates.AttackerList;
                 Pirate carrier = GameSettings.game.GetMyCapsule().Holder;
                 form.RoleAssign(carrier);
                 foreach (Attacker a in list)
@@ -101,7 +101,7 @@ namespace MyBot
             }
             else
             {
-                foreach (Attacker a in GameSettings.allPirates.Alist1)
+                foreach (Attacker a in GameSettings.allPirates.AttackerList)
                 {
                     if (!GeneralMethods.TryPush(a.Pirate))
                     {
