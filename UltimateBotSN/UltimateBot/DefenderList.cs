@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 using Pirates;
 
@@ -17,10 +18,12 @@ namespace MyBot
             {
                 this.Add(new Defender(def[i], Roles.front));
             }
-            for (int i = (def.Count / 2); i < def.Count; i++)
+            for (int i = 0; i < def.Count - (def.Count / 2); i++)
             {
                 this.Add(new Defender(def[i], Roles.backup));
             }
+
+
         }
         public DefenderList() { }
 

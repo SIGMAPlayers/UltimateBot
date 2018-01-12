@@ -51,7 +51,7 @@
     <Compile Include="DefenderList.cs" />
     <Compile Include="Formation.cs" />
     <Compile Include="GameSettings.cs" />
-    <Compile Include="GeneralMethods.cs" />
+    <Compile Include="GeneralMethodes.cs" />
     <Compile Include="MyBot.cs" />
     <Compile Include="PirateList.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

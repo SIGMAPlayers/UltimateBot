@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 using Pirates;
 
@@ -12,13 +13,12 @@ namespace MyBot
         public AttackerList(PirateGame game)
         {
             PirateList all = new PirateList(game.GetAllMyPirates().OrderBy(Pirate => Pirate.Location.Distance(game.GetMyCapsule().Location)));
-
-            for (int i = 0; i < GameSettings.FORMATION_COUNT; i++)
+            for (int i = 0; i < GameSettings.FORMATION_COUNT / 4; i++)
             {
-                this.Add(new Attacker(all[i], Attackers.BodyGuard));
-                this.Add(new Attacker(all[i + 1], Attackers.BodyGuard));
-                this.Add(new Attacker(all[i + 2], Attackers.Collector));
-                this.Add(new Attacker(all[i + 3], Attackers.TailGuard));
+                this.Add(new Attacker(all[0], Attackers.BodyGuard));
+                this.Add(new Attacker(all[1], Attackers.BodyGuard));
+                this.Add(new Attacker(all[2], Attackers.Collector));
+                this.Add(new Attacker(all[3], Attackers.TailGuard));
             }
 
         }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 using Pirates;
 
@@ -18,20 +19,20 @@ namespace MyBot
 
         public Attacker(Pirate pirate, Attackers role)
         {
-            this.duty = role;
-            this.pirate = pirate;
+            this.Duty = role;
+            this.Pirate = pirate;
         }
 
         public void SwitchRoles(Attacker a, Attacker b)
         {
-            Attackers tempDuty = b.duty;
-            b.duty = a.duty;
-            a.duty = tempDuty;
+            Attackers tempDuty = b.Duty;
+            b.Duty = a.Duty;
+            a.Duty = tempDuty;
         }
 
         public void BecomeCollector(Attacker replacer, Attacker Collector)
         {
-            if (replacer.pirate.IsAlive())
+            if (replacer.Pirate.IsAlive())
             {
                 SwitchRoles(replacer, Collector);
             }
@@ -39,7 +40,7 @@ namespace MyBot
 
         public bool IsAlive()
         {
-            return this.pirate.IsAlive();
+            return this.Pirate.IsAlive();
         }
     }
 }
