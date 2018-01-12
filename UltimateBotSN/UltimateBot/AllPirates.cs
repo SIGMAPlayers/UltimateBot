@@ -10,8 +10,8 @@ namespace MyBot
     //2 lists of attackers and defenders
     public class AllPirates
     {
-        private AttackerList Alist;
-        private DefenderList Dlist;
+        private AttackerList attackerList;
+        private DefenderList defenderList;
 
         public AllPirates()
         {
@@ -20,39 +20,39 @@ namespace MyBot
 
         public AllPirates(PirateGame game)
         {
-            this.Alist1 = new AttackerList(game);
-            this.Dlist = new DefenderList(game);
+            this.attackerList = new AttackerList(game);
+            this.defenderList = new DefenderList(game);
         }
 
         public AllPirates(AttackerList Alist, DefenderList Dlist)
         {
-            this.Alist1 = Alist;
-            this.Dlist = Dlist;
+            this.attackerList = Alist;
+            this.defenderList = Dlist;
         }
 
-        public AttackerList Alist1
+        public AttackerList AttackerList
         {
             get
             {
-                return Alist;
+                return attackerList;
             }
 
             set
             {
-                Alist = value;
+                attackerList = value;
             }
         }
 
-        public DefenderList Dlist1
+        public DefenderList DefenderList
         {
             get
             {
-                return Dlist;
+                return defenderList;
             }
 
             set
             {
-                Dlist = value;
+                defenderList = value;
             }
         }
     }
