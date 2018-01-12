@@ -8,75 +8,96 @@ namespace MyBot
 {
     public class Formation
     {
-        Pirate carrier;
+        Pirate carrier; //holds the capsule. PROTECT HIM!
         Pirate bodyguard;
         Pirate bodyguard2;
-        Pirate tail;
-
-        public Pirate Tail { get => tail; set => tail = value; }
+        Pirate headGuard;
+        private Location target;
+        private Location bodyguardLoc;
+        private Location bodyguard2Loc;
+        private Location headGuardLoc;
+        static List<Pirate> enemytargets = null; //when underthreat assigns the formation to prtect the carrier
+        public Pirate HeadGuard { get => headGuard; set => headGuard = value; }
         public Pirate Bodyguard2 { get => bodyguard2; set => bodyguard2 = value; }
         public Pirate Bodyguard { get => bodyguard; set => bodyguard = value; }
         public Pirate Carrier { get => carrier; set => carrier = value; }
         /// <summary>
         /// Constructor to create the Formation.
         /// </summary>
-        /// <param name="p1">The Carrier Pirate.</param>
-        /// <param name="p2">The Bodyguard Pirate one.</param>
-        /// <param name="p3">The Bodyguard Pirate two.</param>
-        /// <param name="p4">The Tail Pirate.</param>
-
         public Formation()
         {
 
         }
 
+        #region SailToTarget
+        /// <summary>
+        /// the head meneger of the formation this methods decides in which formation to choose and sends to him 
+        /// </summary>
+        /// <param name="target">the place that you want to go to</param>
         public void SailToTarget(Location target)
         {
-            if (Tail == null && Carrier != null && Bodyguard != null && Bodyguard2 != null)
+            this.target = target;
+            if (HeadGuard == null && Carrier != null && Bodyguard != null && Bodyguard2 != null)
             {
 
-                FormUpAndSail3Pos(target);
+                FormUpAndSail3Pos();
                 GameSettings.game.Debug("3pos");
             }
-            else if (Tail != null && Carrier != null && Bodyguard != null && Bodyguard2 != null)
+            else if (HeadGuard != null && Carrier != null && Bodyguard != null && Bodyguard2 != null)
             {
                 GameSettings.game.Debug("4pos");
-                FormUpAndSail4Pos(target);
+                FormUpAndSail4Pos();
+
+            }
+            else if (HeadGuard == null && Carrier != null && Bodyguard != null && Bodyguard2 == null)
+            {
+                GameSettings.game.Debug("2pos");
+                FormUpAndSail2Pos();
 
             }
         }
+        #endregion
 
+        #region RoleAssign
+        /// <summary>
+        /// assigns roles to the pirates who are close to the carrier.
+        /// expl:the formation starts empty and gets pirates as late binding.
+        /// </summary>
+        /// <param name="pirate">the pirate that we want to give role to</param>
         public void RoleAssign(Pirate pirate)
         {
             if (Carrier == null)
                 Carrier = pirate;
-            else if (Bodyguard == null)
+            else if (Bodyguard == null && pirate != Carrier && pirate != Bodyguard2 && pirate != HeadGuard)
                 Bodyguard = pirate;
-            else if (Bodyguard2 == null)
+            else if (Bodyguard2 == null && pirate != Carrier && pirate != Bodyguard && pirate != HeadGuard)
                 Bodyguard2 = pirate;
-            else if (Tail == null && pirate != Carrier && pirate != Bodyguard && pirate != Bodyguard2)
-                Tail = pirate;
+            else if (HeadGuard == null && pirate != Carrier && pirate != Bodyguard && pirate != Bodyguard2)
+                HeadGuard = pirate;
 
         }
+        #endregion
 
+        #region ClearRoles
+        /// <summary>
+        /// the opposite from RoleAssign. clears the roles in order to break the formation.
+        /// </summary>
         public void ClearRoles()
         {
             if (Carrier != null)
                 Carrier = null;
-            if (Tail != null)
-                Tail = null;
+            if (HeadGuard != null)
+                HeadGuard = null;
             if (Bodyguard2 != null)
                 Bodyguard2 = null;
             if (Bodyguard != null)
                 Bodyguard = null;
         }
-        static List<Pirate> enemytargets = null;
-        /// <summary>
-        /// Form up in 4 pirates formation and sail the the given target.
-        /// </summary>
-        /// <remarks> This code was created by @Idan, for any question about wtf this code is for just ask him :)</remarks>
-        /// <param name="target"> A given location the formation is wanted to head for.</param>
-        public void FormUpAndSail4Pos(Location target)
+        #endregion
+
+
+        
+        private void FormationLocationsAssign(Location target)
         {
             Location upperDot = carrier.Location.Towards(target, carrier.PushRange);
 
@@ -85,13 +106,33 @@ namespace MyBot
             y = (int)System.Math.Sqrt((90000 ^ 2) / ((U.Row ^ 2) / U.Col ^ 2) + 1);
             x = ((-1) * U.Row * y) / (U.Col);
             Location V = new Location(x, y);
-            List<Pirate> Threatingenemys = GeneralMethods.UnderThreat(Carrier,1000);
-            if (Threatingenemys.Count == 0)
+
+            headGuardLoc = upperDot.Add(U.Multiply(0.5));
+            bodyguardLoc = upperDot.Add(V);
+            bodyguard2Loc = upperDot.Subtract(V);
+
+        }
+        /// <summary>
+        /// Form up in 4 pirates formation and sail the the given target.
+        /// </summary>
+        /// <remarks> This code was created by @Idan, for any question about wtf this code is for just ask him :)</remarks>
+        /// <param name="target"> A given location the formation is wanted to head for.</param>
+        public void FormUpAndSail4Pos()
+        {
+            Location upperDot = carrier.Location.Towards(target, carrier.PushRange);
+            
+            int x, y;
+            Location U = upperDot.Subtract(carrier.GetLocation());
+            y = (int)System.Math.Sqrt((90000 ^ 2) / ((U.Row ^ 2) / U.Col ^ 2) + 1);
+            x = ((-1) * U.Row * y) / (U.Col);
+            Location V = new Location(x, y);
+            List<Pirate> ThreatingEnemys = GeneralMethods.UnderThreat(Carrier, 1000);
+            if (ThreatingEnemys.Count == 0)
             {
                 enemytargets = null;
-                if (tail.Distance(upperDot.Add(U.Multiply(0.5))) <= 10 &&
-                    bodyguard.Distance(upperDot.Add(V)) <= 10 &&
-                    bodyguard2.Distance(upperDot.Subtract(V)) < 10)
+                if (HeadGuard.Distance(headGuardLoc) <= 10 &&
+                    bodyguard.Distance(bodyguardLoc) <= 10 &&
+                    bodyguard2.Distance(bodyguard2Loc) < 10)
                 {
                     if (!AttackersTryPush(carrier, carrier.Location.Add(U.Multiply(-5))))
                         carrier.Sail(target);
@@ -99,37 +140,109 @@ namespace MyBot
                         bodyguard.Sail(target.Add(U).Add(V));
                     if (!AttackersTryPush(bodyguard2, carrier.Location.Add(U.Multiply(-5))))
                         bodyguard2.Sail(target.Add(U).Subtract(V));
-                    if (!AttackersTryPush(tail, carrier.Location.Add(U.Multiply(-5))))
-                        tail.Sail(target.Add(U));
+                    if (!AttackersTryPush(HeadGuard, carrier.Location.Add(U.Multiply(-5))))
+                        HeadGuard.Sail(target.Add(U));
                 }
                 else
                 {
 
 
                     if (!AttackersTryPush(bodyguard, carrier.Location.Add(U.Multiply(-5))))
-                        bodyguard.Sail(upperDot.Add(V));
+                        bodyguard.Sail(bodyguardLoc);
                     if (!AttackersTryPush(bodyguard2, carrier.Location.Add(U.Multiply(-5))))
-                        bodyguard2.Sail(upperDot.Subtract(V));
-                    if (!AttackersTryPush(tail, carrier.Location.Add(U.Multiply(-5))))
-                        tail.Sail(upperDot.Add(U.Multiply(0.5)));
+                        bodyguard2.Sail(bodyguard2Loc);
+                    if (!AttackersTryPush(HeadGuard, carrier.Location.Add(U.Multiply(-5))))
+                        HeadGuard.Sail(headGuardLoc);
                 }
             }
             else
             {
-                if(enemytargets == null)
-                    enemytargets = Threatingenemys;
+                if (enemytargets == null)
+                    enemytargets = ThreatingEnemys;
                 if (!AttackersTryPush(carrier, carrier.Location.Add(U.Multiply(-5))))
                     carrier.Sail(target);
 
-                foreach(Attacker attacker in GameSettings.AtkList)
-                {
-                    if (!attacker.Pirate.Equals(carrier))
-                    {
-                        enemytargets.OrderBy(Pirate => Pirate.Distance(attacker.Pirate));
-                        targetedPushing(attacker.Pirate, enemytargets[0]);
-                    }
-                }
+                //  foreach(Attacker attacker in GameSettings.AtkList)
+                //   {
+                //      if(!attacker.Pirate.Equals(carrier))
+                //      {
+                //      enemytargets.OrderBy(Pirate => Pirate.Distance(attacker.Pirate));
+                //      targetedPushing(attacker.Pirate, enemytargets[0]);
+                //      }
+                //  }
+                if (!AttackersTryPush(bodyguard, carrier.Location.Add(U.Multiply(-5))))
+                    bodyguard.Sail(bodyguardLoc);
+                if (!AttackersTryPush(bodyguard2, carrier.Location.Add(U.Multiply(-5))))
+                    bodyguard2.Sail(bodyguard2Loc);
+                if (!AttackersTryPush(HeadGuard, carrier.Location.Add(U.Multiply(-5))))
+                    HeadGuard.Sail(target.Add(U));
             }
+        }
+
+        public void FormUpAndSail3Pos()
+        {
+            Location upperDot = carrier.Location.Towards(target, carrier.PushRange);
+            int x, y;
+            Location U = upperDot.Subtract(carrier.GetLocation());
+            y = (int)System.Math.Sqrt((40000 ^ 2) / ((U.Row ^ 2) / U.Col ^ 2) + 1);
+            x = ((-1) * U.Row * y) / (U.Col);
+            Location V = new Location(x, y);
+
+
+
+            if (
+                bodyguard.Distance(bodyguardLoc) <= 50 &&
+                bodyguard2.Distance(bodyguard2Loc) < 50)
+            {
+                if (!AttackersTryPush(carrier, carrier.Location.Add(U.Multiply(-5))))
+                    carrier.Sail(target);
+                if (!AttackersTryPush(bodyguard, carrier.Location.Add(U.Multiply(-5))))
+                    bodyguard.Sail(bodyguardLoc);
+                if (!AttackersTryPush(bodyguard2, carrier.Location.Add(U.Multiply(-5))))
+                    bodyguard2.Sail(bodyguard2Loc);
+            }
+            else
+            {
+                if (!AttackersTryPush(bodyguard, carrier.Location.Add(U.Multiply(-5))))
+                    bodyguard.Sail(bodyguardLoc);
+                if (!AttackersTryPush(bodyguard2, carrier.Location.Add(U.Multiply(-5))))
+                    bodyguard2.Sail(bodyguard2Loc);
+
+            }
+
+
+        }
+
+        public void FormUpAndSail2Pos()
+        {
+            Location upperDot = carrier.Location.Towards(target, carrier.PushRange);
+            int x, y;
+            Location U = upperDot.Subtract(carrier.GetLocation());
+            y = (int)System.Math.Sqrt((40000 ^ 2) / ((U.Row ^ 2) / U.Col ^ 2) + 1);
+            x = ((-1) * U.Row * y) / (U.Col);
+            Location V = new Location(x, y);
+
+
+
+            if (
+                bodyguard.Distance(upperDot) <= 50)
+
+            {
+                if (!AttackersTryPush(carrier, carrier.Location.Add(U.Multiply(-5))))
+                    carrier.Sail(target);
+                if (!AttackersTryPush(bodyguard, carrier.Location.Add(U.Multiply(-5))))
+                    bodyguard.Sail(target.Add(U));
+
+            }
+            else
+            {
+                if (!AttackersTryPush(bodyguard, carrier.Location.Add(U.Multiply(-5))))
+                    bodyguard.Sail(upperDot);
+
+
+            }
+
+
         }
 
         public void targetedPushing(Pirate attacker, Pirate enemy)
@@ -139,57 +252,7 @@ namespace MyBot
             else
                 attacker.Sail(enemy);
         }
-        
-        public void FormUpAndSail3Pos(Location target)
-        {
-            Location upperDot = carrier.Location.Towards(target, carrier.PushRange);
-            int x, y;
-            Location U = upperDot.Subtract(carrier.GetLocation());
-            y = (int)System.Math.Sqrt((40000 ^ 2) / ((U.Row ^ 2) / U.Col ^ 2) + 1);
-            x = ((-1) * U.Row * y) / (U.Col);
-            Location V = new Location(x, y);
-            List<Pirate> Threatingenemys = GeneralMethods.UnderThreat(Carrier, 1000);
-            if (Threatingenemys.Count == 0)
-            {
-                enemytargets = null;
-                if (
-                    bodyguard.Distance(upperDot.Add(V)) <= 50 &&
-                    bodyguard2.Distance(upperDot.Subtract(V)) < 50)
-                {
-                    if (!AttackersTryPush(carrier, carrier.Location.Add(U.Multiply(-5))))
-                        carrier.Sail(target);
-                    if (!AttackersTryPush(bodyguard, carrier.Location.Add(U.Multiply(-5))))
-                        bodyguard.Sail(target.Add(U).Add(V));
-                    if (!AttackersTryPush(bodyguard2, carrier.Location.Add(U.Multiply(-5))))
-                        bodyguard2.Sail(target.Add(U).Subtract(V));
-                }
-                else
-                {
-                    if (!AttackersTryPush(bodyguard, carrier.Location.Add(U.Multiply(-5))))
-                        bodyguard.Sail(upperDot.Add(V));
-                    if (!AttackersTryPush(bodyguard2, carrier.Location.Add(U.Multiply(-5))))
-                        bodyguard2.Sail(upperDot.Subtract(V));
 
-                }
-            }
-            else
-            {
-                if (enemytargets == null)
-                    enemytargets = Threatingenemys;
-                if (!AttackersTryPush(carrier, carrier.Location.Add(U.Multiply(-5))))
-                    carrier.Sail(target);
-
-                foreach (Attacker attacker in GameSettings.AtkList)
-                {
-                    if (!attacker.Pirate.Equals(carrier) && attacker != null && attacker.Pirate != null)
-                    {
-                        enemytargets.OrderBy(Pirate => Pirate.Distance(attacker.Pirate));
-                        targetedPushing(attacker.Pirate, enemytargets[0]);
-                    }
-                }
-            }
-
-        }
 
         public static bool AttackersTryPush(Pirate pirate, Location PushLoc)
         {
