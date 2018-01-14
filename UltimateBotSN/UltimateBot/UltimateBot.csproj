@@ -49,6 +49,7 @@
     <Compile Include="AttackersList.cs" />
     <Compile Include="Defender.cs" />
     <Compile Include="DefenderList.cs" />
+    <Compile Include="FieldAnalyzer.cs" />
     <Compile Include="Formation.cs" />
     <Compile Include="GameSettings.cs" />
     <Compile Include="GeneralMethodes.cs" />

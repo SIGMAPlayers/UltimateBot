@@ -218,7 +218,7 @@ namespace MyBot
             if (attacker.CanPush(enemy))
                 attacker.Push(enemy, new Location(0, 0));
             else
-                attacker.Sail(enemy);
+                attacker.Sail(Carrier.Location.Towards(enemy, attacker.PushRange));
         }
         #endregion
 

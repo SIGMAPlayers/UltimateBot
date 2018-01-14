@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Pirates;
 
 namespace MyBot
@@ -29,24 +28,7 @@ namespace MyBot
                 }
             }
         }
-        /// <summary>
-        /// checks if there is any threat on the given object within a given range.
-        /// a threat is an enemyship who is in the range that was given
-        /// </summary>
-        /// <param name="mapObject"></param>
-        /// <param name="rangeOfDanger"></param>
-        /// <returns>list of piretes </returns>
-        public static List<Pirate> UnderThreat(MapObject mapObject, int rangeOfDanger)
-        {
-            List<Pirate> toReturn = new List<Pirate>();
-            foreach (Pirate enemy in GameSettings.game.GetEnemyLivingPirates())
-            {
-                if (enemy.InRange(mapObject, rangeOfDanger))
-                    toReturn.Add(enemy);
-
-            }
-            return toReturn;
-        }
+        
 
         /// <summary>
         /// Makes the pirate try to push an enemy pirate. Returns true if it did.

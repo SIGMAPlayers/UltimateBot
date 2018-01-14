@@ -95,8 +95,6 @@ namespace MyBot
                 form.RoleAssign(carrier);
                 foreach (Attacker a in list)
                 {
-                    GameSettings.game.Debug("AttackerDis: " + a.Pirate.Distance(carrier));
-
                     if (!a.Pirate.Equals(carrier) && a.Pirate.Distance(carrier) < 800)
                     {
 
