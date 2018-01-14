@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+
 
 using Pirates;
 
@@ -20,40 +20,17 @@ namespace MyBot
 
         public AllPirates(PirateGame game)
         {
-            this.attackerList = new AttackerList(game);
-            this.defenderList = new DefenderList(game);
+            this.AttackerList = new AttackerList(game);
+            this.DefenderList = new DefenderList(game);
         }
 
         public AllPirates(AttackerList Alist, DefenderList Dlist)
         {
-            this.attackerList = Alist;
-            this.defenderList = Dlist;
+            this.AttackerList = Alist;
+            this.DefenderList = Dlist;
         }
 
-        public AttackerList AttackerList
-        {
-            get
-            {
-                return attackerList;
-            }
-
-            set
-            {
-                attackerList = value;
-            }
-        }
-
-        public DefenderList DefenderList
-        {
-            get
-            {
-                return defenderList;
-            }
-
-            set
-            {
-                defenderList = value;
-            }
-        }
+        public AttackerList AttackerList { get => attackerList; set => attackerList = value; }
+        public DefenderList DefenderList { get => defenderList; set => defenderList = value; }
     }
 }

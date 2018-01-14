@@ -31,30 +31,126 @@ namespace MyBot
 
         #region SailToTarget
         /// <summary>
-        /// the head meneger of the formation this methods decides in which formation to choose and sends to him 
+        /// the head meneger of the formation this methods decides in which formation to choose sails accordingly
         /// </summary>
         /// <param name="target">the place that you want to go to</param>
         public void SailToTarget(Location target)
         {
             this.target = target;
-            if (HeadGuard == null && Carrier != null && Bodyguard != null && Bodyguard2 != null)
+           
+            AssignFormationLocations();
+            bool formationComlete = FormUp();
+            if (formationComlete)
             {
-
-                FormUpAndSail3Pos();
-                GameSettings.game.Debug("3pos");
+                if (carrier != null && !AttackersTryPush(carrier))
+                {
+                    Carrier.Sail(target);
+                }
+                    
+                if (Bodyguard != null && !AttackersTryPush(bodyguard))
+                {
+                    if(bodyguard2 == null)
+                    {
+                        Bodyguard.Sail(target.Add(headGuardLoc.Subtract(Carrier.Location)));
+                    }
+                    else
+                    {
+                        Bodyguard.Sail(target.Add(bodyguardLoc.Subtract(Carrier.Location)));
+                    }       
+                }
+                if (bodyguard2 != null && !AttackersTryPush(bodyguard2))
+                {
+                    Bodyguard2.Sail(target.Add(bodyguard2Loc.Subtract(Carrier.Location)));
+                }
+                if (HeadGuard != null && !AttackersTryPush(HeadGuard))
+                {
+                    HeadGuard.Sail(target.Add(headGuardLoc.Subtract(Carrier.Location)));
+                }
             }
-            else if (HeadGuard != null && Carrier != null && Bodyguard != null && Bodyguard2 != null)
+                
+        }
+        #endregion
+
+        #region FormUp
+        /// <summary>
+        /// Form up the pirates until every one of the occupied roles is in position
+        /// </summary>
+        /// <returns>
+        /// true if the formation is complete
+        /// false if the formation is incomlete.
+        /// </returns>
+        private bool FormUp()
+        {
+            int PiratesInFormation = 0;
+            int PiratesInPosition = 0;
+            if (HeadGuard != null)
             {
-                GameSettings.game.Debug("4pos");
-                FormUpAndSail4Pos();
-
+                PiratesInFormation++;
+                if (HeadGuard.Distance(headGuardLoc) > 10)
+                {
+                    if (!AttackersTryPush(HeadGuard))
+                    {
+                        HeadGuard.Sail(headGuardLoc);
+                    }
+                }
+                else
+                {
+                    PiratesInPosition++;
+                }
+                
             }
-            else if (HeadGuard == null && Carrier != null && Bodyguard != null && Bodyguard2 == null)
+            if (Bodyguard != null)
             {
-                GameSettings.game.Debug("2pos");
-                FormUpAndSail2Pos();
-
+                PiratesInFormation++;
+                if (Bodyguard2 != null)
+                {
+                    if (Bodyguard.Distance(bodyguardLoc) > 10)
+                    {
+                        if (!AttackersTryPush(Bodyguard))
+                        {
+                            bodyguard.Sail(bodyguardLoc);
+                        }
+                    }
+                    else
+                    {
+                        PiratesInPosition++;
+                    }
+                }
+                else if (Bodyguard2 == null)
+                {
+                    if (Bodyguard.Distance(headGuardLoc) > 10)
+                    {
+                        if (!AttackersTryPush(Bodyguard))
+                        {
+                            bodyguard.Sail(headGuardLoc);
+                        }
+                    }
+                    else
+                    {
+                        PiratesInPosition++;
+                    } 
+                }
             }
+            if (bodyguard2 != null)
+            {
+                PiratesInFormation++;
+                if(bodyguard2.Distance(bodyguard2Loc) > 10)
+                {
+                    if (!AttackersTryPush(bodyguard2))
+                    {
+                        bodyguard2.Sail(bodyguard2Loc);
+                    }
+                }
+                else
+                {
+                    PiratesInPosition++;
+                }
+            }
+
+            if (PiratesInPosition == PiratesInFormation)
+                return true;
+            else
+                return false;
         }
         #endregion
 
@@ -76,7 +172,7 @@ namespace MyBot
                 HeadGuard = pirate;
 
         }
-        #endregion
+#endregion
 
         #region ClearRoles
         /// <summary>
@@ -95,9 +191,11 @@ namespace MyBot
         }
         #endregion
 
-
-        
-        private void FormationLocationsAssign(Location target)
+        #region AssignFormationLocations
+        /// <summary>
+        ///     when called, the function evaluates the locations of the guardiens according to the formation shape using vectors
+        /// </summary>
+        private void AssignFormationLocations()
         {
             Location upperDot = carrier.Location.Towards(target, carrier.PushRange);
 
@@ -112,151 +210,23 @@ namespace MyBot
             bodyguard2Loc = upperDot.Subtract(V);
 
         }
-        /// <summary>
-        /// Form up in 4 pirates formation and sail the the given target.
-        /// </summary>
-        /// <remarks> This code was created by @Idan, for any question about wtf this code is for just ask him :)</remarks>
-        /// <param name="target"> A given location the formation is wanted to head for.</param>
-        public void FormUpAndSail4Pos()
-        {
-            Location upperDot = carrier.Location.Towards(target, carrier.PushRange);
-            
-            int x, y;
-            Location U = upperDot.Subtract(carrier.GetLocation());
-            y = (int)System.Math.Sqrt((90000 ^ 2) / ((U.Row ^ 2) / U.Col ^ 2) + 1);
-            x = ((-1) * U.Row * y) / (U.Col);
-            Location V = new Location(x, y);
-            List<Pirate> ThreatingEnemys = GeneralMethods.UnderThreat(Carrier, 1000);
-            if (ThreatingEnemys.Count == 0)
-            {
-                enemytargets = null;
-                if (HeadGuard.Distance(headGuardLoc) <= 10 &&
-                    bodyguard.Distance(bodyguardLoc) <= 10 &&
-                    bodyguard2.Distance(bodyguard2Loc) < 10)
-                {
-                    if (!AttackersTryPush(carrier, carrier.Location.Add(U.Multiply(-5))))
-                        carrier.Sail(target);
-                    if (!AttackersTryPush(bodyguard, carrier.Location.Add(U.Multiply(-5))))
-                        bodyguard.Sail(target.Add(U).Add(V));
-                    if (!AttackersTryPush(bodyguard2, carrier.Location.Add(U.Multiply(-5))))
-                        bodyguard2.Sail(target.Add(U).Subtract(V));
-                    if (!AttackersTryPush(HeadGuard, carrier.Location.Add(U.Multiply(-5))))
-                        HeadGuard.Sail(target.Add(U));
-                }
-                else
-                {
+        #endregion
 
-
-                    if (!AttackersTryPush(bodyguard, carrier.Location.Add(U.Multiply(-5))))
-                        bodyguard.Sail(bodyguardLoc);
-                    if (!AttackersTryPush(bodyguard2, carrier.Location.Add(U.Multiply(-5))))
-                        bodyguard2.Sail(bodyguard2Loc);
-                    if (!AttackersTryPush(HeadGuard, carrier.Location.Add(U.Multiply(-5))))
-                        HeadGuard.Sail(headGuardLoc);
-                }
-            }
-            else
-            {
-                if (enemytargets == null)
-                    enemytargets = ThreatingEnemys;
-                if (!AttackersTryPush(carrier, carrier.Location.Add(U.Multiply(-5))))
-                    carrier.Sail(target);
-
-                //  foreach(Attacker attacker in GameSettings.AtkList)
-                //   {
-                //      if(!attacker.Pirate.Equals(carrier))
-                //      {
-                //      enemytargets.OrderBy(Pirate => Pirate.Distance(attacker.Pirate));
-                //      targetedPushing(attacker.Pirate, enemytargets[0]);
-                //      }
-                //  }
-                if (!AttackersTryPush(bodyguard, carrier.Location.Add(U.Multiply(-5))))
-                    bodyguard.Sail(bodyguardLoc);
-                if (!AttackersTryPush(bodyguard2, carrier.Location.Add(U.Multiply(-5))))
-                    bodyguard2.Sail(bodyguard2Loc);
-                if (!AttackersTryPush(HeadGuard, carrier.Location.Add(U.Multiply(-5))))
-                    HeadGuard.Sail(target.Add(U));
-            }
-        }
-
-        public void FormUpAndSail3Pos()
-        {
-            Location upperDot = carrier.Location.Towards(target, carrier.PushRange);
-            int x, y;
-            Location U = upperDot.Subtract(carrier.GetLocation());
-            y = (int)System.Math.Sqrt((40000 ^ 2) / ((U.Row ^ 2) / U.Col ^ 2) + 1);
-            x = ((-1) * U.Row * y) / (U.Col);
-            Location V = new Location(x, y);
-
-
-
-            if (
-                bodyguard.Distance(bodyguardLoc) <= 50 &&
-                bodyguard2.Distance(bodyguard2Loc) < 50)
-            {
-                if (!AttackersTryPush(carrier, carrier.Location.Add(U.Multiply(-5))))
-                    carrier.Sail(target);
-                if (!AttackersTryPush(bodyguard, carrier.Location.Add(U.Multiply(-5))))
-                    bodyguard.Sail(bodyguardLoc);
-                if (!AttackersTryPush(bodyguard2, carrier.Location.Add(U.Multiply(-5))))
-                    bodyguard2.Sail(bodyguard2Loc);
-            }
-            else
-            {
-                if (!AttackersTryPush(bodyguard, carrier.Location.Add(U.Multiply(-5))))
-                    bodyguard.Sail(bodyguardLoc);
-                if (!AttackersTryPush(bodyguard2, carrier.Location.Add(U.Multiply(-5))))
-                    bodyguard2.Sail(bodyguard2Loc);
-
-            }
-
-
-        }
-
-        public void FormUpAndSail2Pos()
-        {
-            Location upperDot = carrier.Location.Towards(target, carrier.PushRange);
-            int x, y;
-            Location U = upperDot.Subtract(carrier.GetLocation());
-            y = (int)System.Math.Sqrt((40000 ^ 2) / ((U.Row ^ 2) / U.Col ^ 2) + 1);
-            x = ((-1) * U.Row * y) / (U.Col);
-            Location V = new Location(x, y);
-
-
-
-            if (
-                bodyguard.Distance(upperDot) <= 50)
-
-            {
-                if (!AttackersTryPush(carrier, carrier.Location.Add(U.Multiply(-5))))
-                    carrier.Sail(target);
-                if (!AttackersTryPush(bodyguard, carrier.Location.Add(U.Multiply(-5))))
-                    bodyguard.Sail(target.Add(U));
-
-            }
-            else
-            {
-                if (!AttackersTryPush(bodyguard, carrier.Location.Add(U.Multiply(-5))))
-                    bodyguard.Sail(upperDot);
-
-
-            }
-
-
-        }
-
-        public void targetedPushing(Pirate attacker, Pirate enemy)
+        #region TargetedPushing
+        public void TargetedPushing(Pirate attacker, Pirate enemy)
         {
             if (attacker.CanPush(enemy))
                 attacker.Push(enemy, new Location(0, 0));
             else
                 attacker.Sail(enemy);
         }
+        #endregion
 
-
-        public static bool AttackersTryPush(Pirate pirate, Location PushLoc)
+        #region AttackersTryPush
+        private bool AttackersTryPush(Pirate pirate)
         {
-            // Go over all enemies.
+            Location upperDot = carrier.Location.Towards(target, carrier.PushRange);
+            Location U = upperDot.Subtract(carrier.GetLocation());
 
             foreach (Pirate enemy in GameSettings.game.GetEnemyLivingPirates())
             {
@@ -267,7 +237,7 @@ namespace MyBot
                     //Push enemy!
 
                     //Vector: the distance (x,y) you need to go through to go from the mothership to the enemy
-                    pirate.Push(enemy, PushLoc);
+                    pirate.Push(enemy, carrier.Location.Add(U.Multiply(-5)));
                     //Print a message.
                     GameSettings.game.Debug("pirate " + pirate + " pushes " + enemy + " towards " + enemy.InitialLocation);
                     //Did push.
@@ -277,7 +247,7 @@ namespace MyBot
             // Didn't push.
             return false;
         }
-
+        #endregion
 
     }
 }
