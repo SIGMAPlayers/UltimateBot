@@ -31,7 +31,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PirateGame">
-      <HintPath>..\..\..\..\..\Downloads\jre-8u101-windows-x64\PirateGame.dll</HintPath>
+      <HintPath>..\..\..\..\..\Downloads\PirateGame.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -43,10 +43,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Backup.cs" />
-    <Compile Include="BaseDefender.cs" />
-    <Compile Include="Class1.cs" />
-    <Compile Include="Front.cs" />
     <Compile Include="ICommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
