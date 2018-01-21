@@ -53,6 +53,7 @@
     <Compile Include="BodyGuard.cs" />
     <Compile Include="Carrier.cs" />
     <Compile Include="Front.cs" />
+    <Compile Include="GameSettings.cs" />
     <Compile Include="ICommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Strategy.cs" />
