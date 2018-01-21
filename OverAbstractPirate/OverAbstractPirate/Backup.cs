@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OverAbstractPirate
+namespace MyBot
 {
-    public interface ICommand
+    public class Backup
     {
-        void ExecuteCommand();
     }
 }
