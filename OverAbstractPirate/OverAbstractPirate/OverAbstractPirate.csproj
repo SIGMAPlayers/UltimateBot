@@ -45,7 +45,6 @@
   <ItemGroup>
     <Compile Include="Backup.cs" />
     <Compile Include="BaseDefender.cs" />
-    <Compile Include="Class1.cs" />
     <Compile Include="Front.cs" />
     <Compile Include="ICommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
