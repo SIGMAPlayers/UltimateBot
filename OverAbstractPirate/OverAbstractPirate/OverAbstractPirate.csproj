@@ -46,6 +46,7 @@
     <Compile Include="Backup.cs" />
     <Compile Include="BaseDefender.cs" />
     <Compile Include="Front.cs" />
+    <Compile Include="GameSettings.cs" />
     <Compile Include="ICommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

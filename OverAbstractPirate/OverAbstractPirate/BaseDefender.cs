@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using Pirates;
 
@@ -14,9 +11,14 @@ namespace MyBot
 
         public Pirate Pirate { get => pirate; set => pirate = value; }
 
+        protected BaseDefender(Pirate pirate)
+        {
+            this.pirate = pirate;
+        }
+
         /// <summary>
         /// The instruction book that the bot follows, a very stupid method that just executes a strategy that the
-        /// class was ment to do
+        /// class was meant to do
         /// </summary>
         public abstract void ExecuteCommand();
 
@@ -25,13 +27,13 @@ namespace MyBot
         /// If can be pushed out of the map, else push againts the motherboard.
         /// </summary>
         /// <returns> true if the pirate pushed. </returns>
-        public abstract bool TryPush();
+        public abstract bool Push();
 
         /// <summary>
         /// Chooses a pirate in range of their city to attack.
         /// </summary>
         /// <returns> Returns the closest pirate to attack. </returns>
-        public abstract Pirate DefendFrom();
+        public abstract Pirate Protect();
 
         /// <summary>
         /// Generates dynamically a guard location so the defenders will always be infront
@@ -41,7 +43,7 @@ namespace MyBot
         /// <example for param name="range">The range from the first layer range = 0 (first) range = ~450 (second).</param>
         /// <returns> Returns the basic location for the defenders. </returns>
         /// Changed to work with two layers
-        public abstract Location ProtectFromCarriers();
+        public abstract Location DefendAt();
 
         public bool IsAlive()
         {
