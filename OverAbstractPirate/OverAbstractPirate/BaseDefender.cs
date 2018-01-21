@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using Pirates;
 
-namespace OverAbstractPirate
+namespace MyBot
 {
     public abstract class BaseDefender : ICommand
     {
