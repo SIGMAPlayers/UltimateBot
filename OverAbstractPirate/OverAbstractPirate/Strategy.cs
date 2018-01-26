@@ -26,13 +26,13 @@ namespace MyBot
         /// </summary>
         /// <param name="pirates">list to priorites.</param>
         /// <returns>prioritiesed list</returns>
-        protected abstract List<Pirate> PiratesPrioritization(List<Pirate> pirates);
+        public abstract List<Pirate> PiratesPrioritization(List<Pirate> pirates);
 
         /// <summary>
         /// Assigns the given pirates each to his role (set of commands) and pushes him to the participants list.
         /// </summary>
         /// <param name="pirates">the pirate that are going to take part in this strategy</param>
-        protected abstract void AssignPiratesToParticipants(List<Pirate> pirates);
+        public abstract void AssignPiratesToParticipants(List<Pirate> pirates);
 
         /// <summary>
         /// the main mind of the strategy. uses the FieldAnalyzer to make a decision
