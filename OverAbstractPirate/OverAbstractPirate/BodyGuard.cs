@@ -6,7 +6,20 @@ using Pirates;
 
 namespace MyBot
 {
-    class BodyGuard : BaseAttacker
+    public class BodyGuard : BaseAttacker
     {
+        public BodyGuard()
+        {
+
+        }
+        public BodyGuard(Pirate pirate)
+        {
+            this.Pirate = pirate;
+        }
+
+        public override void ExecuteCommand()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -46,7 +46,6 @@
     <Compile Include="Calculator.cs" />
     <Compile Include="FieldAnalyzer.cs" />
     <Compile Include="Formation.cs" />
-    <Compile Include="HeadGuard.cs" />
     <Compile Include="Backup.cs" />
     <Compile Include="BaseAttacker.cs" />
     <Compile Include="BaseDefender.cs" />

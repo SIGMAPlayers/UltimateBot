@@ -7,6 +7,9 @@ namespace MyBot
 {
     public static class GameSettings
     {
-        public static PirateGame Game;
+        private static List<PirateGame> game;
+
+        public static PirateGame Game { get => game[game.Count - 1]; set => game.Add(value); }
+        public static List<PirateGame> GameList { get => game;}
     }
 }
