@@ -43,20 +43,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Calculator.cs" />
-    <Compile Include="FieldAnalyzer.cs" />
-    <Compile Include="Formation.cs" />
-    <Compile Include="Backup.cs" />
-    <Compile Include="BaseAttacker.cs" />
-    <Compile Include="BaseDefender.cs" />
-    <Compile Include="BodyGuard.cs" />
-    <Compile Include="Carrier.cs" />
-    <Compile Include="Front.cs" />
-    <Compile Include="GameSettings.cs" />
-    <Compile Include="ICommand.cs" />
+    <Compile Include="FieldInfo\Calculator.cs" />
+    <Compile Include="FieldInfo\FieldAnalyzer.cs" />
+    <Compile Include="Strategies\FireWall.cs" />
+    <Compile Include="Strategies\Formation.cs" />
+    <Compile Include="Roles\Defensive\Backup.cs" />
+    <Compile Include="BaseClasses\BaseAttacker.cs" />
+    <Compile Include="BaseClasses\BaseDefender.cs" />
+    <Compile Include="Roles\Offensive\BodyGuard.cs" />
+    <Compile Include="Roles\Offensive\Carrier.cs" />
+    <Compile Include="Roles\Defensive\Front.cs" />
+    <Compile Include="FieldInfo\GameSettings.cs" />
+    <Compile Include="Interfaces\ICommand.cs" />
+    <Compile Include="MyBot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Strategy.cs" />
-    <Compile Include="StrategyOrganizer.cs" />
+    <Compile Include="BaseClasses\Strategy.cs" />
+    <Compile Include="FieldInfo\StrategyOrganizer.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

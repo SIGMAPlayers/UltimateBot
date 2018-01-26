@@ -13,7 +13,7 @@ namespace MyBot
         {
         }
 
-        protected override void AssignPiratesToParticipants(List<Pirate> pirates)
+        public override void AssignPiratesToParticipants(List<Pirate> pirates)
         {
             Carrier carrier = new Carrier();
             List<BodyGuard> bodyguards = new List<BodyGuard>();
@@ -38,13 +38,13 @@ namespace MyBot
             
         }
 
-        protected override List<Pirate> PiratesPrioritization(List<Pirate> pirates)
+        public override List<Pirate> PiratesPrioritization(List<Pirate> pirates)
         {
             List<Pirate> orderedPirates = pirates.OrderBy(Pirate => Pirate.Distance(GameSettings.Game.GetMyCapsule().Location)).ToList();
             return orderedPirates;
         }
 
-        protected override void ExecuteStrategy()
+        public override void ExecuteStrategy()
         {
             throw new NotImplementedException();
         }

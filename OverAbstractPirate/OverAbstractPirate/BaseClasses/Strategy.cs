@@ -18,7 +18,7 @@ namespace MyBot
         /// <summary>
         /// FieldAnalyzer of that strategy
         /// </summary>
-        public FieldAnalyzer FieldAnalyzer { get => fieldAnalyzer; set => fieldAnalyzer = value; }
+        protected FieldAnalyzer FieldAnalyzer { get => fieldAnalyzer; set => fieldAnalyzer = value; }
 
         /// <summary>
         /// priorites a given list of pirates according the self needs.
@@ -38,7 +38,7 @@ namespace MyBot
         /// the main mind of the strategy. uses the FieldAnalyzer to make a decision
         /// and send a command to each sub-role in the participants list
         /// </summary>
-        protected abstract void ExecuteStrategy();
+        public abstract void ExecuteStrategy();
 
        
 
