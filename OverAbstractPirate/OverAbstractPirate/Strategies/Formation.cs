@@ -8,7 +8,7 @@ namespace MyBot
 {
     public class Formation : Strategy
     {
-        
+        //
         public Formation()
         {
         }
