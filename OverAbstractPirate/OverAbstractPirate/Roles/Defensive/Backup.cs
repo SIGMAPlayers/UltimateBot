@@ -30,7 +30,19 @@ namespace MyBot
 
         public override void ExecuteCommand()
         {
+            Pirate protectFrom = Protect();
 
+            if (protectFrom != null)
+            {
+                if (!Push())
+                {
+                    DefendAt();
+                }
+            }
+            else
+            {
+                DefendAt();
+            }
         }
 
         public override Location DefendAt()
