@@ -31,7 +31,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PirateGame">
-      <HintPath>..\..\UltimateBotSN\UltimateBot\PirateGame.dll</HintPath>
+      <HintPath>..\PirateGame.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

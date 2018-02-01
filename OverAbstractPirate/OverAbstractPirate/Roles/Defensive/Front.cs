@@ -13,14 +13,14 @@ namespace MyBot
         public override Pirate Protect()
         {
             List<Pirate> enemiesByDistanceFromEnemyBase = GameSettings.Game.GetEnemyLivingPirates().ToList();
-            enemiesByDistanceFromEnemyBase.OrderBy(Pirate => Pirate.Location.Distance(GameSettings.Game.GetEnemyMothership().Location));
+            enemiesByDistanceFromEnemyBase.OrderBy(Pirate => Pirate.Location.Distance(GameSettings.Game.GetEnemyMotherships()[0].Location));
 
             int scale = pirate.PushDistance * 4;
             foreach (Pirate pirate in enemiesByDistanceFromEnemyBase)
             {
                 //Checks if the any of the pirates has capsule in the distance
                 //of the mothership has a capsule
-                if (pirate.Distance(GameSettings.Game.GetEnemyMothership()) < scale && pirate.Capsule != null)
+                if (pirate.Distance(GameSettings.Game.GetEnemyMotherships()[0]) < scale && pirate.Capsule != null)
                     return pirate;
             }
             return null;
@@ -28,7 +28,19 @@ namespace MyBot
 
         public override void ExecuteCommand()
         {
+            Pirate protectFrom = Protect();
             
+            if(protectFrom != null)
+            {
+                if(!Push())
+                {
+                    DefendAt();
+                }
+            }
+            else
+            {
+                DefendAt();
+            }
         }
 
         public override Location DefendAt()
@@ -45,12 +57,12 @@ namespace MyBot
             Location guardLocation;
             if (enemyCarrier != null)
             {
-                guardLocation = GameSettings.Game.GetEnemyMothership().Location.Towards(enemyCarrier, scale);
+                guardLocation = GameSettings.Game.GetEnemyMotherships()[0].Location.Towards(enemyCarrier, scale);
                 GameSettings.Game.Debug("Location from ProtectFromCarrier" + guardLocation);
                 return guardLocation;
             }
 
-            guardLocation = GameSettings.Game.GetEnemyMothership().Location.Towards(GameSettings.Game.GetEnemyCapsule(), scale);
+            guardLocation = GameSettings.Game.GetEnemyMotherships()[0].Location.Towards(GameSettings.Game.GetEnemyCapsules()[0], scale);
             GameSettings.Game.Debug("Location from ProtectFromCarrier" + guardLocation);
             return guardLocation;
         }
@@ -78,7 +90,7 @@ namespace MyBot
                     }
                     else
                     {
-                        Location oppositeSide = enemy.GetLocation().Subtract(GameSettings.Game.GetEnemyMothership().GetLocation());
+                        Location oppositeSide = enemy.GetLocation().Subtract(GameSettings.Game.GetEnemyMotherships()[0].GetLocation());
                         //Vector: the distance (x,y) you need to go through to go from the mothership to the enemy
                         oppositeSide = enemy.GetLocation().Towards(enemy.GetLocation().Add(oppositeSide), 600);
                         pirate.Push(enemy, oppositeSide);

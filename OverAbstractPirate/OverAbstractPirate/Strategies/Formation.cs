@@ -8,7 +8,7 @@ namespace MyBot
 {
     public class Formation : Strategy
     {
-        
+        //
         public Formation()
         {
         }
@@ -40,7 +40,7 @@ namespace MyBot
 
         public override List<Pirate> PiratesPrioritization(List<Pirate> pirates)
         {
-            List<Pirate> orderedPirates = pirates.OrderBy(Pirate => Pirate.Distance(GameSettings.Game.GetMyCapsule().Location)).ToList();
+            List<Pirate> orderedPirates = pirates.OrderBy(Pirate => Pirate.Distance(GameSettings.Game.GetMyCapsules()[0].Location)).ToList();
             return orderedPirates;
         }
 
