@@ -74,20 +74,24 @@ namespace MyBot
         /// </summary>
         /// <param name="defenderList"> </param>
         /// <returns>The maximum range the enemy pirate can be pushed</returns>
-        public List<BaseDefender> CheckHowManyDefendrsCanPushEnemyCarrier(Pirate enemyCarrier, List<BaseDefender> defenders)
+        public List<BaseDefender> CheckHowManyDefendrsCanPushEnemyCarrier(List<Pirate> enemyCarriers, List<BaseDefender> defenders)
         {
             List<BaseDefender> canDoublePush = new List<BaseDefender>();
 
-            foreach (BaseDefender defender in defenders)
+            foreach(Pirate enemyCarrier in enemyCarriers)
             {
-                if (defender.Pirate.CanPush(enemyCarrier))
-                {
-                    canDoublePush.Add(defender);
-                }
-            }
-            if (canDoublePush.Count > 1)
-                return canDoublePush;
+                canDoublePush = new List<BaseDefender>();
 
+                foreach (BaseDefender defender in defenders)
+                {
+                    if (defender.Pirate.CanPush(enemyCarrier))
+                    {
+                        canDoublePush.Add(defender);
+                    }
+                }
+                if (canDoublePush.Count > 1)
+                    return canDoublePush;
+            }
             return null;
         }
 
@@ -166,8 +170,21 @@ namespace MyBot
             }
         }
 
-        public Pirate GetClosestPirateToMothership
+        public List<Pirate> GetClosestEnemyPiratesToMothership(BaseDefender defender)
+        {
+            List<Pirate> closestEnemyPirates = new List<Pirate>();
+            Mothership closestEnemyMotherShip = GameSettings.Game.GetEnemyMotherships().OrderBy(Mothership => Mothership.Location.Distance(defender.Pirate)).ToList()[0];
 
+            foreach (Pirate pirate in GameSettings.Game.GetEnemyLivingPirates())
+            {
+                if(pirate.Distance(closestEnemyMotherShip) < defender.Pirate.PushDistance * 3.5)
+                {
+                    closestEnemyPirates.Add(pirate);
+                }
+            }
+
+            return closestEnemyPirates;
+        }
 
         /// <summary>
         /// Checks if the enemy pirate is close enough to the border to kill him. 
