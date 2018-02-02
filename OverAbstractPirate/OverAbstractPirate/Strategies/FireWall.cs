@@ -48,17 +48,21 @@ namespace MyBot
                     {
                         enemyCarriers = enemyCarriers.OrderBy(Pirate => Pirate.Location.Distance(defender.Pirate)).ToList();
                         defender.PirateToPush = enemyCarriers[0];
-                        List<Pirate> pirateToSend = new List<Pirate>();
-                        pirateToSend.Add(defender.PirateToPush);
+                        List<Pirate> pirateToSend = new List<Pirate>() { defender.PirateToPush };
                         defender.WhereToPush = FieldAnalyzer.DefendersWhereToPush(defender.PirateToPush, FieldAnalyzer.CheckHowManyDefendrsCanPushEnemyCarrier(pirateToSend, baseDefenders).Count * defender.Pirate.PushDistance);
                     }
                 }
                 else
-                {
-                    List<Pirate> threatingEnemies = FieldAnalyzer.GetClosestEnemyPiratesToMothership(baseDefenders);
+                { 
+                    List<Pirate> threatingEnemies = FieldAnalyzer.GetClosestEnemyPiratesToMothership(defender);
 
-                    defender.PirateToPush = 
-                    defender.WhereToPush = FieldAnalyzer.DefendersWhereToPush();
+                    List<BaseDefender> defenderToSend = new List<BaseDefender> { defender };
+                    List<BaseDefender> multipleDefendersCanPushIt = FieldAnalyzer.CheckHowManyDefendrsCanPushEnemyCarrier(GameSettings.Game.GetEnemyLivingPirates().ToList(), defenderToSend);
+                    if(multipleDefendersCanPushIt.Count > 1)
+                    {
+                        defender.PirateToPush = multipleDefendersCanPushIt[0].Pirate;
+                    }
+                    defender.WhereToPush = FieldAnalyzer.DefendersWhereToPush(defender.PirateToPush, defender.Pirate.PushDistance);
                 }
 
                 defender.ExecuteCommand();

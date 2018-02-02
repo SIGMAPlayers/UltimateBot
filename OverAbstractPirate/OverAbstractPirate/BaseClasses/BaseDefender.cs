@@ -20,6 +20,9 @@ namespace MyBot
         protected BaseDefender(Pirate pirate, FieldAnalyzer fieldAnalyzer)
         {
             this.pirate = pirate;
+            this.fieldAnalyzer = fieldAnalyzer;
+            this.pirateToPush = null;
+            this.whereToPush = null;
         }
 
         /// <summary>
