@@ -7,7 +7,6 @@ namespace MyBot
 {
     public abstract class Strategy
     {
-       
         private List<ICommand> participants;
         private FieldAnalyzer fieldAnalyzer;
 

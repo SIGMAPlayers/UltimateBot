@@ -8,9 +8,14 @@ namespace MyBot
     public abstract class BaseDefender : ICommand
     {
         protected Pirate pirate;
-        protected FieldAnalyzer fieldAnalyzer;
+        private FieldAnalyzer fieldAnalyzer;
+        private Pirate pirateToPush;
+        private Location whereToPush;
 
         public Pirate Pirate { get => pirate; set => pirate = value; }
+        public FieldAnalyzer FieldAnalyzer { get => fieldAnalyzer; set => fieldAnalyzer = value; }
+        public Pirate PirateToPush { get => pirateToPush; set => pirateToPush = value; }
+        public Location WhereToPush { get => whereToPush; set => whereToPush = value; }
 
         protected BaseDefender(Pirate pirate, FieldAnalyzer fieldAnalyzer)
         {

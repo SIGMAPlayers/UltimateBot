@@ -11,17 +11,56 @@ namespace MyBot
     {
         public override void AssignPiratesToParticipants(List<Pirate> pirates)
         {
-            throw new NotImplementedException();
+            for (int i = 0; i < pirates.Count / 2; i++)
+            {
+                Participants[i] = new Front(pirates[i], new FieldAnalyzer());
+            }
+
+            pirates.RemoveRange(0, pirates.Count / 2);
+
+            for (int i = 0; i < pirates.Count; i++)
+            {
+                Participants[i] = new Backup(pirates[i], new FieldAnalyzer());
+            }
         }
 
         public override List<Pirate> PiratesPrioritization(List<Pirate> pirates)
         {
-            throw new NotImplementedException();
+            if(GameSettings.Game.GetEnemyMotherships().Length > 0)
+            {
+                pirates = GameSettings.Game.GetAllMyPirates().OrderBy(Pirate => Pirate.Location.Distance(GameSettings.Game.GetMyCapsules()[0].Location)).ToList();
+            }
+
+            return pirates;
         }
 
         public override void ExecuteStrategy()
         {
-            throw new NotImplementedException();
+            List<BaseDefender> baseDefenders = Participants.Cast<BaseDefender>().ToList();
+
+            foreach(BaseDefender defender in baseDefenders)
+            {
+                //Backup backup = defender as Backup;
+                if(defender is Backup)
+                {
+                    List<Pirate> enemyCarriers = FieldAnalyzer.HowManyCarriersNearCityCanBeDoublePushed(baseDefenders);
+                    if (enemyCarriers.Count > 0)
+                    {
+                        enemyCarriers = enemyCarriers.OrderBy(Pirate => Pirate.Location.Distance(defender.Pirate)).ToList();
+                        defender.PirateToPush = enemyCarriers[0];
+                        defender.WhereToPush = FieldAnalyzer.DefendersWhereToPush(defender.PirateToPush, FieldAnalyzer.CheckHowManyDefendrsCanPushEnemyCarrier(defender.PirateToPush, baseDefenders).Count * defender.Pirate.PushDistance);
+                    }
+                }
+                else
+                {
+                    List<Pirate> threatingEnemies = FieldAnalyzer.HowManyCarriersNearCityCanBeDoublePushed(baseDefenders);
+
+                    defender.PirateToPush = 
+                    defender.WhereToPush = FieldAnalyzer.DefendersWhereToPush();
+                }
+
+                defender.ExecuteCommand();
+            }
         }
     }
 }

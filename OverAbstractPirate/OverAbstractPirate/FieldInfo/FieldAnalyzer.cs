@@ -72,21 +72,102 @@ namespace MyBot
         /// Checks if an enemy pirate can be pushed by multiple defenders
         /// and returns the maximum push range
         /// </summary>
-        /// <param name="enemyPirate"> The enemy pirate you want to push</param>
         /// <param name="defenderList"> </param>
         /// <returns>The maximum range the enemy pirate can be pushed</returns>
-        public int CheckHowManyCanPush(Pirate enemyPirate, List<BaseDefender> defenderList)
+        public List<BaseDefender> CheckHowManyDefendrsCanPushEnemyCarrier(Pirate enemyCarrier, List<BaseDefender> defenders)
         {
-            int range = 0;
+            List<BaseDefender> canDoublePush = new List<BaseDefender>();
 
-            foreach (BaseDefender defender in defenderList)
+            foreach (BaseDefender defender in defenders)
             {
-                if (defender.Pirate.CanPush(enemyPirate))
-                    range += defender.Pirate.PushRange;
+                if (defender.Pirate.CanPush(enemyCarrier))
+                {
+                    canDoublePush.Add(defender);
+                }
+            }
+            if (canDoublePush.Count > 1)
+                return canDoublePush;
+
+            return null;
+        }
+
+        /// <summary>
+        /// Returns how many carriers are near the Mothership and can be double pushed
+        /// </summary>
+        /// <param name="defenderList"></param>
+        /// <returns></returns>
+        public List<Pirate> HowManyCarriersNearCityCanBeDoublePushed(List<BaseDefender> defenderList)
+        {
+            List<Pirate> carriers = CarrierCloseToCity();
+            List<Pirate> canBeDoublePushed = new List<Pirate>();
+            int countCanPush = 0;
+
+            foreach (Pirate enemyCarrier in carriers)
+            {
+                countCanPush = 0;
+
+                foreach (BaseDefender defender in defenderList)
+                {
+                    if (defender.Pirate.CanPush(enemyCarrier))
+                    {
+                        countCanPush++;
+                    }
+                }
+
+                if (countCanPush > 1)
+                {
+                    canBeDoublePushed.Add(enemyCarrier);
+                }
             }
 
-            return range;
+            return canBeDoublePushed;
         }
+
+        /// <summary>
+        /// Returns a list of carriers that are close to their city
+        /// </summary>
+        /// <returns></returns>
+        private List<Pirate> CarrierCloseToCity()
+        {
+            List<Pirate> closeCarriers = new List<Pirate>();
+
+            foreach(Pirate enemyPirate in GameSettings.Game.GetEnemyLivingPirates())
+            {
+                if(enemyPirate.HasCapsule())
+                {
+                    Mothership closestEnemyMotherShip = GameSettings.Game.GetEnemyMotherships().OrderBy(Mothership => Mothership.Location.Distance(pirate)).ToList()[0];
+                    if (enemyPirate.Distance(closestEnemyMotherShip) < enemyPirate.PushDistance * 2)
+                    {
+                        closeCarriers.Add(enemyPirate);
+                    }
+                }
+            }
+            return closeCarriers;
+        }
+
+        /// <summary>
+        /// Defines where the defender need to push
+        /// </summary>
+        /// <param name="enemyPirate"></param>
+        /// <param name="range"></param>
+        /// <returns></returns>
+        public Location DefendersWhereToPush(Pirate enemyPirate, int range)
+        {
+            Location outOfBorder = GetCloseEnoughToBorder(enemyPirate, range);
+            if (outOfBorder != null)
+            {
+                return outOfBorder;
+            }
+            else
+            {
+                Location oppositeSide = enemyPirate.GetLocation().Subtract(GameSettings.Game.GetEnemyMotherships()[0].GetLocation());
+                //Vector: the distance (x,y) you need to go through to go from the mothership to the enemy
+                return oppositeSide = enemyPirate.GetLocation().Towards(enemyPirate.GetLocation().Add(oppositeSide), 600);
+            }
+        }
+
+        public Pirate GetClosestPirateToMothership
+
 
         /// <summary>
         /// Checks if the enemy pirate is close enough to the border to kill him. 
@@ -95,7 +176,7 @@ namespace MyBot
         /// <param name="enemyPirate">The enemy pirate to be checked.</param>
         /// <param name="range">The range that will be checked if you can throw it</param>
         /// <returns>Returns the location that if you push it towards it, the pirate will die or null if you can't kill it.</returns>
-        public static Location GetCloseEnoughToBorder(Pirate enemyPirate, int range)
+        public Location GetCloseEnoughToBorder(Pirate enemyPirate, int range)
         {
             Location up = new Location(0, enemyPirate.Location.Col);
             Location right = new Location(enemyPirate.Location.Row, GameSettings.Game.Cols);
