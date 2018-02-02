@@ -8,7 +8,7 @@ namespace MyBot
 {
     public class Formation : Strategy
     {
-        //
+        
         public Formation()
         {
         }
@@ -30,11 +30,14 @@ namespace MyBot
                 }
             }
 
-            this.Participants.Add(carrier);          
-            foreach(BodyGuard BG in bodyguards)
+            
+            List<ICommand> list = new List<ICommand>();
+            list.Add(carrier);
+            foreach (BodyGuard BG in bodyguards)
             {
-                this.Participants.Add(BG);
+                list.Add(BG);
             }
+            this.Participants = list;
             
         }
 
@@ -46,9 +49,46 @@ namespace MyBot
 
         public override void ExecuteStrategy()
         {
-            throw new NotImplementedException();
+            
+                FieldAnalyzer.DefineTargets();
+
+                bool formationComlete = FormUp();
+                if (formationComlete)
+                {
+                    foreach(BaseAttacker attacker in Participants)
+                    {
+                        attacker.SailToTarget();
+                    }
+                }
+            
         }
 
-       
+       private bool FormUp()
+        {
+            int PiratesInFormation = 0;
+            int PiratesInPosition = 0;
+            foreach(BaseAttacker attacker in Participants)
+            {
+                PiratesInFormation++;
+                if (attacker.Pirate.Distance(attacker.PositionInFormation) > 10)
+                {
+                    attacker.SailToPosition();
+                }
+                else
+                {
+                    PiratesInPosition++;
+                }
+
+                  if (PiratesInPosition == PiratesInFormation)
+                return true;
+            else
+                return false;
+            }
+
+            if (PiratesInPosition == PiratesInFormation)
+                return true;
+            else
+                return false;
+        }
     }
 }

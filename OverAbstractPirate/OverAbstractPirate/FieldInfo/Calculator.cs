@@ -32,5 +32,16 @@ namespace MyBot
             }
             return (int)(radAngle * (180 / Math.PI));
         }
+
+        /// <summary>
+        /// takes the carrier as the perspective to calculate the Location of all the other guardiens 
+        /// </summary>
+        /// <param name="carrier"></param>
+        /// <returns></returns>
+        public Location CalculateVectorOfFormation(Carrier carrier)
+        {
+            Location upperDot = carrier.Pirate.Location.Towards(carrier.Destination, carrier.Pirate.PushRange*2);
+            return upperDot;
+        }
     }
 }

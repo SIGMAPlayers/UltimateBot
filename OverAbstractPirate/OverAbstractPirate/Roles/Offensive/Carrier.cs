@@ -22,12 +22,25 @@ namespace MyBot
         /// </summary>
         public void HoldYourPosition()
         {
-            AttackersTryPush(this.Pirate);
+            this.AttackersTryPush();
+        }
+        public override void SailToPosition()
+        {
+            HoldYourPosition();
+        }
+        
+        public override void SailToTarget()
+        {
+            if(!this.AttackersTryPush())
+            {
+                this.Pirate.Sail(Destination);
+            }
         }
 
         public override void ExecuteCommand()
         {
             throw new NotImplementedException();
         }
+
     }
 }

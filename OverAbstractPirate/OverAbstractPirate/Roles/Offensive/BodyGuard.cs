@@ -21,5 +21,15 @@ namespace MyBot
         {
             throw new NotImplementedException();
         }
+
+        public override void SailToPosition()
+        {
+            if (!this.AttackersTryPush())
+            {
+                this.Pirate.Sail(this.PositionInFormation);
+            }
+        }
+
+        
     }
 }

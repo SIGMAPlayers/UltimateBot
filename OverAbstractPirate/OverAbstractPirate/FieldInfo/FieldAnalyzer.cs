@@ -34,6 +34,39 @@ namespace MyBot
             return threatingPirates;
         }
 
+        #region AssignFormationLocations
+        /// <summary>
+        ///     when called, the function evaluates the locations of the guardiens according to the formation shape using vectors
+        /// </summary>
+        private void AssignFormationLocations(List<BaseAttacker> participants)
+        {
+            Location guardiensPosition = new Location(0,0);
+            foreach(BaseAttacker Role in participants)
+            {
+                if(Role is Carrier)
+                {
+                    guardiensPosition = calculator.CalculateVectorOfFormation(Role as Carrier);
+                }
+            }
+            foreach(BaseAttacker Role in participants)
+            {
+                if(Role is Carrier)
+                {
+                    continue;
+                }
+                else
+                {
+                    Role.PositionInFormation = guardiensPosition;
+                }
+            }
+
+        }
+        #endregion
+
+        public Location DefineTargets()
+        {
+            //implement!
+        }
     }
 }
 
