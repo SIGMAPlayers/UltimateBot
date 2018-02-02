@@ -8,10 +8,11 @@ namespace MyBot
     public abstract class BaseDefender : ICommand
     {
         protected Pirate pirate;
+        protected FieldAnalyzer fieldAnalyzer;
 
         public Pirate Pirate { get => pirate; set => pirate = value; }
 
-        protected BaseDefender(Pirate pirate)
+        protected BaseDefender(Pirate pirate, FieldAnalyzer fieldAnalyzer)
         {
             this.pirate = pirate;
         }

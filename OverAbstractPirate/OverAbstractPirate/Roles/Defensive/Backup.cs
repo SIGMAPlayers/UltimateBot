@@ -7,7 +7,7 @@ namespace MyBot
     public class Backup : BaseDefender
     { 
 
-        public Backup(Pirate pirate) : base(pirate) { }
+        public Backup(Pirate pirate, FieldAnalyzer fieldAnalyzer) : base(pirate, fieldAnalyzer) { }
 
         public override Pirate Protect()
         {
@@ -83,7 +83,8 @@ namespace MyBot
                 {
                     //Changed
                     //Push enemy!
-                    int range = CheckHowManyCanPush(enemy);
+                    
+                    int range = fieldAnalyzer.CheckHowManyCanPush(enemy);
                     Location outOfBorder = GeneralMethods.GetCloseEnoughToBorder(enemy, range);
                     if (outOfBorder != null)
                     {

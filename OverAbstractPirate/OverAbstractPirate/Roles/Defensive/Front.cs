@@ -8,7 +8,7 @@ namespace MyBot
     public class Front : BaseDefender
     {
         //GameSettings.Game
-        public Front(Pirate pirate) : base(pirate) { }
+        public Front(Pirate pirate, FieldAnalyzer fieldAnalyzer) : base(pirate, fieldAnalyzer) { }
 
         public override Pirate Protect()
         {
@@ -82,7 +82,7 @@ namespace MyBot
                     //Changed
                     //Push enemy!
                     int range = CheckHowManyCanPush(enemy);
-                    Location outOfBorder = GeneralMethods.GetCloseEnoughToBorder(enemy, range);
+                    Location outOfBorder = fieldAnalyzer.GetCloseEnoughToBorder(enemy, range);
                     if (outOfBorder != null)
                     {
                         pirate.Push(enemy, outOfBorder);
