@@ -248,12 +248,20 @@ namespace MyBot
             return false;
         }
 
-        public int CheckHowManyEnemiesNearAreaByDistance(GameObject obj, int distance)
+
+        /// <summary>
+        /// Checks how many GameObjects are near another GameObject by distance
+        /// </summary>
+        /// <param name="gameObjects"></param>
+        /// <param name="fromObj"></param>
+        /// <param name="distance"></param>
+        /// <returns></returns>
+        public int CheckHowManyGameObjectsNearAreaByDistance(List<GameObject> gameObjects, GameObject fromObj, int distance)
         {
             int count = 0;
-            foreach (Pirate enemy in GameSettings.Game.GetEnemyLivingPirates())
+            foreach (GameObject gameObject in gameObjects)
             {
-                if (calculator.CheckIfCloseToObjectByDistance(enemy, obj, distance))
+                if (calculator.CheckIfCloseToObjectByDistance(gameObject, fromObj, distance))
                     count++;
             }
             return count;
