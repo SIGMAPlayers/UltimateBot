@@ -228,6 +228,12 @@ namespace MyBot
             return null;
         }
 
+        /// <summary>
+        /// Checks if an enemy will be close to my attacker after I push myself to a Location
+        /// </summary>
+        /// <param name="attacker"></param>
+        /// <param name="enemy"></param>
+        /// <returns></returns>
         public bool CheckWhetherEnemyIsCloseToMeAfterPush (BaseAttacker attacker, Pirate enemy)
         {
             Location enemyGoingTo = calculator.PredictLocationByMovement(enemy);
@@ -240,6 +246,17 @@ namespace MyBot
                 return true;
             }
             return false;
+        }
+
+        public int CheckHowManyEnemiesNearAreaByDistance(GameObject obj, int distance)
+        {
+            int count = 0;
+            foreach (Pirate enemy in GameSettings.Game.GetEnemyLivingPirates())
+            {
+                if (calculator.CheckIfCloseToObjectByDistance(enemy, obj, distance))
+                    count++;
+            }
+            return count;
         }
     }
 }

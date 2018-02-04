@@ -112,5 +112,13 @@ namespace MyBot
 
             return endPoint;
         }
+
+
+        public bool CheckIfCloseToObjectByDistance (GameObject obj1, GameObject obj2, int distance)
+        {
+            if (obj1.Distance(obj2) <= distance)
+                return true;
+            else return false;
+        }
     }
 }
