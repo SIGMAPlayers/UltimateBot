@@ -9,53 +9,43 @@ namespace MyBot
 {
     class AsteroidHandler
     {
-        private FieldAnalyzer fieldAnalyzer = new FieldAnalyzer();
-        private int asteroidSize = GameSettings.Game.AsteroidSize;
-        private int turnsToPassAsteroid = GameSettings.Game.AsteroidSize / GameSettings.Game.PirateMaxSpeed;
+        FieldAnalyzer fieldAnalyzer = new FieldAnalyzer();
+        int asteroidSize = GameSettings.Game.AsteroidSize;
 
         /// <summary>
         /// Check the most crowded place to push the astroid to
         /// </summary>
         /// <returns></returns>
-        public Location FindBestLocationToPushTo
+        public Location FindBestLocationToPushTo()
         {
-            get
+            if (GameSettings.Game.GetEnemyLivingPirates()[0]==null) // If there isn't any living enemy pirate
             {
-                if (GameSettings.Game.GetEnemyLivingPirates()[0] == null) // If there isn't any living enemy pirate
+                if (GameSettings.Game.GetEnemyMotherships()[0] != null) // If there is an enemy motherShip
                 {
-                    if (GameSettings.Game.GetEnemyMotherships()[0] != null) // If there is an enemy motherShip
-                    {
-                        return GameSettings.Game.GetEnemyMotherships()[0].Location; // Push to enemy mothership
-                    }
-                    else return new Location(0, 0); // For no errors purpose...
+                    return GameSettings.Game.GetEnemyMotherships()[0].Location; // Push to enemy mothership
                 }
-
-                Location bestLocation = null;
-                int maxEnemies = 0;
-                int current = 0;
-
-                List<GameObject> enemies = new List<GameObject>();
-                enemies.AddRange(GameSettings.Game.GetEnemyLivingPirates());
-
-                // Check on each enemy, which is the most crowded location
-                foreach (Pirate enemy in GameSettings.Game.GetEnemyLivingPirates())
-                {
-                    current = fieldAnalyzer.CheckHowManyGameObjectsNearAreaByDistance(enemies, enemy, asteroidSize);
-                    if (current > maxEnemies)
-                    {
-                        maxEnemies = current;
-                        bestLocation = enemy.Location;
-                    }
-                }
-
-                return bestLocation;
+                else return new Location (0,0); // For no errors purpose...
             }
-        }
+                
+            Location bestLocation = null;
+            int maxEnemies = 0;
+            int current = 0;
 
-        public Location AvoidAstroid(Asteroid asteroid)
-        {
-            int turnsForDoomedPirates = 0;
-            return null;
+            List<GameObject> enemies = new List<GameObject>();
+            enemies.AddRange(GameSettings.Game.GetEnemyLivingPirates());
+
+            // Check on each enemy, which is the most crowded location
+            foreach (Pirate enemy in GameSettings.Game.GetEnemyLivingPirates())
+            {
+                current = fieldAnalyzer.CheckHowManyGameObjectsNearAreaByDistance(enemies, enemy, asteroidSize);
+                if (current > maxEnemies)
+                {
+                    maxEnemies = current;
+                    bestLocation = enemy.Location;
+                }
+            }
+
+            return bestLocation;
         }
     }
 }

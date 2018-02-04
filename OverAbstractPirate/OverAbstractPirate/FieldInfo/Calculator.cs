@@ -40,44 +40,36 @@ namespace MyBot
         /// <returns></returns>
         public Location CalculateVectorOfFormation(Carrier carrier)
         {
-            Location upperDot = carrier.Pirate.Location.Towards(carrier.Destination, carrier.Pirate.PushRange*2);
+            Location upperDot = carrier.Pirate.Location.Towards(carrier.Destination, carrier.Pirate.PushRange * 2);
             return upperDot;
         }
 
         /// <summary>
-        /// Takes an object, a list of games, predicts the location of the object in the next turn
+        /// Calculates the best option for a capsule to go to...
+        /// will always return a capsule.
+        /// a good capsule is defined by:
+        /// - distance from me.
+        /// - holds capsule init.
+        /// - no enemys guarding it (found at most 1000 units from it) //not implemented yet
         /// </summary>
-        /// <param name="obj"></param>
         /// <returns></returns>
-        public Location PredictLocationByMovement (SpaceObject obj)
+        public Location CalculateBEstCapsuleToGoTo(Pirate pirate)
         {
-            List<SpaceObject> spaceObjects = null;
-            Location currentLocation = obj.Location;
-            Location previousLocation = null;
+            List<Capsule> capsules = GameSettings.Game.GetMyCapsules().ToList();
+            capsules = capsules.OrderBy(Capsule => Capsule.InitialLocation.Distance(pirate)).ToList();
 
-            // First, check the type of obj
-            if (obj is Pirate)
+            foreach (Capsule c in capsules)
             {
-                spaceObjects.AddRange(GameSettings.GameList[GameSettings.GameList.Count-2].GetEnemyLivingPirates().ToList());
-            }
-            else if (obj is Asteroid)
-            {
-                spaceObjects.AddRange(GameSettings.GameList[GameSettings.GameList.Count - 2].GetLivingAsteroids().ToList());
-            }
-            else return null;
-
-            foreach (SpaceObject movingObj in spaceObjects) // Check on every SpaceObject on the list defined before:
-            {
-                if (movingObj.Id == obj.Id) // Is it the original object?
+                if (c.Holder != null)
                 {
-                    previousLocation = movingObj.Location; // Then get it's past Location! put it in "previousLocation"
-                    break;
+                    continue;
+                }
+                else
+                {
+                    return c.Location;
                 }
             }
-
-            // Now, calculate it's predicted Location
-            return currentLocation.Add(currentLocation.Subtract(previousLocation));
-
+            return capsules[0].Location;
         }
 
         // Same as before, but now consider turns too
@@ -109,7 +101,7 @@ namespace MyBot
 
             // Now, calculate it's predicted Location
             Location substraction = currentLocation.Subtract(previousLocation);
-            for (int i =0; i<turns; i++)
+            for (int i = 0; i < turns; i++)
             {
                 currentLocation.Add(substraction);
 
@@ -119,15 +111,43 @@ namespace MyBot
 
         }
 
-
         /// <summary>
-        /// Takes a SpaceObject, and calculate it's final location based on the push and the current movement
+        /// Takes an object, a list of games, predicts the location of the object in the next turn
         /// </summary>
         /// <param name="obj"></param>
-        /// <param name="pushTo"></param>
-        /// <param name="moveTo"></param>
         /// <returns></returns>
-        public Location PredictLocationAfterPush (SpaceObject obj, Location pushTo, Location moveTo)
+        public Location PredictLocationByMovement(SpaceObject obj)
+        {
+            List<SpaceObject> spaceObjects = null;
+            Location currentLocation = obj.Location;
+            Location previousLocation = null;
+
+            // First, check the type of obj
+            if (obj is Pirate)
+            {
+                spaceObjects.AddRange(GameSettings.GameList[GameSettings.GameList.Count - 2].GetEnemyLivingPirates().ToList());
+            }
+            else if (obj is Asteroid)
+            {
+                spaceObjects.AddRange(GameSettings.GameList[GameSettings.GameList.Count - 2].GetLivingAsteroids().ToList());
+            }
+            else return null;
+
+            foreach (SpaceObject movingObj in spaceObjects) // Check on every SpaceObject on the list defined before:
+            {
+                if (movingObj.Id == obj.Id) // Is it the original object?
+                {
+                    previousLocation = movingObj.Location; // Then get it's past Location! put it in "previousLocation"
+                    break;
+                }
+            }
+
+            // Now, calculate it's predicted Location
+            return currentLocation.Add(currentLocation.Subtract(previousLocation));
+
+        }
+
+        public Location PredictLocationAfterPush(SpaceObject obj, Location pushTo, Location moveTo)
         {
             Location currentLocation = obj.Location;
             Location endPoint;
@@ -153,7 +173,7 @@ namespace MyBot
         }
 
 
-        public bool CheckIfCloseToObjectByDistance (GameObject obj1, GameObject obj2, int distance)
+        public bool CheckIfCloseToObjectByDistance(GameObject obj1, GameObject obj2, int distance)
         {
             if (obj1.Distance(obj2) <= distance)
                 return true;

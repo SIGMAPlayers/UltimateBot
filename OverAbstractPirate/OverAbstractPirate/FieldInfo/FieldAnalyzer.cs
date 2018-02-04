@@ -192,7 +192,7 @@ namespace MyBot
             {
                 if(enemyPirate.HasCapsule())
                 {
-                    Mothership closestEnemyMotherShip = GameSettings.Game.GetEnemyMotherships().OrderBy(Mothership => Mothership.Location.Distance(pirate)).ToList()[0];
+                    Mothership closestEnemyMotherShip = GameSettings.Game.GetEnemyMotherships().OrderBy(Mothership => Mothership.Location.Distance(enemyPirate)).ToList()[0];
                     if (enemyPirate.Distance(closestEnemyMotherShip) < enemyPirate.PushDistance * 2)
                     {
                         closeCarriers.Add(enemyPirate);
@@ -237,6 +237,17 @@ namespace MyBot
             }
 
             return closestEnemyPirates;
+        }
+
+        /// <summary>
+        /// Predict the Location of a SpaceObject in number of turns
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="turns"></param>
+        /// <returns></returns>
+        public Location PredictLocation(SpaceObject obj, int turns)
+        {
+            return calculator.PredictLocationByMovement(obj, turns);
         }
 
         /// <summary>
@@ -318,17 +329,6 @@ namespace MyBot
                     count++;
             }
             return count;
-        }
-
-        /// <summary>
-        /// Predict the Location of a SpaceObject in number of turns
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <param name="turns"></param>
-        /// <returns></returns>
-        public Location PredictLocation(SpaceObject obj, int turns)
-        {
-            return calculator.PredictLocationByMovement(obj, turns);
         }
     }
 }

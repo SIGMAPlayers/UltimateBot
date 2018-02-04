@@ -8,7 +8,7 @@ namespace MyBot
 {
     public class BodyGuard : BaseAttacker
     {
-        
+        Carrier GuardedCarrier;
         public BodyGuard()
         {
             this.fieldAnalyzer = new FieldAnalyzer();
@@ -16,6 +16,11 @@ namespace MyBot
         public BodyGuard(Pirate pirate)
         {
             this.Pirate = pirate;
+        }
+
+        public void assignCarrier(Carrier c)
+        {
+            GuardedCarrier = c;
         }
 
         public override void ExecuteCommand()
@@ -33,7 +38,7 @@ namespace MyBot
             }
             else
             {
-                this.TargetedPushing(); //HELP!!! DEMENDS CARRIER WHICH BODYGUARD DOSNT KNOW!
+                this.TargetedPushing(GuardedCarrier);
             }
             
         }

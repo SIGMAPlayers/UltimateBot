@@ -38,6 +38,7 @@ namespace MyBot
             }
             foreach (BodyGuard BG in bodyguards)
             {
+                BG.assignCarrier(carrier);
                 list.Add(BG);
             }
             this.Participants = list;
