@@ -227,6 +227,20 @@ namespace MyBot
             //Returns null if not close enough to a border
             return null;
         }
+
+        public bool CheckWhetherEnemyIsCloseToMeAfterPush (BaseAttacker attacker, Pirate enemy)
+        {
+            Location enemyGoingTo = calculator.PredictLocationByMovement(enemy);
+            Location pushTo = calculator.PredictLocationAfterPush(attacker.Pirate, attacker.Destination, attacker.Destination);
+            Pirate newEnemy = new Pirate();
+            newEnemy.Location = pushTo;
+
+            if (newEnemy.InPushRange(pushTo))
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }
 
