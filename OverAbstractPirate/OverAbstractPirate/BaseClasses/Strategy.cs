@@ -9,7 +9,7 @@ namespace MyBot
     {
        
         private List<ICommand> participants;
-        private FieldAnalyzer fieldAnalyzer;
+        private FieldAnalyzer fieldAnalyzer = new FieldAnalyzer();
 
         /// <summary>
         /// list of the Assigned Roles

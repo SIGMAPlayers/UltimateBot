@@ -43,5 +43,33 @@ namespace MyBot
             Location upperDot = carrier.Pirate.Location.Towards(carrier.Destination, carrier.Pirate.PushRange*2);
             return upperDot;
         }
+
+        /// <summary>
+        /// Calculates the best option for a capsule to go to...
+        /// will always return a capsule.
+        /// a good capsule is defined by:
+        /// - distance from me.
+        /// - holds capsule init.
+        /// - no enemys guarding it (found at most 1000 units from it) //not implemented yet
+        /// </summary>
+        /// <returns></returns>
+        public Location CalculateBEstCapsuleToGoTo(Pirate pirate)
+        {
+            List<Capsule> capsules = GameSettings.Game.GetMyCapsules().ToList();
+            capsules = capsules.OrderBy(Capsule => Capsule.InitialLocation.Distance(pirate)).ToList();
+            int RightPoints = 0;
+            foreach (Capsule c in capsules)
+            {
+                if(c.Holder != null)
+                {
+                    continue;
+                }
+                else
+                {
+                    return c.Location;
+                }
+            }
+            return capsules[0].Location;
+        }
     }
 }
