@@ -7,7 +7,7 @@ namespace MyBot
     public class Backup : BaseDefender
     { 
 
-        public Backup(Pirate pirate) : base(pirate) { }
+        public Backup(Pirate pirate, FieldAnalyzer fieldAnalyzer) : base(pirate, fieldAnalyzer) { }
 
         public override Pirate Protect()
         {
@@ -76,32 +76,10 @@ namespace MyBot
         /// <returns> true if the pirate pushed.</returns>
         public override bool Push()
         {
-            foreach (Pirate enemy in GameSettings.Game.GetEnemyLivingPirates())
+            if (pirate.CanPush(PirateToPush))
             {
-                // Check if the pirate can push the enemy.
-                if (pirate.CanPush(enemy) && enemy.HasCapsule())
-                {
-                    //Changed
-                    //Push enemy!
-                    int range = CheckHowManyCanPush(enemy);
-                    Location outOfBorder = GeneralMethods.GetCloseEnoughToBorder(enemy, range);
-                    if (outOfBorder != null)
-                    {
-                        pirate.Push(enemy, outOfBorder);
-                        return true;
-                    }
-                    else
-                    {
-                        Location oppositeSide = enemy.GetLocation().Subtract(GameSettings.Game.GetEnemyMotherships()[0].GetLocation());
-                        //Vector: the distance (x,y) you need to go through to go from the mothership to the enemy
-                        oppositeSide = enemy.GetLocation().Towards(enemy.GetLocation().Add(oppositeSide), 600);
-                        pirate.Push(enemy, oppositeSide);
-                        //Print a message.
-                        GameSettings.Game.Debug("defender " + pirate + " pushes " + enemy + " towards " + enemy.InitialLocation);
-                        //Did push.
-                        return true;
-                    }
-                }
+                pirate.Push(PirateToPush, WhereToPush);
+                return true;
             }
             return false;
         }
