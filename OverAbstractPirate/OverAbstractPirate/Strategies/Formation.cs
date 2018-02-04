@@ -32,7 +32,10 @@ namespace MyBot
 
             
             List<ICommand> list = new List<ICommand>();
-            list.Add(carrier);
+            if (carrier.Pirate != null)
+            {
+                list.Add(carrier);
+            }
             foreach (BodyGuard BG in bodyguards)
             {
                 list.Add(BG);
@@ -50,45 +53,42 @@ namespace MyBot
         public override void ExecuteStrategy()
         {
             
-                FieldAnalyzer.DefineTargets();
+            FieldAnalyzer.DefineTargets(Participants.Cast<BaseAttacker>().ToList());
 
-                bool formationComlete = FormUp();
-                if (formationComlete)
-                {
-                    foreach(BaseAttacker attacker in Participants)
-                    {
-                        attacker.SailToTarget();
-                    }
-                }
+            BaseAttacker.FormationComplete = FormUp();
+
+            Carrier carrier = Participants.OfType<Carrier>().ToList()[0];
+            List<Pirate> enemysThreating = FieldAnalyzer.UnderThreat(carrier.Pirate, carrier.Pirate.PushRange * 4, carrier.Destination);
+            if(enemysThreating.Count > 0)
+            {
+                FieldAnalyzer.PopulateEnemyTargets(enemysThreating,Participants.Cast<BaseAttacker>().ToList());
+            }
+
+            foreach(BaseAttacker attacker in Participants)
+            {
+                attacker.ExecuteCommand();
+            }
+               
             
         }
 
        private bool FormUp()
-        {
+       {
             int PiratesInFormation = 0;
             int PiratesInPosition = 0;
             foreach(BaseAttacker attacker in Participants)
             {
                 PiratesInFormation++;
-                if (attacker.Pirate.Distance(attacker.PositionInFormation) > 10)
-                {
-                    attacker.SailToPosition();
-                }
-                else
+                if (attacker.Pirate.Distance(attacker.PositionInFormation) < 10)
                 {
                     PiratesInPosition++;
                 }
-
-                  if (PiratesInPosition == PiratesInFormation)
-                return true;
-            else
-                return false;
             }
 
             if (PiratesInPosition == PiratesInFormation)
                 return true;
             else
                 return false;
-        }
+       }
     }
 }

@@ -27,12 +27,13 @@ namespace MyBot
             foreach (Pirate enemy in GameSettings.Game.GetEnemyLivingPirates())
             {
                 int angleOfAttack = calculator.CalculateAngleOfAttack(pirate, enemy, destination);
-                if (enemy.InRange(pirate, rangeOfDanger) && angleOfAttack > 200 || angleOfAttack < 160)
+                if (enemy.InRange(pirate, rangeOfDanger) && (angleOfAttack > 200 || angleOfAttack < 160))
                     threatingPirates.Add(enemy);
 
             }
             return threatingPirates;
         }
+
 
         #region AssignFormationLocations
         /// <summary>
@@ -63,9 +64,61 @@ namespace MyBot
         }
         #endregion
 
-        public Location DefineTargets()
+        public Mothership FindClosestMotherShip(Pirate pirate)
         {
-            //implement!
+            Mothership closestEnemyMotherShip = GameSettings.Game.GetEnemyMotherships().OrderBy(Mothership => Mothership.Location.Distance(pirate)).ToList()[0];
+            return closestEnemyMotherShip;
+        }
+
+        public void DefineTargets(List<BaseAttacker> participants)
+        {
+            Carrier FormCarrier = null;
+            foreach(BaseAttacker attacker in participants)
+            {
+                if (attacker is Carrier)
+                {
+                    FormCarrier = attacker as Carrier;
+                }
+            }
+            if(FormCarrier != null)
+            {
+                FormCarrier.Destination = FindClosestMotherShip(FormCarrier.Pirate).Location;
+                foreach(BaseAttacker attacker in participants)
+                {
+                    if(attacker is Carrier)
+                    {
+
+                    }
+                    else
+                    {
+                        attacker.Destination = FormCarrier.Destination.Towards(attacker.Pirate, attacker.Pirate.PushRange * 2);
+                    }
+                }
+            }
+            else
+            {
+                foreach(BaseAttacker attacker in participants)
+                {
+                    attacker.Destination = calculator.CalculateBEstCapsuleToGoTo(attacker.Pirate);
+                }
+            }
+
+            
+        }
+
+        public void PopulateEnemyTargets(List<Pirate> enemys, List<BaseAttacker> participants)
+        {
+            List<BodyGuard> guardians = participants.OfType<BodyGuard>().ToList();
+            Carrier c = participants.OfType<Carrier>().ToList()[0];
+            enemys = enemys.OrderBy(Pirate => Pirate.Distance(c.Pirate)).ToList();
+            foreach(BodyGuard BG in guardians)
+            {
+                if(BG.TargetEnemy == null)
+                {
+                    BG.TargetEnemy = enemys[0];
+                    enemys.RemoveAt(0);
+                }
+            }
         }
 
         /// <summary>

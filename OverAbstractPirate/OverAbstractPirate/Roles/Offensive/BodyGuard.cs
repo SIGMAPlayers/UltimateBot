@@ -8,9 +8,10 @@ namespace MyBot
 {
     public class BodyGuard : BaseAttacker
     {
+        
         public BodyGuard()
         {
-
+            this.fieldAnalyzer = new FieldAnalyzer();
         }
         public BodyGuard(Pirate pirate)
         {
@@ -19,10 +20,25 @@ namespace MyBot
 
         public override void ExecuteCommand()
         {
-            throw new NotImplementedException();
+            if(this.TargetEnemy == null)
+            {
+                if (FormationComplete)
+                {
+                    this.SailToTarget();
+                }
+                else
+                {
+                    this.SailToPosition();
+                }
+            }
+            else
+            {
+                this.TargetedPushing(); //HELP!!! DEMENDS CARRIER WHICH BODYGUARD DOSNT KNOW!
+            }
+            
         }
 
-        public override void SailToPosition()
+        protected override void SailToPosition()
         {
             if (!this.AttackersTryPush())
             {
@@ -30,6 +46,5 @@ namespace MyBot
             }
         }
 
-        
     }
 }
