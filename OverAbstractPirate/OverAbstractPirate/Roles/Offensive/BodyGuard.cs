@@ -1,4 +1,4 @@
-﻿using System;
+﻿
 using System.Collections.Generic;
 using System.Linq;
 using Pirates;
@@ -41,6 +41,18 @@ namespace MyBot
                 this.TargetedPushing(GuardedCarrier);
             }
             
+            //if(this.Pirate.PushReloadTurns == 0)
+            //{
+            //    foreach(Pirate enemy in GameSettings.Game.GetEnemyLivingPirates())
+            //    {
+            //        if (!fieldAnalyzer.CheckWhetherEnemyIsCloseToMeAfterPush(GuardedCarrier,enemy))
+            //        {
+                        
+            //        }
+            //    }
+                
+
+            //}
         }
 
         protected override void SailToPosition()
