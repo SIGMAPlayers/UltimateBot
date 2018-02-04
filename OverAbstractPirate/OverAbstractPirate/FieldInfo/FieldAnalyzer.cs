@@ -266,6 +266,17 @@ namespace MyBot
             }
             return count;
         }
+
+        /// <summary>
+        /// Predict the Location of a SpaceObject in number of turns
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="turns"></param>
+        /// <returns></returns>
+        public Location PredictLocation(SpaceObject obj, int turns)
+        {
+            return calculator.PredictLocationByMovement(obj, turns);
+        }
     }
 }
 

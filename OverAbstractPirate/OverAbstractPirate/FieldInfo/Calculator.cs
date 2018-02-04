@@ -80,6 +80,45 @@ namespace MyBot
 
         }
 
+        // Same as before, but now consider turns too
+        public Location PredictLocationByMovement(SpaceObject obj, int turns)
+        {
+            List<SpaceObject> spaceObjects = null;
+            Location currentLocation = obj.Location;
+            Location previousLocation = null;
+
+            // First, check the type of obj
+            if (obj is Pirate)
+            {
+                spaceObjects.AddRange(GameSettings.GameList[GameSettings.GameList.Count - 2].GetEnemyLivingPirates().ToList());
+            }
+            else if (obj is Asteroid)
+            {
+                spaceObjects.AddRange(GameSettings.GameList[GameSettings.GameList.Count - 2].GetLivingAsteroids().ToList());
+            }
+            else return null;
+
+            foreach (SpaceObject movingObj in spaceObjects) // Check on every SpaceObject on the list defined before:
+            {
+                if (movingObj.Id == obj.Id) // Is it the original object?
+                {
+                    previousLocation = movingObj.Location; // Then get it's past Location! put it in "previousLocation"
+                    break;
+                }
+            }
+
+            // Now, calculate it's predicted Location
+            Location substraction = currentLocation.Subtract(previousLocation);
+            for (int i =0; i<turns; i++)
+            {
+                currentLocation.Add(substraction);
+
+            }
+
+            return currentLocation;
+
+        }
+
 
         /// <summary>
         /// Takes a SpaceObject, and calculate it's final location based on the push and the current movement
