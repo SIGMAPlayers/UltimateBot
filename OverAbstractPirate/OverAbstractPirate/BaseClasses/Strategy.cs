@@ -1,4 +1,4 @@
-﻿using System;
+﻿
 using System.Collections.Generic;
 using System.Linq;
 using Pirates;
@@ -8,7 +8,7 @@ namespace MyBot
     public abstract class Strategy
     {
         private List<ICommand> participants;
-        private FieldAnalyzer fieldAnalyzer;
+        private FieldAnalyzer fieldAnalyzer = new FieldAnalyzer();
 
         /// <summary>
         /// list of the Assigned Roles

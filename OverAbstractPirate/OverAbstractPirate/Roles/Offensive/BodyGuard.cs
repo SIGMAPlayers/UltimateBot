@@ -1,4 +1,4 @@
-﻿using System;
+﻿
 using System.Collections.Generic;
 using System.Linq;
 using Pirates;
@@ -8,21 +8,54 @@ namespace MyBot
 {
     public class BodyGuard : BaseAttacker
     {
+        Carrier GuardedCarrier;
         public BodyGuard()
         {
-
+            this.fieldAnalyzer = new FieldAnalyzer();
         }
         public BodyGuard(Pirate pirate)
         {
             this.Pirate = pirate;
         }
 
-        public override void ExecuteCommand()
+        public void assignCarrier(Carrier c)
         {
-            throw new NotImplementedException();
+            GuardedCarrier = c;
         }
 
-        public override void SailToPosition()
+        public override void ExecuteCommand()
+        {
+            if(this.TargetEnemy == null)
+            {
+                if (FormationComplete)
+                {
+                    this.SailToTarget();
+                }
+                else
+                {
+                    this.SailToPosition();
+                }
+            }
+            else
+            {
+                this.TargetedPushing(GuardedCarrier);
+            }
+            
+            //if(this.Pirate.PushReloadTurns == 0)
+            //{
+            //    foreach(Pirate enemy in GameSettings.Game.GetEnemyLivingPirates())
+            //    {
+            //        if (!fieldAnalyzer.CheckWhetherEnemyIsCloseToMeAfterPush(GuardedCarrier,enemy))
+            //        {
+                        
+            //        }
+            //    }
+                
+
+            //}
+        }
+
+        protected override void SailToPosition()
         {
             if (!this.AttackersTryPush())
             {
@@ -30,6 +63,5 @@ namespace MyBot
             }
         }
 
-        
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+﻿
 using System.Collections.Generic;
 using System.Linq;
 using Pirates;
@@ -27,12 +27,13 @@ namespace MyBot
             foreach (Pirate enemy in GameSettings.Game.GetEnemyLivingPirates())
             {
                 int angleOfAttack = calculator.CalculateAngleOfAttack(pirate, enemy, destination);
-                if (enemy.InRange(pirate, rangeOfDanger) && angleOfAttack > 200 || angleOfAttack < 160)
+                if (enemy.InRange(pirate, rangeOfDanger) && (angleOfAttack > 200 || angleOfAttack < 160))
                     threatingPirates.Add(enemy);
 
             }
             return threatingPirates;
         }
+
 
         #region AssignFormationLocations
         /// <summary>
@@ -63,9 +64,61 @@ namespace MyBot
         }
         #endregion
 
-        public Location DefineTargets()
+        public Mothership FindClosestMotherShip(Pirate pirate)
         {
-            //implement!
+            Mothership closestEnemyMotherShip = GameSettings.Game.GetEnemyMotherships().OrderBy(Mothership => Mothership.Location.Distance(pirate)).ToList()[0];
+            return closestEnemyMotherShip;
+        }
+
+        public void DefineTargets(List<BaseAttacker> participants)
+        {
+            Carrier FormCarrier = null;
+            foreach(BaseAttacker attacker in participants)
+            {
+                if (attacker is Carrier)
+                {
+                    FormCarrier = attacker as Carrier;
+                }
+            }
+            if(FormCarrier != null)
+            {
+                FormCarrier.Destination = FindClosestMotherShip(FormCarrier.Pirate).Location;
+                foreach(BaseAttacker attacker in participants)
+                {
+                    if(attacker is Carrier)
+                    {
+
+                    }
+                    else
+                    {
+                        attacker.Destination = FormCarrier.Destination.Towards(attacker.Pirate, attacker.Pirate.PushRange * 2);
+                    }
+                }
+            }
+            else
+            {
+                foreach(BaseAttacker attacker in participants)
+                {
+                    attacker.Destination = calculator.CalculateBEstCapsuleToGoTo(attacker.Pirate);
+                }
+            }
+
+            
+        }
+
+        public void PopulateEnemyTargets(List<Pirate> enemys, List<BaseAttacker> participants)
+        {
+            List<BodyGuard> guardians = participants.OfType<BodyGuard>().ToList();
+            Carrier c = participants.OfType<Carrier>().ToList()[0];
+            enemys = enemys.OrderBy(Pirate => Pirate.Distance(c.Pirate)).ToList();
+            foreach(BodyGuard BG in guardians)
+            {
+                if(BG.TargetEnemy == null)
+                {
+                    BG.TargetEnemy = enemys[0];
+                    enemys.RemoveAt(0);
+                }
+            }
         }
 
         /// <summary>
@@ -187,6 +240,17 @@ namespace MyBot
         }
 
         /// <summary>
+        /// Predict the Location of a SpaceObject in number of turns
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="turns"></param>
+        /// <returns></returns>
+        public Location PredictLocation(SpaceObject obj, int turns)
+        {
+            return calculator.PredictLocationByMovement(obj, turns);
+        }
+
+        /// <summary>
         /// Checks if the enemy pirate is close enough to the border to kill him. 
         /// Returns the location that if you push it towards it, the pirate will die or null if you can't kill it.
         /// </summary>
@@ -226,6 +290,45 @@ namespace MyBot
             }
             //Returns null if not close enough to a border
             return null;
+        }
+
+        /// <summary>
+        /// Checks if an enemy will be close to my attacker after I push myself to a Location
+        /// </summary>
+        /// <param name="attacker"></param>
+        /// <param name="enemy"></param>
+        /// <returns></returns>
+        public bool CheckWhetherEnemyIsCloseToMeAfterPush (BaseAttacker attacker, Pirate enemy)
+        {
+            Location enemyGoingTo = calculator.PredictLocationByMovement(enemy);
+            Location pushTo = calculator.PredictLocationAfterPush(attacker.Pirate, attacker.Destination, attacker.Destination);
+            Pirate newEnemy = new Pirate();
+            newEnemy.Location = pushTo;
+
+            if (newEnemy.InPushRange(pushTo))
+            {
+                return true;
+            }
+            return false;
+        }
+
+
+        /// <summary>
+        /// Checks how many GameObjects are near another GameObject by distance
+        /// </summary>
+        /// <param name="gameObjects"></param>
+        /// <param name="fromObj"></param>
+        /// <param name="distance"></param>
+        /// <returns></returns>
+        public int CheckHowManyGameObjectsNearAreaByDistance(List<GameObject> gameObjects, GameObject fromObj, int distance)
+        {
+            int count = 0;
+            foreach (GameObject gameObject in gameObjects)
+            {
+                if (calculator.CheckIfCloseToObjectByDistance(gameObject, fromObj, distance))
+                    count++;
+            }
+            return count;
         }
     }
 }

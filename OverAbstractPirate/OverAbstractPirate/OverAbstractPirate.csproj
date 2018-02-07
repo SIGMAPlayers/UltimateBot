@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AsteroidHandler.cs" />
     <Compile Include="FieldInfo\Calculator.cs" />
     <Compile Include="FieldInfo\FieldAnalyzer.cs" />
     <Compile Include="Strategies\FireWall.cs" />

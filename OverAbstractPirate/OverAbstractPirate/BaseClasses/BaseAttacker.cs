@@ -1,4 +1,4 @@
-﻿using System;
+﻿
 using System.Collections.Generic;
 using System.Linq;
 using Pirates;
@@ -12,16 +12,20 @@ namespace MyBot
         private Pirate targetEnemy;
         private Location destination;
         private Location positionInFormation;
+        private static bool formationComplete;
+        public FieldAnalyzer fieldAnalyzer;
+        
 
 
         public Pirate Pirate { get => pirate; set => pirate = value; }
         public Pirate TargetEnemy { get => targetEnemy; set => targetEnemy = value; }
         public Location Destination { get => destination; set => destination = value; }
         public Location PositionInFormation { get => positionInFormation; set => positionInFormation = value; }
+        public static bool FormationComplete { get => formationComplete; set => formationComplete = value; }
 
         public abstract void ExecuteCommand();
-        public abstract void SailToPosition();
-        public void SailToTarget()
+        protected abstract void SailToPosition();
+        protected void SailToTarget()
         {
             if (!this.AttackersTryPush())
             {
@@ -30,7 +34,7 @@ namespace MyBot
         }
 
         #region AttackersTryPush
-        public bool AttackersTryPush()
+        protected bool AttackersTryPush()
         {
             Location upperDot = this.pirate.Location.Towards(Destination, pirate.PushRange);
             Location U = upperDot.Subtract(this.pirate.GetLocation());
@@ -65,9 +69,12 @@ namespace MyBot
             Location U = upperDot.Subtract(this.pirate.GetLocation());
 
             if (this.pirate.CanPush(targetEnemy))
+            {
                 this.pirate.Push(targetEnemy, pirate.Location.Add(U.Multiply(-5)));
+                this.TargetEnemy = null;
+            }
             else
-                this.pirate.Sail(carrier.pirate.Location.Towards(targetEnemy, this.pirate.PushRange*2));
+                this.pirate.Sail(carrier.pirate.Location.Towards(targetEnemy, this.pirate.PushRange * 2));
         }
         #endregion
     }

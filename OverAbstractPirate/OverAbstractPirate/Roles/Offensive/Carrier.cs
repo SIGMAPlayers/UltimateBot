@@ -1,4 +1,4 @@
-﻿using System;
+﻿
 using System.Collections.Generic;
 using System.Linq;
 using Pirates;
@@ -11,7 +11,7 @@ namespace MyBot
     {
         public Carrier()
         {
-            
+            this.fieldAnalyzer = new FieldAnalyzer();
         }
         public Carrier(Pirate pirate)
         {
@@ -24,22 +24,24 @@ namespace MyBot
         {
             this.AttackersTryPush();
         }
-        public override void SailToPosition()
+        protected override void SailToPosition()
         {
             HoldYourPosition();
         }
         
-        public override void SailToTarget()
-        {
-            if(!this.AttackersTryPush())
-            {
-                this.Pirate.Sail(Destination);
-            }
-        }
+        
 
         public override void ExecuteCommand()
         {
-            throw new NotImplementedException();
+           
+            if(FormationComplete)
+            {
+                this.SailToTarget();
+            }
+            else
+            {
+                this.HoldYourPosition();
+            }
         }
 
     }
