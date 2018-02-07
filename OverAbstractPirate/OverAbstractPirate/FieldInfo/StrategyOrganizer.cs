@@ -10,12 +10,16 @@ namespace MyBot
         private List<Pirate> piratesToDeliver;
         private List<Strategy> strategies;
         private float assignationRatio;
+        private FieldAnalyzer fieldAnalyzer;
 
         public List<Pirate> PiratesToDeliver { get => piratesToDeliver; set => piratesToDeliver = value; }
 
         public StrategyOrganizer(List<Strategy> strategies)
         {
-            PiratesToDeliver = GameSettings.Game.GetMyLivingPirates().ToList();
+            if(GameSettings.Game.GetMyLivingPirates() != null)
+            {
+                PiratesToDeliver = GameSettings.Game.GetMyLivingPirates().ToList();
+            }
             this.strategies = strategies;
         }
 
@@ -32,7 +36,7 @@ namespace MyBot
         {
             List<Pirate> currentPirates = PiratesToDeliver;
             List<Pirate> specificPiratesForAStrategy = new List<Pirate>();
-            int numberOfPiratesPerStrategy = (int)(piratesToDeliver.Count()*assignationRatio);
+            int numberOfPiratesPerStrategy = (int)(piratesToDeliver.Count() * assignationRatio);
             foreach (Strategy strategy in strategies)
             {
                 currentPirates = strategy.PiratesPrioritization(PiratesToDeliver);

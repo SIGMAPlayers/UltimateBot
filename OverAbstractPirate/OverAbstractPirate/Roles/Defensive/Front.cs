@@ -29,17 +29,17 @@ namespace MyBot
         public override void ExecuteCommand()
         {
             Pirate protectFrom = Protect();
-            
-            if(protectFrom != null)
+
+            if (protectFrom != null)
             {
-                if(!Push())
+                if (!Push())
                 {
-                    DefendAt();
+                    pirate.Sail(DefendAt().GetLocation());
                 }
             }
             else
             {
-                DefendAt();
+                pirate.Sail(DefendAt().GetLocation());
             }
         }
 
@@ -58,12 +58,12 @@ namespace MyBot
             if (enemyCarrier != null)
             {
                 guardLocation = GameSettings.Game.GetEnemyMotherships()[0].Location.Towards(enemyCarrier, scale);
-                GameSettings.Game.Debug("Location from ProtectFromCarrier" + guardLocation);
+                //GameSettings.Game.Debug("Location from ProtectFromCarrier" + guardLocation);
                 return guardLocation;
             }
 
             guardLocation = GameSettings.Game.GetEnemyMotherships()[0].Location.Towards(GameSettings.Game.GetEnemyCapsules()[0], scale);
-            GameSettings.Game.Debug("Location from ProtectFromCarrier" + guardLocation);
+            //GameSettings.Game.Debug("Location from ProtectFromCarrier" + guardLocation);
             return guardLocation;
         }
 
@@ -74,7 +74,7 @@ namespace MyBot
         /// <returns> true if the pirate pushed. </returns>
         public override bool Push()
         {
-            if(PirateToPush == null)
+            if (PirateToPush == null)
             {
                 foreach (Pirate enemy in GameSettings.Game.GetEnemyLivingPirates())
                 {

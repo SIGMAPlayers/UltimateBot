@@ -28,6 +28,12 @@ namespace MyBot
                 {
                     bodyguards.Add(new BodyGuard(pirate));
                 }
+
+                foreach (ICommand item in Participants)
+                {
+                    BaseAttacker miniItem = item as BaseAttacker;
+                    GameSettings.Game.Debug("List of FireWall: " + miniItem.Pirate.Id);
+                }
             }
 
             
@@ -58,19 +64,22 @@ namespace MyBot
 
             BaseAttacker.FormationComplete = FormUp();
 
-            Carrier carrier = Participants.OfType<Carrier>().ToList()[0];
-            List<Pirate> enemysThreating = FieldAnalyzer.UnderThreat(carrier.Pirate, carrier.Pirate.PushRange * 4, carrier.Destination);
-            if(enemysThreating.Count > 0)
+            List<Carrier> possibleCarriers = Participants.OfType<Carrier>().ToList();
+
+            if (Participants.OfType<Carrier>().ToList() != null)
             {
-                FieldAnalyzer.PopulateEnemyTargets(enemysThreating,Participants.Cast<BaseAttacker>().ToList());
+                Carrier carrier = Participants.OfType<Carrier>().ToList()[0];
+                List<Pirate> enemysThreating = FieldAnalyzer.UnderThreat(carrier.Pirate, carrier.Pirate.PushRange * 4, carrier.Destination);
+                if (enemysThreating.Count > 0)
+                {
+                    FieldAnalyzer.PopulateEnemyTargets(enemysThreating, Participants.Cast<BaseAttacker>().ToList());
+                }
             }
 
-            foreach(BaseAttacker attacker in Participants)
+            foreach (BaseAttacker attacker in Participants)
             {
                 attacker.ExecuteCommand();
             }
-               
-            
         }
 
        private bool FormUp()

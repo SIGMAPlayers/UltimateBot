@@ -16,11 +16,13 @@ namespace MyBot
         
         public void DoTurn(PirateGame game)
         {
-            if (game.Turn == 1)
-            {
-                StrategyOrganizer strategyOrganizer = new StrategyOrganizer(strategies);
-                strategyOrganizer.DeliverPirates();
-            }
+            GameSettings.Game = game;
+
+            //if (game.Turn == 1) //LOL What?
+            //{
+            StrategyOrganizer strategyOrganizer = new StrategyOrganizer(strategies);
+            strategyOrganizer.DeliverPirates();
+            //}
 
             foreach (Strategy strategy in strategies)
             {

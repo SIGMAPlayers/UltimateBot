@@ -131,7 +131,7 @@ namespace MyBot
         {
             List<BaseDefender> canDoublePush = new List<BaseDefender>();
 
-            foreach(Pirate enemyCarrier in enemyCarriers)
+            foreach (Pirate enemyCarrier in enemyCarriers)
             {
                 canDoublePush = new List<BaseDefender>();
 
@@ -143,9 +143,11 @@ namespace MyBot
                     }
                 }
                 if (canDoublePush.Count > 1)
+                {
                     return canDoublePush;
+                }
             }
-            return null;
+            return new List<BaseDefender>();
         }
 
         /// <summary>

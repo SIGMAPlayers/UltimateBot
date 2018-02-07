@@ -10,6 +10,12 @@ namespace MyBot
         private List<ICommand> participants;
         private FieldAnalyzer fieldAnalyzer = new FieldAnalyzer();
 
+        public Strategy()
+        {
+            fieldAnalyzer = new FieldAnalyzer();
+            participants = new List<ICommand>();
+        }
+
         /// <summary>
         /// list of the Assigned Roles
         /// </summary>

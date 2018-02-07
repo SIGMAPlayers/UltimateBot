@@ -21,6 +21,12 @@ namespace MyBot
             {
                 Participants[i] = new Backup(pirates[i], new FieldAnalyzer());
             }
+
+            foreach(ICommand item in Participants)
+            {
+                BaseDefender miniItem = item as BaseDefender;
+                GameSettings.Game.Debug("List of FireWall: " + miniItem.Pirate.Id);
+            }
         }
 
         public override List<Pirate> PiratesPrioritization(List<Pirate> pirates)
@@ -35,9 +41,16 @@ namespace MyBot
 
         public override void ExecuteStrategy()
         {
-            List<BaseDefender> baseDefenders = Participants.Cast<BaseDefender>().ToList();
+            List<BaseDefender> baseDefenders = new List<BaseDefender>();
 
-            foreach(BaseDefender defender in baseDefenders)
+            if (Participants != null)
+            {
+                baseDefenders = Participants.Cast<BaseDefender>().ToList();
+            }
+
+            GameSettings.Game.Debug("Participants.Count: "+Participants.Count);
+
+            foreach (BaseDefender defender in baseDefenders)
             {
                 //Backup backup = defender as Backup;
                 if(defender is Backup)

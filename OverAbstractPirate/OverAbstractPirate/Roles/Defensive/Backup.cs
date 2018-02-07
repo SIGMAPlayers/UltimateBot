@@ -5,7 +5,7 @@ using Pirates;
 namespace MyBot
 {
     public class Backup : BaseDefender
-    { 
+    {
 
         public Backup(Pirate pirate, FieldAnalyzer fieldAnalyzer) : base(pirate, fieldAnalyzer) { }
 
@@ -36,12 +36,12 @@ namespace MyBot
             {
                 if (!Push())
                 {
-                    DefendAt();
+                    pirate.Sail(DefendAt().GetLocation());
                 }
             }
             else
             {
-                DefendAt();
+                pirate.Sail(DefendAt().GetLocation());
             }
         }
 
@@ -60,12 +60,12 @@ namespace MyBot
             if (enemyCarrier != null)
             {
                 guardLocation = GameSettings.Game.GetEnemyMotherships()[0].Location.Towards(enemyCarrier, scale - 450);
-                GameSettings.Game.Debug("Location from ProtectFromCarrier" + guardLocation);
+                //GameSettings.Game.Debug("Location from ProtectFromCarrier" + guardLocation);
                 return guardLocation;
             }
 
             guardLocation = GameSettings.Game.GetEnemyMotherships()[0].Location.Towards(GameSettings.Game.GetEnemyCapsules()[0], scale - 450);
-            GameSettings.Game.Debug("Location from ProtectFromCarrier" + guardLocation);
+            //GameSettings.Game.Debug("Location from ProtectFromCarrier" + guardLocation);
             return guardLocation;
         }
 
@@ -76,10 +76,13 @@ namespace MyBot
         /// <returns> true if the pirate pushed.</returns>
         public override bool Push()
         {
-            if (pirate.CanPush(PirateToPush))
+            if (PirateToPush != null && WhereToPush != null)
             {
-                pirate.Push(PirateToPush, WhereToPush);
-                return true;
+                if (pirate.CanPush(PirateToPush))
+                {
+                    pirate.Push(PirateToPush, WhereToPush);
+                    return true;
+                }
             }
             return false;
         }
