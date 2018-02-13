@@ -30,8 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="PirateGame">
-      <HintPath>..\PirateGame.dll</HintPath>
+    <Reference Include="PirateGame, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Downloads\PirateGame.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -44,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AsteroidHandler.cs" />
+    <Compile Include="BaseClasses\BaseCommand.cs" />
     <Compile Include="FieldInfo\Calculator.cs" />
     <Compile Include="FieldInfo\FieldAnalyzer.cs" />
     <Compile Include="Strategies\FireWall.cs" />

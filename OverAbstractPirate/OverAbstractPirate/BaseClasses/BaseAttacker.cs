@@ -1,4 +1,3 @@
-﻿
 using System.Collections.Generic;
 using System.Linq;
 using Pirates;
@@ -49,6 +48,50 @@ namespace MyBot
                     
                     GameSettings.Game.Debug("pirate " + this.pirate + " pushes " + enemy + " towards " + enemy.InitialLocation);
                     //Did push.
+                    return true;
+                }
+                
+            }
+            foreach(Wormhole w in GameSettings.Game.GetAllWormholes())
+            {
+                foreach (Pirate enemy in GameSettings.Game.GetEnemyLivingPirates())
+                {
+                    // Check if the pirate can push the enemy.
+                    if (this.pirate.CanPush(w) && enemy.InRange(w, this.pirate.PushDistance))
+                    {
+                       
+                        this.pirate.Push(w, enemy.Location);
+                        
+                        GameSettings.Game.Debug("pirate " + this.pirate + " pushes " + enemy + " towards " + enemy.InitialLocation);
+                        //Did push.
+                        return true;
+                    }
+                    
+                }
+                 if (this.pirate.CanPush(w) && GameSettings.Game.GetEnemyCapsules().Length > 0)
+                {
+                    // Push asteroid!
+                    this.pirate.Push(w, GameSettings.Game.GetEnemyCapsules()[0]);
+
+                    // Print a message
+                    //GameSettings.Game.Debug("pirate " + pirate + " pushes " + asteroid + " towards " + GameSettings.Game.GetEnemyCapsules()[0]);
+
+                    // Did push
+                    return true;
+                }
+            }
+            foreach (Asteroid asteroid in GameSettings.Game.GetLivingAsteroids())
+            {
+                // Check if the pirate can push the asteroid
+                if (this.pirate.CanPush(asteroid) && GameSettings.Game.GetEnemyCapsules().Length > 0)
+                {
+                    // Push asteroid!
+                    this.pirate.Push(asteroid, GameSettings.Game.GetEnemyCapsules()[0]);
+
+                    // Print a message
+                    //GameSettings.Game.Debug("pirate " + pirate + " pushes " + asteroid + " towards " + GameSettings.Game.GetEnemyCapsules()[0]);
+
+                    // Did push
                     return true;
                 }
             }

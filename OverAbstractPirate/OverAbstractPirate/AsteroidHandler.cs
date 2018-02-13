@@ -1,4 +1,4 @@
-﻿
+
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,7 +6,7 @@ using Pirates;
 
 namespace MyBot
 {
-    class AsteroidHandler
+    public class AsteroidHandler
     {
         FieldAnalyzer fieldAnalyzer = new FieldAnalyzer();
         int asteroidSize = GameSettings.Game.AsteroidSize;
@@ -17,11 +17,13 @@ namespace MyBot
         /// <returns></returns>
         public Location FindBestLocationToPushTo()
         {
-            if (GameSettings.Game.GetEnemyLivingPirates()[0]==null) // If there isn't any living enemy pirate
+            if (GameSettings.Game.GetEnemyLivingPirates().Length == 0) // If there isn't any living enemy pirate
             {
-                if (GameSettings.Game.GetEnemyMotherships()[0] != null) // If there is an enemy motherShip
+                if (GameSettings.Game.GetEnemyMotherships().Length > 0) // If there is an enemy motherShip
                 {
-                    return GameSettings.Game.GetEnemyMotherships()[0].Location; // Push to enemy mothership
+                    Mothership mothership = fieldAnalyzer.GetMostPopulatedEnemyMothership();
+                    if (mothership != null)
+                        return mothership.GetLocation(); // Push to enemy mothership
                 }
                 else return new Location (0,0); // For no errors purpose...
             }

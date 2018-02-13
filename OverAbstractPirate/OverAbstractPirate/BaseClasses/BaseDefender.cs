@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 
 using Pirates;
@@ -11,19 +11,22 @@ namespace MyBot
         private FieldAnalyzer fieldAnalyzer;
         private Pirate pirateToPush;
         private Location whereToPush;
+        protected AsteroidHandler asteroidHandler;
 
+        public Pirate Pirate { get => pirate; set => pirate = value; }
+        public FieldAnalyzer FieldAnalyzer { get => fieldAnalyzer; set => fieldAnalyzer = value; }
+        public Pirate PirateToPush { get => pirateToPush; set => pirateToPush = value; }
+        public Location WhereToPush { get => whereToPush; set => whereToPush = value; }
+        public AsteroidHandler AsteroidHandler { get => AsteroidHandler; set => AsteroidHandler = value; }
+        
         protected BaseDefender(Pirate pirate, FieldAnalyzer fieldAnalyzer)
         {
             this.pirate = pirate;
             this.fieldAnalyzer = fieldAnalyzer;
             this.pirateToPush = null;
             this.whereToPush = null;
+            asteroidHandler = new AsteroidHandler();
         }
-
-        public Pirate Pirate { get => pirate; set => pirate = value; }
-        public FieldAnalyzer FieldAnalyzer { get => fieldAnalyzer; set => fieldAnalyzer = value; }
-        public Pirate PirateToPush { get => pirateToPush; set => pirateToPush = value; }
-        public Location WhereToPush { get => whereToPush; set => whereToPush = value; }
 
         /// <summary>
         /// The instruction book that the bot follows, a very stupid method that just executes a strategy that the

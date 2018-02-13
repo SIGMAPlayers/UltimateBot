@@ -1,4 +1,4 @@
-﻿
+
 using System.Collections.Generic;
 using System.Linq;
 using Pirates;
@@ -11,13 +11,14 @@ namespace MyBot
         
         public Formation()
         {
+            
         }
 
         public override void AssignPiratesToParticipants(List<Pirate> pirates)
         {
-            Carrier carrier = new Carrier();
+            Carrier carrier = new Carrier(this.Participants);
             List<BodyGuard> bodyguards = new List<BodyGuard>();
-
+            
             foreach(Pirate pirate in pirates)
             {
                 if(pirate.HasCapsule() && carrier.Pirate == null)
@@ -27,12 +28,6 @@ namespace MyBot
                 else
                 {
                     bodyguards.Add(new BodyGuard(pirate));
-                }
-
-                foreach (ICommand item in Participants)
-                {
-                    BaseAttacker miniItem = item as BaseAttacker;
-                    GameSettings.Game.Debug("List of FireWall: " + miniItem.Pirate.Id);
                 }
             }
 
@@ -44,7 +39,8 @@ namespace MyBot
             }
             foreach (BodyGuard BG in bodyguards)
             {
-                BG.assignCarrier(carrier);
+                if(carrier.Pirate != null)
+                    BG.assignCarrier(carrier);
                 list.Add(BG);
             }
             this.Participants = list;
@@ -59,22 +55,32 @@ namespace MyBot
 
         public override void ExecuteStrategy()
         {
-            
-            FieldAnalyzer.DefineTargets(Participants.Cast<BaseAttacker>().ToList());
-
-            BaseAttacker.FormationComplete = FormUp();
-
-            List<Carrier> possibleCarriers = Participants.OfType<Carrier>().ToList();
-
-            if (Participants.OfType<Carrier>().ToList() != null)
+            foreach(BaseAttacker BA in Participants.Cast<BaseAttacker>().ToList())
             {
-                Carrier carrier = Participants.OfType<Carrier>().ToList()[0];
-                List<Pirate> enemysThreating = FieldAnalyzer.UnderThreat(carrier.Pirate, carrier.Pirate.PushRange * 4, carrier.Destination);
-                if (enemysThreating.Count > 0)
+                GameSettings.Game.Debug("Formation" + BA.Pirate.Id);
+            }
+            FieldAnalyzer.DefineTargets(Participants.Cast<BaseAttacker>().ToList());
+            FieldAnalyzer.AssignFormationLocations(Participants.Cast<BaseAttacker>().ToList());
+            BaseAttacker.FormationComplete = FormUp();
+            
+            List<Carrier> possibleCarriers = Participants.OfType<Carrier>().ToList();
+            
+            if(possibleCarriers.Count > 0)
+            {
+                 if(Participants.OfType<Carrier>().ToList() != null)
                 {
-                    FieldAnalyzer.PopulateEnemyTargets(enemysThreating, Participants.Cast<BaseAttacker>().ToList());
+                    if(Participants.OfType<Carrier>().ToList()[0] != null)
+                    {
+                        Carrier carrier = Participants.OfType<Carrier>().ToList()[0];
+                        List<Pirate> enemysThreating = FieldAnalyzer.UnderThreat(carrier.Pirate, carrier.Pirate.PushRange * 4, carrier.Destination);
+                        if (enemysThreating.Count > 0)
+                        {
+                            FieldAnalyzer.PopulateEnemyTargets(enemysThreating, Participants.Cast<BaseAttacker>().ToList());
+                        }
+                    }
                 }
             }
+               
 
             foreach (BaseAttacker attacker in Participants)
             {
@@ -89,6 +95,7 @@ namespace MyBot
             foreach(BaseAttacker attacker in Participants)
             {
                 PiratesInFormation++;
+                
                 if (attacker.Pirate.Distance(attacker.PositionInFormation) < 10)
                 {
                     PiratesInPosition++;

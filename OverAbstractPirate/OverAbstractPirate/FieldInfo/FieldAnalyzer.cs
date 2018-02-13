@@ -1,4 +1,3 @@
-﻿
 using System.Collections.Generic;
 using System.Linq;
 using Pirates;
@@ -9,7 +8,11 @@ namespace MyBot
     {
         //My BestFriend
         Calculator calculator;
-
+        
+        public FieldAnalyzer()
+        {
+            calculator = new Calculator();
+        }
 
         /// <summary>
         /// checks if there is any threat on the given pirate within a given range. sorted by distance from pirate.
@@ -34,42 +37,76 @@ namespace MyBot
             return threatingPirates;
         }
 
-
+        public bool IsFormationGuardsCloseToTheCarrier(List<ICommand> form, Carrier carrier)
+        {
+            foreach(BaseAttacker guard in form.Cast<BaseAttacker>().ToList())
+            {
+                if(!(guard is Carrier))
+                {
+                    if(guard.Pirate.InRange(carrier.Pirate, 1200) && guard.PositionInFormation != guard.Pirate.Location)
+                    {
+                        return true;
+                    }
+                }
+                
+            }
+            return false;
+        }
+        
         #region AssignFormationLocations
         /// <summary>
         ///     when called, the function evaluates the locations of the guardiens according to the formation shape using vectors
         /// </summary>
-        private void AssignFormationLocations(List<BaseAttacker> participants)
+        public void AssignFormationLocations(List<BaseAttacker> participants)
         {
-            Location guardiensPosition = new Location(0,0);
-            foreach(BaseAttacker Role in participants)
+            if(participants.Count > 0)
             {
-                if(Role is Carrier)
+                Location guardiensPosition = calculator.CalculateBEstCapsuleToGoTo(participants[0].Pirate); 
+                foreach(BaseAttacker Role in participants)
                 {
-                    guardiensPosition = calculator.CalculateVectorOfFormation(Role as Carrier);
+                    if(Role is Carrier)
+                    {
+                        guardiensPosition = calculator.CalculateVectorOfFormation(Role as Carrier);
+                    }
+                    else
+                    {
+                    
+                    }
+                }
+                foreach(BaseAttacker Role in participants)
+                {
+                    if(Role is Carrier)
+                    {
+                        Role.PositionInFormation = Role.Pirate.Location;
+                    }
+                    else
+                    {
+                        Role.PositionInFormation = guardiensPosition;
+                    }
                 }
             }
-            foreach(BaseAttacker Role in participants)
-            {
-                if(Role is Carrier)
-                {
-                    continue;
-                }
-                else
-                {
-                    Role.PositionInFormation = guardiensPosition;
-                }
-            }
-
         }
         #endregion
 
         public Mothership FindClosestMotherShip(Pirate pirate)
         {
-            Mothership closestEnemyMotherShip = GameSettings.Game.GetEnemyMotherships().OrderBy(Mothership => Mothership.Location.Distance(pirate)).ToList()[0];
-            return closestEnemyMotherShip;
+            Mothership closestmyMotherShip = GameSettings.Game.GetMyMotherships().OrderBy(Mothership => Mothership.Location.Distance(pirate)).ToList()[0];
+            return closestmyMotherShip;
         }
-
+        
+        public int HowMuchCapsules (PirateGame game, List<Pirate> pirates)
+        {
+            int count = 0;
+            foreach (Pirate pirate in pirates)
+            {
+                if (pirate.HasCapsule())
+                {
+                    count++;
+                }
+            }
+            return count;
+        }
+        
         public void DefineTargets(List<BaseAttacker> participants)
         {
             Carrier FormCarrier = null;
@@ -82,16 +119,17 @@ namespace MyBot
             }
             if(FormCarrier != null)
             {
+                
                 FormCarrier.Destination = FindClosestMotherShip(FormCarrier.Pirate).Location;
                 foreach(BaseAttacker attacker in participants)
                 {
                     if(attacker is Carrier)
                     {
-
+                        
                     }
                     else
                     {
-                        attacker.Destination = FormCarrier.Destination.Towards(attacker.Pirate, attacker.Pirate.PushRange * 2);
+                        attacker.Destination = FormCarrier.Destination;
                     }
                 }
             }
@@ -99,6 +137,7 @@ namespace MyBot
             {
                 foreach(BaseAttacker attacker in participants)
                 {
+                    
                     attacker.Destination = calculator.CalculateBEstCapsuleToGoTo(attacker.Pirate);
                 }
             }
@@ -109,29 +148,34 @@ namespace MyBot
         public void PopulateEnemyTargets(List<Pirate> enemys, List<BaseAttacker> participants)
         {
             List<BodyGuard> guardians = participants.OfType<BodyGuard>().ToList();
+            GameSettings.Game.Debug("BodyGuards are ==> " + guardians.Count);
             Carrier c = participants.OfType<Carrier>().ToList()[0];
+            GameSettings.Game.Debug("Carrier is ==> " + c);
             enemys = enemys.OrderBy(Pirate => Pirate.Distance(c.Pirate)).ToList();
             foreach(BodyGuard BG in guardians)
             {
                 if(BG.TargetEnemy == null)
                 {
-                    BG.TargetEnemy = enemys[0];
+                    if(enemys.Count > 0)
+                    {
+                        BG.TargetEnemy = enemys[0];
                     enemys.RemoveAt(0);
+                    }
+                    
                 }
             }
         }
 
         /// <summary>
-        /// Checks if an enemy pirate can be pushed by multiple defenders
-        /// and returns the maximum push range
+        /// Returns how many carriers are near the Mothership and can be double pushed
         /// </summary>
-        /// <param name="defenderList"> </param>
-        /// <returns>The maximum range the enemy pirate can be pushed</returns>
+        /// <param name="defenderList"></param>
+        /// <returns></returns>
         public List<BaseDefender> CheckHowManyDefendrsCanPushEnemyCarrier(List<Pirate> enemyCarriers, List<BaseDefender> defenders)
         {
             List<BaseDefender> canDoublePush = new List<BaseDefender>();
 
-            foreach (Pirate enemyCarrier in enemyCarriers)
+            foreach(Pirate enemyCarrier in enemyCarriers)
             {
                 canDoublePush = new List<BaseDefender>();
 
@@ -149,7 +193,7 @@ namespace MyBot
             }
             return new List<BaseDefender>();
         }
-
+        
         /// <summary>
         /// Returns how many carriers are near the Mothership and can be double pushed
         /// </summary>
@@ -180,6 +224,19 @@ namespace MyBot
             }
 
             return canBeDoublePushed;
+        }
+        
+        public Pirate GetMostThreatningEnemyCarrier(Mothership mothershipToProtect)
+        {
+            foreach(Pirate pirate in GameSettings.Game.GetEnemyLivingPirates())
+            {
+                if(pirate.HasCapsule() && pirate.Distance(mothershipToProtect) > pirate.PushDistance * 1.5)
+                {
+                    return pirate;
+                }
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -331,6 +388,45 @@ namespace MyBot
                     count++;
             }
             return count;
+        }
+        
+        /// <summary>
+        /// Gets the most populated with defenders enemy mothership, returns null if there is no mothership
+        /// </summary>
+        /// <returns></returns>
+        public Mothership GetMostPopulatedEnemyMothership()
+        {
+            List<Mothership> mothershipList = GameSettings.Game.GetEnemyMotherships().ToList();
+
+            int countMaxPirates = 0;
+            int countPirates = 0;
+            int iMaxMothership = 0;
+
+            for (int i = 0; i < mothershipList.Count; i++)
+            {
+                countPirates = 0;
+
+                foreach(Pirate enemyPirate in GameSettings.Game.GetEnemyLivingPirates())
+                {
+                    if(mothershipList[i].Distance(enemyPirate) < 1500)
+                    {
+                        countPirates++;
+                    }
+                }
+
+                if(countMaxPirates < countPirates)
+                {
+                    countMaxPirates = countPirates;
+                    iMaxMothership = i;
+                }
+            }
+
+            if(mothershipList.Count > 0)
+            {
+                return mothershipList[0];
+            }
+
+            return null;
         }
     }
 }
