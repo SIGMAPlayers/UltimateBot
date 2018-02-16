@@ -1,4 +1,3 @@
-﻿
 using System.Collections.Generic;
 using System.Linq;
 using Pirates;
@@ -9,9 +8,11 @@ namespace MyBot
 {
     public class Carrier : BaseAttacker
     {
-        public Carrier()
+        List<ICommand> myform;
+        public Carrier(List<ICommand> form)
         {
             this.fieldAnalyzer = new FieldAnalyzer();
+            this.myform = form;
         }
         public Carrier(Pirate pirate)
         {
@@ -33,15 +34,29 @@ namespace MyBot
 
         public override void ExecuteCommand()
         {
-           
-            if(FormationComplete)
+           if(fieldAnalyzer.UnderThreat(this.Pirate,1200, this.Destination).Count == 0)
+           {
+            if(fieldAnalyzer.IsFormationGuardsCloseToTheCarrier(myform,this))
             {
-                this.SailToTarget();
+                if(FormationComplete)
+                {
+                    this.SailToTarget();
+                }
+                else
+                {
+                    this.HoldYourPosition();
+                }
             }
             else
             {
-                this.HoldYourPosition();
+                this.SailToTarget();    
             }
+           }
+           else
+           {
+               this.SailToTarget();
+           }
+            
         }
 
     }

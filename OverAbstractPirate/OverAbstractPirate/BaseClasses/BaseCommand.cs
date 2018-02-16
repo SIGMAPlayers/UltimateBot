@@ -1,33 +1,20 @@
-﻿using Pirates;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System;
+using System.Text;
+using System.Threading.Tasks;
+
+using Pirates;
 
 namespace MyBot
 {
     public abstract class BaseCommand : ICommand
     {
-        protected List<MapObject> bestWay;
-        protected FieldAnalyzer FA;
-
-        public BaseCommand()
-        {
-            bestWay = new List<MapObject>();
-            FA = new FieldAnalyzer();
-        }
-
         public abstract void ExecuteCommand();
 
-        public virtual Location FindBestWay(Pirate pirate, MapObject des)
+        public Location GetLocationSmartly()
         {
-            GameSettings.Game.Debug("Got to BaseCommand");
-            return FA.GetBestHoles(pirate, des).Last().GetLocation();
-
-        }
-
-        public Location AdvisePush()
-        {
-            //write best location to push!
+            return new Location(0, 0);
         }
     }
 }

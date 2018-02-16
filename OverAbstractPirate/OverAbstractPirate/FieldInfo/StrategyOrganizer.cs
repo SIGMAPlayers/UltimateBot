@@ -1,4 +1,3 @@
-﻿
 using System.Collections.Generic;
 using System.Linq;
 using Pirates;
@@ -9,7 +8,9 @@ namespace MyBot
     {
         private List<Pirate> piratesToDeliver;
         private List<Strategy> strategies;
-        private float assignationRatio;
+        private double assignationRatio;
+        private FieldAnalyzer fieldAnalyzer;
+        private List<List<Pirate>> PiratesForEveryStrategy;
 
         public List<Pirate> PiratesToDeliver { get => piratesToDeliver; set => piratesToDeliver = value; }
 
@@ -17,30 +18,72 @@ namespace MyBot
         {
             PiratesToDeliver = GameSettings.Game.GetMyLivingPirates().ToList();
             this.strategies = strategies;
+            fieldAnalyzer = new FieldAnalyzer();
+            
+            PiratesForEveryStrategy = new List<List<Pirate>>();
+            GameSettings.Game.Debug("Strategies Count == "+ strategies.Count);
         }
 
-        public void SetAssignationRatio(FieldAnalyzer FieldAnalyzer)
+        public void SetAssignationRatio()
         {
             //For now
-            assignationRatio = 1 / strategies.Count;
+            assignationRatio = 1.0 / (double)strategies.Count;
+        }
+        
+        public void Prioritizer()
+        {
+            SetAssignationRatio();
+            List<Pirate> currentPirates = PiratesToDeliver;
+            List<Pirate> specificPiratesForAStrategy = new List<Pirate>();
+            int numberOfPiratesPerStrategy = (int)(piratesToDeliver.Count()*assignationRatio);
+            
+            foreach(Strategy s in strategies)
+            {
+                currentPirates = s.PiratesPrioritization(currentPirates);
+                specificPiratesForAStrategy = currentPirates.GetRange(0, numberOfPiratesPerStrategy);
+                PiratesForEveryStrategy.Add(specificPiratesForAStrategy);
+                currentPirates.RemoveRange(0, numberOfPiratesPerStrategy);
+            }
+            
+            if(currentPirates.Count > 0)
+            {
+                foreach(Pirate p in currentPirates)
+                {
+                    PiratesForEveryStrategy[0].Add(p);
+                }
+            }
+        } 
+        public void Assigner()
+        {
+            for(int i = 0; i < strategies.Count; i++)
+            {
+                strategies[i].AssignPiratesToParticipants(PiratesForEveryStrategy[i]);
+            }
         }
 
         /// <summary>
         /// Send all available pirates to every strategy
         /// </summary>
         public void DeliverPirates()
-        {
+        {     
+            //Has 8 pirates
             List<Pirate> currentPirates = PiratesToDeliver;
             List<Pirate> specificPiratesForAStrategy = new List<Pirate>();
             int numberOfPiratesPerStrategy = (int)(piratesToDeliver.Count()*assignationRatio);
-            foreach (Strategy strategy in strategies)
+            
+           
+            if(PiratesToDeliver.Count > 0)
             {
-                currentPirates = strategy.PiratesPrioritization(PiratesToDeliver);
-                specificPiratesForAStrategy = currentPirates.GetRange(0, numberOfPiratesPerStrategy);
-                currentPirates.RemoveRange(0, numberOfPiratesPerStrategy);
-                strategy.AssignPiratesToParticipants(specificPiratesForAStrategy);
+                GameSettings.Game.Debug("piratesToDeliver.Count()*assignationRatio = " + numberOfPiratesPerStrategy);
+                if(PiratesForEveryStrategy.Count == 0)
+                {
+                    Prioritizer();    
+                }
+                
+                Assigner();
+                
             }
+           
         }
-
     }
 }

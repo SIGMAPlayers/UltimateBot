@@ -1,4 +1,3 @@
-﻿
 using System.Collections.Generic;
 using System.Linq;
 using Pirates;
@@ -21,6 +20,8 @@ namespace MyBot
         public void assignCarrier(Carrier c)
         {
             GuardedCarrier = c;
+           
+            GameSettings.Game.Debug("Guarded carrier is ===> " + c.Pirate.Id);
         }
 
         public override void ExecuteCommand()
@@ -29,10 +30,12 @@ namespace MyBot
             {
                 if (FormationComplete)
                 {
+                    GameSettings.Game.Debug("Formation Clomlete lets sail to the target ==> "+ this.Destination);
                     this.SailToTarget();
                 }
                 else
                 {
+                    GameSettings.Game.Debug("Formation in incomplete les sail to the position ==>" + this.PositionInFormation);
                     this.SailToPosition();
                 }
             }
@@ -41,18 +44,6 @@ namespace MyBot
                 this.TargetedPushing(GuardedCarrier);
             }
             
-            //if(this.Pirate.PushReloadTurns == 0)
-            //{
-            //    foreach(Pirate enemy in GameSettings.Game.GetEnemyLivingPirates())
-            //    {
-            //        if (!fieldAnalyzer.CheckWhetherEnemyIsCloseToMeAfterPush(GuardedCarrier,enemy))
-            //        {
-                        
-            //        }
-            //    }
-                
-
-            //}
         }
 
         protected override void SailToPosition()

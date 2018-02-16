@@ -1,4 +1,4 @@
-﻿
+
 using System.Collections.Generic;
 using System.Linq;
 
@@ -13,91 +13,65 @@ namespace MyBot
             List<Pirate> newPirates = new List<Pirate>(pirates);
             //GameSettings.Game.Debug("AssignPiratesToParticipants (FireWall) pirates.Count = " + pirates.Count);
             List<ICommand> templist = new List<ICommand>();
-
-            List<Pirate> enemyCarriers = new List<Pirate>();
-            foreach(Pirate enemy in GameSettings.Game.GetEnemyLivingPirates())
-            {
-                if(enemy.HasCapsule())
-                {
-                    enemyCarriers.Add(enemy);
-                }
-            }
-            foreach(Mothership mothership in GameSettings.Game.GetEnemyMotherships())
-            {
-                if()
-            }
-
-            if (newPirates.Count > 1 && GameSettings.Game.GetEnemyMotherships().Length == 1)
+            if(newPirates.Count > 1)
             {
                 for (int i = 0; i < newPirates.Count / 2; i++)
                 {
                     templist.Add(new Front(pirates[i], new FieldAnalyzer()));
                 }
-
+    
                 newPirates.RemoveRange(0, pirates.Count / 2);
-
+    
                 for (int i = 0; i < newPirates.Count; i++)
                 {
                     templist.Add(new Backup(newPirates[i], new FieldAnalyzer()));
                 }
             }
-            else if (GameSettings.Game.GetEnemyMotherships().Length > 1)
-            {
-                foreach (Pirate pirate in newPirates)
-                {
-                    templist.Add(new Backup(pirate, new FieldAnalyzer()));
-                }
-            }
             else
             {
-                if (newPirates.Count == 1)
-                {
+                 if(newPirates.Count == 1)
+                 {
                     templist.Add(new Backup(newPirates[0], new FieldAnalyzer()));
-                }
+                 }
             }
-
+            
             Participants = templist;
         }
 
         public override List<Pirate> PiratesPrioritization(List<Pirate> pirates)
         {
+            List<Pirate> newlist = new List<Pirate>();
             if(GameSettings.Game.GetEnemyMotherships().Length > 0)
             {
-                pirates = GameSettings.Game.GetAllMyPirates().OrderBy(Pirate => Pirate.Location.Distance(GameSettings.Game.GetMyCapsules()[0].Location)).ToList();
+                if(GameSettings.Game.GetMyCapsules() != null)
+                {                
+                    newlist = pirates.OrderBy(Pirate => Pirate.Location.Distance(GameSettings.Game.GetEnemyMotherships()[0].Location)).ToList();
+                }
             }
-
+            
+            GameSettings.Game.Debug("pirates.Count PiratesPrioritization" + pirates.Count);
             return pirates;
         }
 
         public override void ExecuteStrategy()
         {
-           
+            foreach(BaseDefender BD in Participants.Cast<BaseDefender>().ToList())
+            {
+                GameSettings.Game.Debug("FireWall" + BD.Pirate.Id);
+            }
             
-            List<BaseDefender> baseDefenders = Participants.Cast<BaseDefender>().ToList();
+            List<BaseDefender> baseDefenders = new List<BaseDefender>();
 
+            if (Participants != null)
+            {
+                baseDefenders = Participants.Cast<BaseDefender>().ToList();
+                GameSettings.Game.Debug("FireWall Participants.Count: "+Participants.Count);
+            }
+            
             foreach(BaseDefender defender in baseDefenders)
             {
-                foreach (Asteroid asteroid in GameSettings.Game.GetLivingAsteroids())
-                {
-                    Mothership mothership = FieldAnalyzer.FindClosestMotherShip(defender.Pirate);
-                    if(mothership != null)
-                    {
-                        if (asteroid.GetLocation().Equals(mothership))
-                        {
-                            //For Backup
-                            int scale = (int)(asteroid.Size * 1.2);
-                            if(defender is Front)
-                            {
-                                scale = (int)(asteroid.Size * 1.8);
-                            }
-                            Pirate enemyCarrier = FieldAnalyzer.GetMostThreatningEnemyCarrier(mothership);
-                            defender.WhereToDefend = mothership.Location.Towards(enemyCarrier, scale);
-
-                        }
-                    }
-                }
                 //Backup backup = defender as Backup;
-                if (defender is Backup)
+                if(defender is Backup)
                 {
                     List<Pirate> enemyCarriers = FieldAnalyzer.HowManyCarriersNearCityCanBeDoublePushed(baseDefenders);
                     if (enemyCarriers.Count > 0)
@@ -117,8 +91,8 @@ namespace MyBot
                     if(multipleDefendersCanPushIt.Count > 1)
                     {
                         defender.PirateToPush = multipleDefendersCanPushIt[0].Pirate;
+                        defender.WhereToPush = FieldAnalyzer.DefendersWhereToPush(defender.PirateToPush, defender.Pirate.PushDistance);
                     }
-                    defender.WhereToPush = FieldAnalyzer.DefendersWhereToPush(defender.PirateToPush, defender.Pirate.PushDistance);
                 }
 
                 defender.ExecuteCommand();
