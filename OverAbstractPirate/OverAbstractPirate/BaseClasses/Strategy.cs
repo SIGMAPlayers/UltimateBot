@@ -9,11 +9,11 @@ namespace MyBot
     {
         private List<ICommand> participants;
         private FieldAnalyzer fieldAnalyzer = new FieldAnalyzer();
-
+        
         /// <summary>
         /// list of the Assigned Roles
         /// </summary>
-        protected List<ICommand> Participants { get => participants; set => participants = value;}
+        public List<ICommand> Participants { get => participants; set => participants = value;}
         /// <summary>
         /// FieldAnalyzer of that strategy
         /// </summary>

@@ -16,6 +16,7 @@ namespace MyBot
         
         public void DoTurn(PirateGame game)
         {
+            GameSettings.Game = game;
             if (game.Turn == 1)
             {
                 StrategyOrganizer strategyOrganizer = new StrategyOrganizer(strategies);

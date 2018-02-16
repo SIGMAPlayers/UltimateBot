@@ -12,6 +12,22 @@ namespace MyBot
 
         public override Pirate Protect()
         {
+            List<Pirate> enemyCarriers = new List<Pirate>();
+            foreach (Pirate enemy in GameSettings.Game.GetEnemyLivingPirates())
+            {
+                if (enemy.HasCapsule())
+                {
+                    enemyCarriers.Add(enemy);
+                }
+            }
+            if (enemyCarriers.Count > 1)
+            {
+                if(GameSettings.Game.GetEnemyMotherships().Length > 0)
+                {
+                    enemyCarriers.OrderBy(Pirate => Pirate.Location.Distance(GameSettings.Game.GetEnemyMotherships()[0].Location));
+                    return enemyCarriers[1];
+                }
+            }
             List<Pirate> enemiesByDistanceFromEnemyBase = GameSettings.Game.GetEnemyLivingPirates().ToList();
             enemiesByDistanceFromEnemyBase.OrderBy(Pirate => Pirate.Location.Distance(GameSettings.Game.GetEnemyMotherships()[0].Location));
 

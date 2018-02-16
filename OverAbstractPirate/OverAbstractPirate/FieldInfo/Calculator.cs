@@ -24,13 +24,13 @@ namespace MyBot
             Location U = target.Subtract(pirate.Location);//from pirate to target
             Location V = enemy.Location.Subtract(pirate.Location);//from pirate to enemy
 
-            double cosAngle = ((U.Col * V.Col) + (U.Row * V.Row)) / (Math.Sqrt((U.Row ^ 2) + (U.Col ^ 2)) * Math.Sqrt((V.Row ^ 2) + (V.Col ^ 2)));
+            double cosAngle = ((U.Col * V.Col) + (U.Row * V.Row)) / (System.Math.Sqrt((U.Row ^ 2) + (U.Col ^ 2)) * System.Math.Sqrt((V.Row ^ 2) + (V.Col ^ 2)));
             double radAngle = 0;
             if (cosAngle <= 1 && cosAngle >= -1)
             {
-                radAngle = Math.Acos(cosAngle);
+                radAngle = System.Math.Acos(cosAngle);
             }
-            return (int)(radAngle * (180 / Math.PI));
+            return (int)(radAngle * (180 / System.Math.PI));
         }
 
         /// <summary>

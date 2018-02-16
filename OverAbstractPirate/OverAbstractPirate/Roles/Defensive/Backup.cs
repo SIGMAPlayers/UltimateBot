@@ -47,6 +47,7 @@ namespace MyBot
 
         public override Location DefendAt()
         {
+
             Pirate enemyCarrier = null;
 
             foreach (Pirate enemy in GameSettings.Game.GetEnemyLivingPirates())

@@ -11,11 +11,15 @@ namespace MyBot
         private FieldAnalyzer fieldAnalyzer;
         private Pirate pirateToPush;
         private Location whereToPush;
+        protected AsteroidHandler asteroidHandler;
+        private Location whereToDefend;
 
         public Pirate Pirate { get => pirate; set => pirate = value; }
         public FieldAnalyzer FieldAnalyzer { get => fieldAnalyzer; set => fieldAnalyzer = value; }
         public Pirate PirateToPush { get => pirateToPush; set => pirateToPush = value; }
         public Location WhereToPush { get => whereToPush; set => whereToPush = value; }
+        public AsteroidHandler AsteroidHandler { get => AsteroidHandler; set => AsteroidHandler = value; }
+        public Location WhereToDefend { get => whereToDefend; set => whereToDefend = value; }
 
         protected BaseDefender(Pirate pirate, FieldAnalyzer fieldAnalyzer)
         {
@@ -23,6 +27,8 @@ namespace MyBot
             this.fieldAnalyzer = fieldAnalyzer;
             this.pirateToPush = null;
             this.whereToPush = null;
+            this.whereToDefend = null;
+            asteroidHandler = new AsteroidHandler();
         }
 
         /// <summary>

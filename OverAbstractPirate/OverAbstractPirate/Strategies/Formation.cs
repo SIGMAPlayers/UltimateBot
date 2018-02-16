@@ -55,7 +55,7 @@ namespace MyBot
         {
             
             FieldAnalyzer.DefineTargets(Participants.Cast<BaseAttacker>().ToList());
-
+            
             BaseAttacker.FormationComplete = FormUp();
 
             Carrier carrier = Participants.OfType<Carrier>().ToList()[0];

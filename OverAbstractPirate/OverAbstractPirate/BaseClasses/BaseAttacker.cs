@@ -45,7 +45,7 @@ namespace MyBot
                 if (this.pirate.CanPush(enemy))
                 {
                    
-                    this.pirate.Push(enemy, pirate.Location.Add(U.Multiply(-5)));
+                    this.pirate.Push(enemy, base.AdvisePush());
                     
                     GameSettings.Game.Debug("pirate " + this.pirate + " pushes " + enemy + " towards " + enemy.InitialLocation);
                     //Did push.
