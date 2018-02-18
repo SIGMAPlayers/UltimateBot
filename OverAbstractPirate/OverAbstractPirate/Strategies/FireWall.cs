@@ -13,7 +13,7 @@ namespace MyBot
             List<Pirate> newPirates = new List<Pirate>(pirates);
             //GameSettings.Game.Debug("AssignPiratesToParticipants (FireWall) pirates.Count = " + pirates.Count);
             List<ICommand> templist = new List<ICommand>();
-            if(newPirates.Count > 1)
+            if(newPirates.Count > 1 && GameSettings.Game.GetEnemyMotherships().Length == 1)
             {
                 for (int i = 0; i < newPirates.Count / 2; i++)
                 {
@@ -25,6 +25,13 @@ namespace MyBot
                 for (int i = 0; i < newPirates.Count; i++)
                 {
                     templist.Add(new Backup(newPirates[i], new FieldAnalyzer()));
+                }
+            }
+            else if(GameSettings.Game.GetEnemyMotherships().Length > 1)
+            {
+                foreach(Pirate pirate in newPirates)
+                {
+                    templist.Add(new Backup(pirate, new FieldAnalyzer()));
                 }
             }
             else
@@ -92,6 +99,43 @@ namespace MyBot
                     {
                         defender.PirateToPush = multipleDefendersCanPushIt[0].Pirate;
                         defender.WhereToPush = FieldAnalyzer.DefendersWhereToPush(defender.PirateToPush, defender.Pirate.PushDistance);
+                    }
+                }
+
+                if(GameSettings.Game.GetEnemyMotherships().Length > 1)
+                {
+                    List<ICommand> fakeParticipant = new List<ICommand>(Participants);
+
+                    foreach(Mothership mothership in GameSettings.Game.GetEnemyMotherships())
+                    {   
+                        for (int i = 0; i < fakeParticipant.Count / GameSettings.Game.GetEnemyMotherships().Length; i++)
+                        {
+                            Backup backup = fakeParticipant[i] as Backup;
+                            Front front = fakeParticipant[i] as Front;
+                            if (backup != null)
+                            {
+                                GameSettings.Game.Debug("Entered backup");
+                                int scale = (int)(500 * 1.5);
+                                Capsule capsule = FieldAnalyzer.GetClosestEnemyCapsuleToMothership(mothership);
+                                if(capsule != null)
+                                {
+                                    backup.WhereToDefend = mothership.Location.Towards(capsule.GetLocation(), scale - 600);
+                                    GameSettings.Game.Debug("Backup WhereToDefend = " + backup.WhereToDefend);
+                                }
+                            }
+                            else if (front != null)
+                            {
+                                int scale = (int)(500 * 1.5);
+                                Capsule capsule = FieldAnalyzer.GetClosestEnemyCapsuleToMothership(mothership);
+                                if (capsule != null)
+                                {
+                                    GameSettings.Game.Debug("Entered front, capsule = " + capsule.GetLocation());
+                                    front.WhereToDefend = mothership.Location.Towards(capsule.GetLocation(), scale);
+                                    
+                                    GameSettings.Game.Debug("Front WhereToDefend = " + front.WhereToDefend);
+                                }
+                            }
+                        }
                     }
                 }
 

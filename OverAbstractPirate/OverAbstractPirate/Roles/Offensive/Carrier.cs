@@ -23,7 +23,16 @@ namespace MyBot
         /// </summary>
         public void HoldYourPosition()
         {
-            this.AttackersTryPush();
+           if(!this.AttackersTryPush())
+            {
+                foreach(Wormhole w in GameSettings.Game.GetInactiveWormholes())
+                {
+                    if(this.Pirate.InRange(w,w.WormholeRange))
+                    {
+                        this.Pirate.Sail(w.Location.Towards(Destination,w.WormholeRange));
+                    }
+                }
+            }
         }
         protected override void SailToPosition()
         {

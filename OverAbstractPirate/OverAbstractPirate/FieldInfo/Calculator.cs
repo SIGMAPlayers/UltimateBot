@@ -74,39 +74,100 @@ namespace MyBot
         // Same as before, but now consider turns too
         public Location PredictLocationByMovement(SpaceObject obj, int turns)
         {
-            List<SpaceObject> spaceObjects = null;
-            Location currentLocation = obj.Location;
+            List<SpaceObject> spaceObjects = new List<SpaceObject>() ;
+            Location currentLocation = null;
+            if (obj.Location!=null)
+            {
+                currentLocation = obj.Location;
+                GameSettings.Game.Debug("obl location != null" + currentLocation);
+            }
+            else
+            {
+                GameSettings.Game.Debug("obl location == null");
+                return null;
+            }
             Location previousLocation = null;
+            // Location initialLocation = null;
 
             // First, check the type of obj
             if (obj is Pirate)
             {
-                spaceObjects.AddRange(GameSettings.GameList[GameSettings.GameList.Count - 2].GetEnemyLivingPirates().ToList());
+                Pirate pirate = obj as Pirate;
+                foreach (Pirate p in GameSettings.Game.GetEnemyLivingPirates())
+                {
+                    if (pirate.Equals(p))
+                    {
+                        
+                        previousLocation = GameSettings.LastGameEnemyPirates[pirate.Id];
+                        // initialLocation = p.InitialLocation;
+                        // GameSettings.Game.Debug("pervious location "+previousLocation);
+                    }
+                }
+                
+                foreach (Pirate p in GameSettings.Game.GetMyLivingPirates())
+                {
+                    if (pirate.Equals(p))
+                    {
+                        previousLocation = GameSettings.LastGameMyLivingPirates[p.Id];
+                        // initialLocation = p.InitialLocation;
+                        // GameSettings.Game.Debug("pervious location "+previousLocation);
+                    }
+                    
+                }
+                // spaceObjects.AddRange(GameSettings.LastGameMyLivingPirates[GameSettings..Count - 2].GetEnemyLivingPirates().ToList());
             }
             else if (obj is Asteroid)
             {
-                spaceObjects.AddRange(GameSettings.GameList[GameSettings.GameList.Count - 2].GetLivingAsteroids().ToList());
+                Asteroid asteroid = obj as Asteroid;
+
+                previousLocation = GameSettings.LastGameLivingAsteroids[asteroid.Id];
+                // initialLocation = asteroid.InitialLocation;
+                // GameSettings.Game.Debug("pervious location "+previousLocation);
+            }
+            else if (obj is Wormhole)
+            {
+                Wormhole wormhole = obj as Wormhole;
+                
+                previousLocation = GameSettings.LastGameWormholes[wormhole.Id];
+                // initialLocation = wormhole.InitialLocation;
+                // GameSettings.Game.Debug("pervious location "+previousLocation);
+                
+                // spaceObjects.AddRange(GameSettings.GameList[GameSettings.GameList.Count - 2].GetLivingAsteroids().ToList());
             }
             else return null;
 
-            foreach (SpaceObject movingObj in spaceObjects) // Check on every SpaceObject on the list defined before:
+            /*foreach (SpaceObject movingObj in spaceObjects) // Check on every SpaceObject on the list defined before:
             {
                 if (movingObj.Id == obj.Id) // Is it the original object?
                 {
                     previousLocation = movingObj.Location; // Then get it's past Location! put it in "previousLocation"
-                    break;
+                    // break;
                 }
-            }
+            }*/
 
             // Now, calculate it's predicted Location
-            Location substraction = currentLocation.Subtract(previousLocation);
-            for (int i = 0; i < turns; i++)
+            GameSettings.Game.Debug("boo");
+            if (previousLocation != null)
             {
-                currentLocation.Add(substraction);
-
+                GameSettings.Game.Debug("previousLocation != null");
+                Location substraction = currentLocation.Subtract(previousLocation);
+                Location nextLocation = currentLocation;
+                // GameSettings.Game.Debug("movment "+substraction);
+                for (int i = 0; i < turns; i++)
+                {
+                    nextLocation = nextLocation.Add(substraction);
+                }
+                // GameSettings.Game.Debug("next turns location "+nextLocation);
+                return nextLocation;
             }
-
-            return currentLocation;
+            else
+            {
+                GameSettings.Game.Debug("previousLocation == null");
+                return null;
+            }
+            
+            
+            
 
         }
 
@@ -115,7 +176,7 @@ namespace MyBot
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public Location PredictLocationByMovement(SpaceObject obj)
+        /*public Location PredictLocationByMovement(SpaceObject obj)
         {
             List<SpaceObject> spaceObjects = null;
             Location currentLocation = obj.Location;
@@ -144,7 +205,7 @@ namespace MyBot
             // Now, calculate it's predicted Location
             return currentLocation.Add(currentLocation.Subtract(previousLocation));
 
-        }
+        }*/
 
         public Location PredictLocationAfterPush(SpaceObject obj, Location pushTo, Location moveTo)
         {

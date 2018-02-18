@@ -94,7 +94,10 @@ namespace MyBot
             int PiratesInPosition = 0;
             foreach(BaseAttacker attacker in Participants)
             {
-                PiratesInFormation++;
+                if(attacker.Pirate.IsAlive())
+                {
+                    PiratesInFormation++;    
+                }
                 
                 if (attacker.Pirate.Distance(attacker.PositionInFormation) < 10)
                 {

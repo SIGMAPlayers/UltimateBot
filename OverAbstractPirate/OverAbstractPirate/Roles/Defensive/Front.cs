@@ -12,22 +12,6 @@ namespace MyBot
 
         public override Pirate Protect()
         {
-            List<Pirate> enemyCarriers = new List<Pirate>();
-            foreach (Pirate enemy in GameSettings.Game.GetEnemyLivingPirates())
-            {
-                if (enemy.HasCapsule())
-                {
-                    enemyCarriers.Add(enemy);
-                }
-            }
-            if (enemyCarriers.Count > 1)
-            {
-                if(GameSettings.Game.GetEnemyMotherships().Length > 0)
-                {
-                    enemyCarriers.OrderBy(Pirate => Pirate.Location.Distance(GameSettings.Game.GetEnemyMotherships()[0].Location));
-                    return enemyCarriers[1];
-                }
-            }
             List<Pirate> enemiesByDistanceFromEnemyBase = GameSettings.Game.GetEnemyLivingPirates().ToList();
             enemiesByDistanceFromEnemyBase.OrderBy(Pirate => Pirate.Location.Distance(GameSettings.Game.GetEnemyMotherships()[0].Location));
 
@@ -62,39 +46,42 @@ namespace MyBot
         public override Location DefendAt()
         {
             Pirate enemyCarrier = null;
-
-            foreach (Pirate enemy in GameSettings.Game.GetEnemyLivingPirates())
-            {
-                if (enemy.Capsule != null)
-                    enemyCarrier = enemy;
-            }
-
-            int scale = (int)(500 * 1.5);
             Location guardLocation;
-            if(GameSettings.Game.GetEnemyMotherships().Length > 0)
+
+            if (WhereToDefend == null)
             {
-                if (enemyCarrier != null)
+                foreach (Pirate enemy in GameSettings.Game.GetEnemyLivingPirates())
                 {
-                    guardLocation = GameSettings.Game.GetEnemyMotherships()[0].Location.Towards(enemyCarrier, scale);
-                    //GameSettings.Game.Debug("Location from ProtectFromCarrier" + guardLocation);
-                    return guardLocation;
+                    if (enemy.Capsule != null)
+                        enemyCarrier = enemy;
                 }
-    
-                foreach (Wormhole wormhole in GameSettings.Game.GetAllWormholes())
+
+                int scale = (int)(500 * 1.5);
+                if (GameSettings.Game.GetEnemyMotherships().Length > 0)
                 {
-                    if (wormhole.Distance(pirate) < 750)
+                    if (enemyCarrier != null)
                     {
-                        guardLocation = wormhole.GetLocation();
+                        guardLocation = GameSettings.Game.GetEnemyMotherships()[0].Location.Towards(enemyCarrier, scale);
+                        //GameSettings.Game.Debug("Location from ProtectFromCarrier" + guardLocation);
                         return guardLocation;
                     }
                 }
-    
+
                 guardLocation = GameSettings.Game.GetEnemyMotherships()[0].Location.Towards(GameSettings.Game.GetEnemyCapsules()[0], scale);
                 //GameSettings.Game.Debug("Location from ProtectFromCarrier" + guardLocation);
                 return guardLocation;
             }
             
-            return new Location(0,0);
+            foreach (Wormhole wormhole in GameSettings.Game.GetAllWormholes())
+            {
+                if (wormhole.Distance(pirate) < 750)
+                {
+                    guardLocation = wormhole.GetLocation();
+                    return guardLocation;
+                }
+            }
+
+            return WhereToDefend;
             
         }
 
@@ -110,8 +97,8 @@ namespace MyBot
                 if (pirate.CanPush(asteroid))
                 {
                     GameSettings.Game.Debug("Pirate in Backup = " + pirate);
-                    GameSettings.Game.Debug("Location in Backup = " + asteroidHandler.FindBestLocationToPushTo());
-                    pirate.Push(asteroid, asteroidHandler.FindBestLocationToPushTo());
+                    GameSettings.Game.Debug("Location in Backup = " + asteroidHandler.FindBestLocationToPushTo(this.Pirate));
+                    pirate.Push(asteroid, asteroidHandler.FindBestLocationToPushTo(this.Pirate));
                     return true;
                 }
             }

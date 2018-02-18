@@ -7,7 +7,7 @@ namespace MyBot
 {
     public class BodyGuard : BaseAttacker
     {
-        Carrier GuardedCarrier;
+        public Carrier GuardedCarrier;
         public BodyGuard()
         {
             this.fieldAnalyzer = new FieldAnalyzer();
@@ -49,8 +49,13 @@ namespace MyBot
         protected override void SailToPosition()
         {
             if (!this.AttackersTryPush())
-            {
-                this.Pirate.Sail(this.PositionInFormation);
+            { 
+                if(PositionInFormation == this.Destination)
+                {
+                    this.SailToTarget();
+                }
+                else
+                    this.Pirate.Sail(this.PositionInFormation);
             }
         }
 
