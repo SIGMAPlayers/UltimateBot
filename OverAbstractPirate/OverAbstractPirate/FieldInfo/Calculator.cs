@@ -74,9 +74,9 @@ namespace MyBot
         // Same as before, but now consider turns too
         public Location PredictLocationByMovement(SpaceObject obj, int turns)
         {
-            List<SpaceObject> spaceObjects = new List<SpaceObject>() ;
+            List<SpaceObject> spaceObjects = new List<SpaceObject>();
             Location currentLocation = null;
-            if (obj.Location!=null)
+            if (obj.Location != null)
             {
                 currentLocation = obj.Location;
                 GameSettings.Game.Debug("obl location != null" + currentLocation);
@@ -97,13 +97,13 @@ namespace MyBot
                 {
                     if (pirate.Equals(p))
                     {
-                        
+
                         previousLocation = GameSettings.LastGameEnemyPirates[pirate.Id];
                         // initialLocation = p.InitialLocation;
                         // GameSettings.Game.Debug("pervious location "+previousLocation);
                     }
                 }
-                
+
                 foreach (Pirate p in GameSettings.Game.GetMyLivingPirates())
                 {
                     if (pirate.Equals(p))
@@ -112,7 +112,7 @@ namespace MyBot
                         // initialLocation = p.InitialLocation;
                         // GameSettings.Game.Debug("pervious location "+previousLocation);
                     }
-                    
+
                 }
                 // spaceObjects.AddRange(GameSettings.LastGameMyLivingPirates[GameSettings..Count - 2].GetEnemyLivingPirates().ToList());
             }
@@ -127,11 +127,11 @@ namespace MyBot
             else if (obj is Wormhole)
             {
                 Wormhole wormhole = obj as Wormhole;
-                
+
                 previousLocation = GameSettings.LastGameWormholes[wormhole.Id];
                 // initialLocation = wormhole.InitialLocation;
                 // GameSettings.Game.Debug("pervious location "+previousLocation);
-                
+
                 // spaceObjects.AddRange(GameSettings.GameList[GameSettings.GameList.Count - 2].GetLivingAsteroids().ToList());
             }
             else return null;
@@ -165,10 +165,6 @@ namespace MyBot
                 GameSettings.Game.Debug("previousLocation == null");
                 return null;
             }
-            
-            
-            
-
         }
 
         /// <summary>
