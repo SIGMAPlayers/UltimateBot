@@ -19,9 +19,9 @@ namespace MyBot
             PiratesToDeliver = GameSettings.Game.GetMyLivingPirates().ToList();
             this.strategies = strategies;
             fieldAnalyzer = new FieldAnalyzer();
-            
+
             PiratesForEveryStrategy = new List<List<Pirate>>();
-            GameSettings.Game.Debug("Strategies Count == "+ strategies.Count);
+            GameSettings.Game.Debug("Strategies Count == " + strategies.Count);
         }
 
         public void SetAssignationRatio()
@@ -29,33 +29,33 @@ namespace MyBot
             //For now
             assignationRatio = 1.0 / (double)strategies.Count;
         }
-        
+
         public void Prioritizer()
         {
             SetAssignationRatio();
             List<Pirate> currentPirates = PiratesToDeliver;
             List<Pirate> specificPiratesForAStrategy = new List<Pirate>();
-            int numberOfPiratesPerStrategy = (int)(piratesToDeliver.Count()*assignationRatio);
-            
-            foreach(Strategy s in strategies)
+            int numberOfPiratesPerStrategy = (int)(piratesToDeliver.Count() * assignationRatio);
+
+            foreach (Strategy s in strategies)
             {
                 currentPirates = s.PiratesPrioritization(currentPirates);
                 specificPiratesForAStrategy = currentPirates.GetRange(0, numberOfPiratesPerStrategy);
                 PiratesForEveryStrategy.Add(specificPiratesForAStrategy);
                 currentPirates.RemoveRange(0, numberOfPiratesPerStrategy);
             }
-            
-            if(currentPirates.Count > 0)
+
+            if (currentPirates.Count > 0)
             {
-                foreach(Pirate p in currentPirates)
+                foreach (Pirate p in currentPirates)
                 {
                     PiratesForEveryStrategy[0].Add(p);
                 }
             }
-        } 
+        }
         public void Assigner()
         {
-            for(int i = 0; i < strategies.Count; i++)
+            for (int i = 0; i < strategies.Count; i++)
             {
                 strategies[i].AssignPiratesToParticipants(PiratesForEveryStrategy[i]);
             }
@@ -65,25 +65,25 @@ namespace MyBot
         /// Send all available pirates to every strategy
         /// </summary>
         public void DeliverPirates()
-        {     
+        {
             //Has 8 pirates
             List<Pirate> currentPirates = PiratesToDeliver;
             List<Pirate> specificPiratesForAStrategy = new List<Pirate>();
-            int numberOfPiratesPerStrategy = (int)(piratesToDeliver.Count()*assignationRatio);
-            
-           
-            if(PiratesToDeliver.Count > 0)
+            int numberOfPiratesPerStrategy = (int)(piratesToDeliver.Count() * assignationRatio);
+
+
+            if (PiratesToDeliver.Count > 0)
             {
                 GameSettings.Game.Debug("piratesToDeliver.Count()*assignationRatio = " + numberOfPiratesPerStrategy);
-                if(PiratesForEveryStrategy.Count == 0)
+                if (PiratesForEveryStrategy.Count == 0)
                 {
-                    Prioritizer();    
+                    Prioritizer();
                 }
-                
+
                 Assigner();
-                
+
             }
-           
+
         }
     }
 }

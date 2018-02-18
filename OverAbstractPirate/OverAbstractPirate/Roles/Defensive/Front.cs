@@ -26,6 +26,12 @@ namespace MyBot
             return null;
         }
 
+        //   public override void BeHeavyInsteadOfMe(BaseAttacker me)
+        // {
+
+        // this.pirate.SwapStates(me.Pirate);
+        // }
+
         public override void ExecuteCommand()
         {
             Pirate protectFrom = Protect();
@@ -46,40 +52,43 @@ namespace MyBot
         public override Location DefendAt()
         {
             Pirate enemyCarrier = null;
-
-            foreach (Pirate enemy in GameSettings.Game.GetEnemyLivingPirates())
-            {
-                if (enemy.Capsule != null)
-                    enemyCarrier = enemy;
-            }
-
-            int scale = (int)(500 * 1.5);
             Location guardLocation;
-            if(GameSettings.Game.GetEnemyMotherships().Length > 0)
+
+            if (WhereToDefend == null)
             {
-                if (enemyCarrier != null)
+                foreach (Pirate enemy in GameSettings.Game.GetEnemyLivingPirates())
                 {
-                    guardLocation = GameSettings.Game.GetEnemyMotherships()[0].Location.Towards(enemyCarrier, scale);
-                    //GameSettings.Game.Debug("Location from ProtectFromCarrier" + guardLocation);
-                    return guardLocation;
+                    if (enemy.Capsule != null)
+                        enemyCarrier = enemy;
                 }
-    
-                foreach (Wormhole wormhole in GameSettings.Game.GetAllWormholes())
+
+                int scale = (int)(500 * 1.5);
+                if (GameSettings.Game.GetEnemyMotherships().Length > 0)
                 {
-                    if (wormhole.Distance(pirate) < 750)
+                    if (enemyCarrier != null)
                     {
-                        guardLocation = wormhole.GetLocation();
+                        guardLocation = GameSettings.Game.GetEnemyMotherships()[0].Location.Towards(enemyCarrier, scale);
+                        //GameSettings.Game.Debug("Location from ProtectFromCarrier" + guardLocation);
                         return guardLocation;
                     }
                 }
-    
+
                 guardLocation = GameSettings.Game.GetEnemyMotherships()[0].Location.Towards(GameSettings.Game.GetEnemyCapsules()[0], scale);
                 //GameSettings.Game.Debug("Location from ProtectFromCarrier" + guardLocation);
                 return guardLocation;
             }
-            
-            return new Location(0,0);
-            
+
+            foreach (Wormhole wormhole in GameSettings.Game.GetAllWormholes())
+            {
+                if (wormhole.Distance(pirate) < 750)
+                {
+                    guardLocation = wormhole.GetLocation();
+                    return guardLocation;
+                }
+            }
+
+            return WhereToDefend;
+
         }
 
         /// <summary>
@@ -94,8 +103,8 @@ namespace MyBot
                 if (pirate.CanPush(asteroid))
                 {
                     GameSettings.Game.Debug("Pirate in Backup = " + pirate);
-                    GameSettings.Game.Debug("Location in Backup = " + asteroidHandler.FindBestLocationToPushTo());
-                    pirate.Push(asteroid, asteroidHandler.FindBestLocationToPushTo());
+                    GameSettings.Game.Debug("Location in Backup = " + asteroidHandler.FindBestLocationToPushTo(this.Pirate));
+                    pirate.Push(asteroid, asteroidHandler.FindBestLocationToPushTo(this.Pirate));
                     return true;
                 }
             }
@@ -139,7 +148,7 @@ namespace MyBot
                         int cols = GameSettings.Game.Cols;
                         int rows = GameSettings.Game.Rows;
                         //Push to the center for now
-                        if(pirate.CanPush(wormhole))
+                        if (pirate.CanPush(wormhole))
                         {
                             pirate.Push(wormhole, new Location(rows / 2, cols / 2));
                             GameSettings.Game.Debug("Pirate pushed wormhole");

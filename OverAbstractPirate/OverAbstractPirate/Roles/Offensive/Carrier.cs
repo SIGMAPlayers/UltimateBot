@@ -23,40 +23,60 @@ namespace MyBot
         /// </summary>
         public void HoldYourPosition()
         {
-            this.AttackersTryPush();
+            if (!this.AttackersTryPush())
+            {
+                foreach (Wormhole w in GameSettings.Game.GetInactiveWormholes())
+                {
+                    if (this.Pirate.InRange(w, w.WormholeRange))
+                    {
+                        this.Pirate.Sail(w.Location.Towards(Destination, w.WormholeRange));
+                    }
+                }
+            }
         }
         protected override void SailToPosition()
         {
             HoldYourPosition();
         }
-        
-        
+
+
 
         public override void ExecuteCommand()
         {
-           if(fieldAnalyzer.UnderThreat(this.Pirate,1200, this.Destination).Count == 0)
-           {
-            if(fieldAnalyzer.IsFormationGuardsCloseToTheCarrier(myform,this))
+            if (fieldAnalyzer.UnderThreat(this.Pirate, 1200, this.Destination).Count == 0)
             {
-                if(FormationComplete)
+                //   if(this.Pirate.StateName.Equals("normal"))
                 {
-                    this.SailToTarget();
+                    if (fieldAnalyzer.IsFormationGuardsCloseToTheCarrier(myform, this))
+                    {
+
+                        if (FormationComplete)
+                        {
+                            this.SailToTarget();
+                        }
+                        else
+                        {
+                            this.HoldYourPosition();
+                        }
+                    }
+
+                    else
+                    {
+
+                        this.SailToTarget();
+                    }
                 }
-                else
-                {
-                    this.HoldYourPosition();
-                }
+                //   else
+                //   {
+                //       //code that switches this state with a normal state ... see SwapStatesWithAVacantDefender in FieldAnalyzer...
+
+                //   }
             }
             else
             {
-                this.SailToTarget();    
+                this.SailToTarget();
             }
-           }
-           else
-           {
-               this.SailToTarget();
-           }
-            
+
         }
 
     }

@@ -7,7 +7,7 @@ namespace MyBot
 {
     public class BodyGuard : BaseAttacker
     {
-        Carrier GuardedCarrier;
+        public Carrier GuardedCarrier;
         public BodyGuard()
         {
             this.fieldAnalyzer = new FieldAnalyzer();
@@ -20,17 +20,17 @@ namespace MyBot
         public void assignCarrier(Carrier c)
         {
             GuardedCarrier = c;
-           
+
             GameSettings.Game.Debug("Guarded carrier is ===> " + c.Pirate.Id);
         }
 
         public override void ExecuteCommand()
         {
-            if(this.TargetEnemy == null)
+            if (this.TargetEnemy == null)
             {
                 if (FormationComplete)
                 {
-                    GameSettings.Game.Debug("Formation Clomlete lets sail to the target ==> "+ this.Destination);
+                    GameSettings.Game.Debug("Formation Clomlete lets sail to the target ==> " + this.Destination);
                     this.SailToTarget();
                 }
                 else
@@ -43,14 +43,19 @@ namespace MyBot
             {
                 this.TargetedPushing(GuardedCarrier);
             }
-            
+
         }
 
         protected override void SailToPosition()
         {
             if (!this.AttackersTryPush())
             {
-                this.Pirate.Sail(this.PositionInFormation);
+                if (PositionInFormation == this.Destination)
+                {
+                    this.SailToTarget();
+                }
+                else
+                    this.Pirate.Sail(this.PositionInFormation);
             }
         }
 

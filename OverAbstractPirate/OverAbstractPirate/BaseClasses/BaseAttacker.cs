@@ -5,7 +5,7 @@ using Pirates;
 
 namespace MyBot
 {
-    public abstract class BaseAttacker : ICommand
+    public abstract class BaseAttacker : BaseCommand
     {
         private Pirate pirate;
         private Pirate targetEnemy;
@@ -13,22 +13,44 @@ namespace MyBot
         private Location positionInFormation;
         private static bool formationComplete;
         public FieldAnalyzer fieldAnalyzer;
-        
 
 
+        public List<MapObject> BestWay { get; set; }
         public Pirate Pirate { get => pirate; set => pirate = value; }
         public Pirate TargetEnemy { get => targetEnemy; set => targetEnemy = value; }
         public Location Destination { get => destination; set => destination = value; }
         public Location PositionInFormation { get => positionInFormation; set => positionInFormation = value; }
         public static bool FormationComplete { get => formationComplete; set => formationComplete = value; }
+        public MapObject GoingTo;
 
-        public abstract void ExecuteCommand();
+        public BaseAttacker()
+        {
+            fieldAnalyzer = new FieldAnalyzer();
+            targetEnemy = null;
+            destination = null;
+            positionInFormation = null;
+            formationComplete = false;
+        }
+
+        public BaseAttacker(Pirate pirate)
+        {
+            fieldAnalyzer = new FieldAnalyzer();
+            targetEnemy = null;
+            destination = null;
+            positionInFormation = null;
+            formationComplete = false;
+            this.pirate = pirate;
+        }
+
+        //public abstract void ExecuteCommand();
         protected abstract void SailToPosition();
+
         protected void SailToTarget()
         {
             if (!this.AttackersTryPush())
             {
-                this.Pirate.Sail(Destination);
+                GoingTo = FindBestWay(this.Pirate, Destination);
+                this.Pirate.Sail(GoingTo.GetLocation());
             }
         }
 
@@ -43,35 +65,35 @@ namespace MyBot
                 // Check if the pirate can push the enemy.
                 if (this.pirate.CanPush(enemy))
                 {
-                   
+
                     this.pirate.Push(enemy, pirate.Location.Add(U.Multiply(-5)));
-                    
+
                     GameSettings.Game.Debug("pirate " + this.pirate + " pushes " + enemy + " towards " + enemy.InitialLocation);
                     //Did push.
                     return true;
                 }
-                
+
             }
-            foreach(Wormhole w in GameSettings.Game.GetAllWormholes())
+            foreach (Wormhole w in GameSettings.Game.GetAllWormholes())
             {
                 foreach (Pirate enemy in GameSettings.Game.GetEnemyLivingPirates())
                 {
                     // Check if the pirate can push the enemy.
                     if (this.pirate.CanPush(w) && enemy.InRange(w, this.pirate.PushDistance))
                     {
-                       
+
                         this.pirate.Push(w, enemy.Location);
-                        
+
                         GameSettings.Game.Debug("pirate " + this.pirate + " pushes " + enemy + " towards " + enemy.InitialLocation);
                         //Did push.
                         return true;
                     }
-                    
+
                 }
-                 if (this.pirate.CanPush(w) && GameSettings.Game.GetEnemyCapsules().Length > 0)
+                if (this.pirate.CanPush(w) && GameSettings.Game.GetMyMotherships().Length > 0)
                 {
                     // Push asteroid!
-                    this.pirate.Push(w, GameSettings.Game.GetEnemyCapsules()[0]);
+                    this.pirate.Push(w, GameSettings.Game.GetMyMotherships()[0]);
 
                     // Print a message
                     //GameSettings.Game.Debug("pirate " + pirate + " pushes " + asteroid + " towards " + GameSettings.Game.GetEnemyCapsules()[0]);
@@ -79,21 +101,21 @@ namespace MyBot
                     // Did push
                     return true;
                 }
+
             }
+            AsteroidHandler AH = new AsteroidHandler();
             foreach (Asteroid asteroid in GameSettings.Game.GetLivingAsteroids())
             {
                 // Check if the pirate can push the asteroid
-                if (this.pirate.CanPush(asteroid) && GameSettings.Game.GetEnemyCapsules().Length > 0)
+                if (this.pirate.CanPush(asteroid))
                 {
-                    // Push asteroid!
-                    this.pirate.Push(asteroid, GameSettings.Game.GetEnemyCapsules()[0]);
-
-                    // Print a message
-                    //GameSettings.Game.Debug("pirate " + pirate + " pushes " + asteroid + " towards " + GameSettings.Game.GetEnemyCapsules()[0]);
-
-                    // Did push
-                    return true;
+                    if (this.pirate.CanPush(asteroid))
+                    {
+                        this.pirate.Push(asteroid, AH.FindBestLocationToPushTo(this.Pirate));
+                        return true;
+                    }
                 }
+
             }
             // Didn't push.
             return false;
@@ -120,5 +142,6 @@ namespace MyBot
                 this.pirate.Sail(carrier.pirate.Location.Towards(targetEnemy, this.pirate.PushRange * 2));
         }
         #endregion
+
     }
 }

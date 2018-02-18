@@ -48,6 +48,9 @@
     <Compile Include="BaseClasses\BaseCommand.cs" />
     <Compile Include="FieldInfo\Calculator.cs" />
     <Compile Include="FieldInfo\FieldAnalyzer.cs" />
+    <Compile Include="Roles\Defensive\DeathBallDefeneder.cs" />
+    <Compile Include="Roles\Offensive\DeathBallAttacker.cs" />
+    <Compile Include="Strategies\DeathBall.cs" />
     <Compile Include="Strategies\FireWall.cs" />
     <Compile Include="Strategies\Formation.cs" />
     <Compile Include="Roles\Defensive\Backup.cs" />
@@ -62,6 +65,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="BaseClasses\Strategy.cs" />
     <Compile Include="FieldInfo\StrategyOrganizer.cs" />
+    <Compile Include="Strategies\WormholeStrategy.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

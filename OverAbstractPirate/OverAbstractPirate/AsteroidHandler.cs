@@ -15,8 +15,9 @@ namespace MyBot
         /// Check the most crowded place to push the astroid to
         /// </summary>
         /// <returns></returns>
-        public Location FindBestLocationToPushTo()
+        public Location FindBestLocationToPushTo(Pirate Push1)
         {
+            Asteroid ClosestAstroid;
             if (GameSettings.Game.GetEnemyLivingPirates().Length == 0) // If there isn't any living enemy pirate
             {
                 if (GameSettings.Game.GetEnemyMotherships().Length > 0) // If there is an enemy motherShip
@@ -25,9 +26,15 @@ namespace MyBot
                     if (mothership != null)
                         return mothership.GetLocation(); // Push to enemy mothership
                 }
-                else return new Location (0,0); // For no errors purpose...
+                else return new Location(0, 0); // For no errors purpose...
             }
-                
+            else if (GameSettings.Game.GetLivingAsteroids().Length >= 2)
+            {
+                ClosestAstroid = GameSettings.Game.GetLivingAsteroids().ToList().OrderBy(Asteroid => Asteroid.Distance(Push1)).ToList()[1];
+
+                return ClosestAstroid.Location;
+            }
+
             Location bestLocation = null;
             int maxEnemies = 0;
             int current = 0;
