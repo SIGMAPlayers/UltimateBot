@@ -370,7 +370,7 @@ namespace MyBot
         /// <returns></returns>
         public bool CheckWhetherEnemyIsCloseToMeAfterPush (BaseAttacker attacker, Pirate enemy)
         {
-            Location enemyGoingTo = calculator.PredictLocationByMovement(enemy);
+            Location enemyGoingTo = calculator.PredictLocationByMovement(enemy, 1);
             Location pushTo = calculator.PredictLocationAfterPush(attacker.Pirate, attacker.Destination, attacker.Destination);
             Pirate newEnemy = new Pirate();
             newEnemy.Location = pushTo;

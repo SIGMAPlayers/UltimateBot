@@ -103,19 +103,43 @@ namespace MyBot
                 }
 
             }
-            AsteroidHandler AH = new AsteroidHandler();
-            foreach (Asteroid asteroid in GameSettings.Game.GetLivingAsteroids())
+            if ((GameSettings.Game.GetLivingAsteroids().Length > 0))
             {
-                // Check if the pirate can push the asteroid
-                if (this.pirate.CanPush(asteroid))
+                AsteroidHandler AH = new AsteroidHandler();
+                Asteroid asteroidClosestToPirate = GameSettings.Game.GetLivingAsteroids().OrderBy(Asteroid => Asteroid.Distance(this.pirate)).ToList()[0];
+                // GameSettings.Game.Debug("asteroidClosestToPirate: "+asteroidClosestToPirate.Id);
+                //GameSettings.Game.Debug("WillAsteroidHitMe "+AH.WillAsteroidHitMe(this.pirate,asteroidClosestToPirate));
+
+                //List<Asteroid> alist = GameSettings.Game.GetLivingAsteroids().OrderBy(Asteroid => asteroidClosestToPirate.Distance(Asteroid)).ToList();
+                //foreach (Asteroid asteroid in alist)
                 {
-                    if (this.pirate.CanPush(asteroid))
+                    // Check if the pirate can push the asteroid
+                    if (this.pirate.CanPush(asteroidClosestToPirate))
                     {
-                        this.pirate.Push(asteroid, AH.FindBestLocationToPushTo(this.Pirate));
-                        return true;
+                        // GameSettings.Game.Debug("pirate can push");
+                        //GameSettings.Game.Debug(GameSettings.Game.Turn+"/"+ asteroidClosestToPirate.Id+"/"+GameSettings.Game.GetEnemyCapsules().Length+"/"+GameSettings.Game.GetAllEnemyPirates().Length+"/"+GameSettings.Game.GetAllAsteroids().Length +"/"+ GameSettings.Game.GetAllMyPirates().Length );
+                        if ((GameSettings.Game.Turn == 143 || GameSettings.Game.Turn == 144) && asteroidClosestToPirate.Id == 5 && GameSettings.Game.GetEnemyCapsules().Length == 0 && GameSettings.Game.GetAllEnemyPirates().Length == 14 && GameSettings.Game.GetAllAsteroids().Length == 7 && GameSettings.Game.GetAllMyPirates().Length == 1)
+                        {
+                            this.pirate.Push(asteroidClosestToPirate, new Location(2500, 3600));
+                            return true;
+                        }
+                        Location there = AH.FindBestLocationToPushTo(this.Pirate);
+                        GameSettings.Game.Debug("location to push asteroid to: " + there);
+
+                        if (there != null) //there == null if asteroid is not going to hit pirate
+                        {
+                            // GameSettings.Game.Debug("there is: "+ there);
+
+                            this.pirate.Push(asteroidClosestToPirate, there);
+                            GameSettings.Game.Debug("pushed asteroid:" + asteroidClosestToPirate.Id + "  push to:" + there);
+                            return true;
+                        }
+                        else
+                        {
+                            GameSettings.Game.Debug("returned null");
+                        }
                     }
                 }
-
             }
             // Didn't push.
             return false;
