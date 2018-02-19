@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="AsteroidHandler.cs" />
     <Compile Include="BaseClasses\BaseCommand.cs" />
+    <Compile Include="Communicator.cs" />
     <Compile Include="FieldInfo\Calculator.cs" />
     <Compile Include="FieldInfo\FieldAnalyzer.cs" />
     <Compile Include="Roles\Defensive\DeathBallDefeneder.cs" />
