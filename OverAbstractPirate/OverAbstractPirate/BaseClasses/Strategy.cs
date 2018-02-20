@@ -9,6 +9,7 @@ namespace MyBot
         private List<ICommand> participants;
         private FieldAnalyzer fieldAnalyzer;
 
+
         public Strategy()
         {
             fieldAnalyzer = new FieldAnalyzer();
@@ -37,6 +38,11 @@ namespace MyBot
         /// </summary>
         /// <param name="pirates">the pirate that are going to take part in this strategy</param>
         public abstract void AssignPiratesToParticipants(List<Pirate> pirates);
+
+        ///<summery>
+        /// Checks that needs to be done before the Execute, when possible, can "override" execute command
+        ///</summery>
+        public abstract void BeforeExecute();//do something Before the Execute, called in the begging of Execute ExecuteCommand
 
         /// <summary>
         /// the main mind of the strategy. uses the FieldAnalyzer to make a decision

@@ -36,6 +36,7 @@ namespace MyBot
                     enemyCarrier = enemy;
             }
 
+            GameSettings.Game.Debug("WhereToDefend " + WhereToDefend);
             if (WhereToDefend == null)
             {
                 //Take care of a few citys or Ben will punch me!

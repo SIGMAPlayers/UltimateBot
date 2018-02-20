@@ -37,25 +37,6 @@ namespace MyBot
             return threatingPirates;
         }
 
-        //The next method gets a list of all the attackers in the game and all the normal defenders and 
-        //swiches states between them, till there are no more normal defenders.
-        // public void SwapStatesWithAVacantDefender(List<BaseAttacker> attackers, List<BaseDefender> defenders)
-        // {
-
-        // for(int i = 0; i < defenders.Count; i++)
-        // {
-        // if(attackers[i].Pirate.StateName.Equals("heavy"))
-        // {
-        // defenders[i].BeHeavyInsteadOfMe(attackers[i]);
-        // }
-
-        // }
-
-
-        // }
-
-
-
         public bool IsFormationGuardsCloseToTheCarrier(List<ICommand> form, Carrier carrier)
         {
             foreach (BaseAttacker guard in form.Cast<BaseAttacker>().ToList())
@@ -92,7 +73,8 @@ namespace MyBot
 
                     }
                 }
-                foreach(BaseAttacker Role in participants)
+
+                foreach (BaseAttacker Role in participants)
                 {
                     if (Role is Carrier)
                     {
@@ -100,7 +82,12 @@ namespace MyBot
                     }
                     else
                     {
-                        Role.PositionInFormation = guardiensPosition;
+                        if (Role.GoingTo is Wormhole)
+                        {
+                            Role.PositionInFormation = (Role as BodyGuard).GuardedCarrier.Pirate.GetLocation();
+                        }
+                        else
+                            Role.PositionInFormation = guardiensPosition;
                     }
                 }
             }
@@ -244,12 +231,17 @@ namespace MyBot
 
             return canBeDoublePushed;
         }
-        
+
+        /// <summary>
+        /// Get the most closest enemy carrier to a city
+        /// </summary>
+        /// <param name="mothershipToProtect"></param>
+        /// <returns></returns>
         public Pirate GetMostThreatningEnemyCarrier(Mothership mothershipToProtect)
         {
             foreach (Pirate pirate in GameSettings.Game.GetEnemyLivingPirates())
             {
-                if(pirate.HasCapsule() && pirate.Distance(mothershipToProtect) > pirate.PushDistance * 1.5)
+                if (pirate.HasCapsule() && pirate.Distance(mothershipToProtect) < pirate.PushDistance * 1.5)
                 {
                     //GameSettings.Game.Debug("Most threating EC = "+pirate);
                     return pirate;
@@ -257,28 +249,6 @@ namespace MyBot
             }
 
             return null;
-        }
-        
-        /// <summary>
-        /// Returns the closest capsule to a mothership
-        /// </summary>
-        /// <param name="mothership"></param>
-        /// <returns></returns>
-        public Capsule GetClosestEnemyCapsuleToMothership(Mothership mothership)
-        {
-            int minDistance = 100000;
-            Capsule minCapsule = null;
-
-            foreach(Capsule capsule in GameSettings.Game.GetEnemyCapsules())
-            {
-                if(capsule.InitialLocation.Distance(mothership) < minDistance)
-                {
-                    minDistance = capsule.InitialLocation.Distance(mothership);
-                    minCapsule = capsule;
-                }
-            }
-
-            return minCapsule;
         }
 
         /// <summary>
@@ -492,6 +462,116 @@ namespace MyBot
 
             return null;
         }
+
+        public bool isPortalDangerous(Wormhole wormhole)
+        {
+            int count = 0;
+            foreach (Pirate p in GameSettings.Game.GetEnemyLivingPirates())
+            {
+                if (p.Distance(wormhole) <= p.PushRange)
+                {
+                    if (count > 1)
+                    {
+                        return true;
+
+                    }
+                    else
+                    {
+                        count++;
+
+                    }
+                }
+
+            }
+            return false;
+
+        }
+
+        public List<MapObject> GetSafeHoles()
+        {
+            List<Wormhole> AllHoles = GameSettings.Game.GetAllWormholes().ToList();
+            List<MapObject> SafeHoles = new List<MapObject>();
+
+            foreach (Wormhole wormhole in AllHoles)
+            {
+                if (!isPortalDangerous(wormhole) && wormhole.IsActive)
+                {
+                    SafeHoles.Add(wormhole);
+                }
+            }
+
+            return SafeHoles;
+
+        }
+
+        //use this function to move in the shortest way if that have a wormhole
+        public List<MapObject> GetBestHoles(Pirate carrier, MapObject target)
+        {
+            GameSettings.Game.Debug("OKOKOK");
+            List<MapObject> BestHoles = new List<MapObject>();
+            checkPath(target, carrier.Location, BestHoles);
+            GameSettings.Game.Debug(PrintPath(BestHoles));
+            return BestHoles;
+
+        }
+
+        public string PrintPath(List<MapObject> path)
+        {
+            string s = "";
+            foreach (MapObject l in path)
+            {
+                if (l is Wormhole)
+                {
+                    Wormhole z = l as Wormhole;
+                    s += "Wormhole number " + z.Id + "===> ";
+                }
+                else
+                {
+                    s += "target " + l;
+                }
+            }
+            return s;
+        }
+
+        public List<MapObject> checkPath(MapObject target, Location step, List<MapObject> BestWay)
+        {
+            List<MapObject> SafeHoles = GetSafeHoles();
+            foreach (Wormhole w in SafeHoles.Cast<Wormhole>().ToList())
+            {
+                if ((step.Distance(target)
+                > step.Distance(w)
+                + w.Partner.Distance(target)))
+                {
+                    checkPath(target, w.Partner.Location, BestWay);
+                    BestWay.Add(w);
+                    return BestWay;
+                }
+
+            }
+            BestWay.Add(target);
+            return BestWay;
+
+        }
+
+        public Mothership GetClosestEnemyMothership(Pirate pirate)
+        {
+            Mothership minMothership = null;
+            int minDistance = 1000000;
+
+            foreach (Mothership mother in GameSettings.Game.GetEnemyMotherships())
+            {
+                if (mother.Distance(pirate) < minDistance)
+                {
+                    minMothership = mother;
+                    minDistance = mother.Distance(pirate);
+                }
+            }
+
+            return minMothership;
+        }
     }
+}
+
+
 }
 

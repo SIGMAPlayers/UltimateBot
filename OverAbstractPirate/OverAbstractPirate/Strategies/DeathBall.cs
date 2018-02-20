@@ -136,5 +136,10 @@ namespace MyBot
                 bot.ExecuteCommand();
             }
         }
+
+        public override void BeforeExecute()
+        {
+            
+        }
     }
 }
