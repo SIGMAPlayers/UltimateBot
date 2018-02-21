@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Pirates;
 
@@ -7,16 +7,16 @@ namespace MyBot
     public class Communicator
     {
         private static Communicator instance;
-        private Communicator() { }
+        private Communicator(){}
         public static Communicator GetInstance()
         {
-            if (instance == null)
-            {
-                instance = new Communicator();
-            }
-            return instance;
+                if (instance == null)
+                {
+                    instance = new Communicator();
+                }
+                return instance;
         }
-
+        
         /// <summary>
         /// Every strategy in the game that needs to communicate with other strategys.
         /// </summary>
@@ -38,27 +38,34 @@ namespace MyBot
         public bool GiveHeavysToDefence()
         {//                 if(Participants.OfType<Carrier>().ToList() != null)
             List<BaseAttacker> heavyAttackers = new List<BaseAttacker>();
-            foreach (BaseAttacker attacker in StratList.OfType<Formation>().ToList()[0].Participants.Cast<BaseAttacker>().ToList())
+            if(StratList.OfType<Formation>().ToList().Count > 0)
             {
-                if (attacker.Pirate.StateName == "heavy")
+                 foreach(BaseAttacker attacker in StratList.OfType<Formation>().ToList()[0].Participants.Cast<BaseAttacker>().ToList())
                 {
-                    heavyAttackers.Add(attacker);
-                }
-                GameSettings.Game.Debug("HEVY'S AREEEE " + attacker.Pirate.StateName);
-            }
-
-            foreach (BaseDefender defender in StratList.OfType<FireWall>().ToList()[0].Participants.Cast<BaseDefender>().ToList())
-            {
-                if (defender.Pirate.StateName == "normal")
-                {
-                    if (heavyAttackers.Count > 0)
+                    if(attacker.Pirate.StateName == "heavy")
                     {
-                        MakeASwap(defender.Pirate, heavyAttackers[0].Pirate);
-                        heavyAttackers.RemoveAt(0);
-                        return true;
+                        heavyAttackers.Add(attacker);
                     }
+                    GameSettings.Game.Debug("HEVY'S AREEEE " + attacker.Pirate.StateName);
                 }
             }
+           
+            if(StratList.OfType<FireWall>().ToList().Count > 0)
+            {
+                foreach(BaseDefender defender in StratList.OfType<FireWall>().ToList()[0].Participants.Cast<BaseDefender>().ToList())
+                {
+                    if(defender.Pirate.StateName == "normal")
+                    {
+                        if(heavyAttackers.Count > 0)
+                        {
+                            MakeASwap(defender.Pirate, heavyAttackers[0].Pirate);
+                            heavyAttackers.RemoveAt(0);
+                            return true;
+                        }
+                    }
+                } 
+            }
+               
             return false;
         }
 

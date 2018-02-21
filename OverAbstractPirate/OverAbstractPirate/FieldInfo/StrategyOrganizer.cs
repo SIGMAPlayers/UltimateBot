@@ -52,7 +52,7 @@ namespace MyBot
                     PiratesForEveryStrategy[0].Add(p);
                 }
             }
-        } 
+        }
         public void Assigner()
         {
             for(int i = 0; i < strategies.Count; i++)
@@ -61,7 +61,7 @@ namespace MyBot
             }
         }
         
-        public void SendStrategyToCommunicator()
+         public void SendStrategyToCommunicator()
         {
             Communicator c = Communicator.GetInstance();
             c.StratList = strategies;

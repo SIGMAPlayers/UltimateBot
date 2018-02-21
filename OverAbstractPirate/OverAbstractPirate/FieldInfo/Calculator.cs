@@ -74,9 +74,9 @@ namespace MyBot
         // Same as before, but now consider turns too
         public Location PredictLocationByMovement(SpaceObject obj, int turns)
         {
-            List<SpaceObject> spaceObjects = new List<SpaceObject>();
+            List<SpaceObject> spaceObjects = new List<SpaceObject>() ;
             Location currentLocation = null;
-            if (obj.Location != null)
+            if (obj.Location!=null)
             {
                 currentLocation = obj.Location;
                 GameSettings.Game.Debug("obl location != null" + currentLocation);
@@ -88,22 +88,26 @@ namespace MyBot
             }
             Location previousLocation = null;
             // Location initialLocation = null;
-
+            
             // First, check the type of obj
             if (obj is Pirate)
             {
                 Pirate pirate = obj as Pirate;
+                if (GameSettings.Game.Turn == 0)
+                {
+                    return pirate.InitialLocation;
+                }
                 foreach (Pirate p in GameSettings.Game.GetEnemyLivingPirates())
                 {
                     if (pirate.Equals(p))
                     {
-
+                        
                         previousLocation = GameSettings.LastGameEnemyPirates[pirate.Id];
                         // initialLocation = p.InitialLocation;
                         // GameSettings.Game.Debug("pervious location "+previousLocation);
                     }
                 }
-
+                
                 foreach (Pirate p in GameSettings.Game.GetMyLivingPirates())
                 {
                     if (pirate.Equals(p))
@@ -112,14 +116,17 @@ namespace MyBot
                         // initialLocation = p.InitialLocation;
                         // GameSettings.Game.Debug("pervious location "+previousLocation);
                     }
-
+                    
                 }
                 // spaceObjects.AddRange(GameSettings.LastGameMyLivingPirates[GameSettings..Count - 2].GetEnemyLivingPirates().ToList());
             }
             else if (obj is Asteroid)
             {
                 Asteroid asteroid = obj as Asteroid;
-
+                if (GameSettings.Game.Turn == 0)
+                    {
+                        return asteroid.InitialLocation;
+                    }
                 previousLocation = GameSettings.LastGameLivingAsteroids[asteroid.Id];
                 // initialLocation = asteroid.InitialLocation;
                 // GameSettings.Game.Debug("pervious location "+previousLocation);
@@ -127,11 +134,14 @@ namespace MyBot
             else if (obj is Wormhole)
             {
                 Wormhole wormhole = obj as Wormhole;
-
+                if (GameSettings.Game.Turn == 0)
+                {
+                    return wormhole.InitialLocation;
+                }
                 previousLocation = GameSettings.LastGameWormholes[wormhole.Id];
                 // initialLocation = wormhole.InitialLocation;
                 // GameSettings.Game.Debug("pervious location "+previousLocation);
-
+                
                 // spaceObjects.AddRange(GameSettings.GameList[GameSettings.GameList.Count - 2].GetLivingAsteroids().ToList());
             }
             else return null;
@@ -165,6 +175,10 @@ namespace MyBot
                 GameSettings.Game.Debug("previousLocation == null");
                 return null;
             }
+            
+            
+            
+
         }
 
         /// <summary>

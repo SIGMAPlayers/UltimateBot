@@ -12,17 +12,36 @@ namespace MyBot
 
         public override Pirate Protect()
         {
-            List<Pirate> enemiesByDistanceFromEnemyBase = GameSettings.Game.GetEnemyLivingPirates().ToList();
-            enemiesByDistanceFromEnemyBase.OrderBy(Pirate => Pirate.Location.Distance(GameSettings.Game.GetEnemyMotherships()[0].Location));
-
-            int scale = Pirate.PushDistance * 4;
-            foreach (Pirate pirate in enemiesByDistanceFromEnemyBase)
+            List<Pirate> enemyCarriers = new List<Pirate>();
+            foreach(Pirate enemy in GameSettings.Game.GetEnemyLivingPirates())
             {
-                //Checks if the any of the pirates has capsule in the distance
-                //of the mothership has a capsule
-                if (pirate.Distance(GameSettings.Game.GetEnemyMotherships()[0]) < scale && pirate.Capsule != null)
-                    return pirate;
+                if(enemy.HasCapsule())
+                {
+                    enemyCarriers.Add(enemy);
+                }
             }
+
+            if(enemyCarriers.Count < 2)
+            {
+                List<Pirate> enemiesByDistanceFromEnemyBase = GameSettings.Game.GetEnemyLivingPirates().ToList();
+                enemiesByDistanceFromEnemyBase.OrderBy(Pirate => Pirate.Location.Distance(GameSettings.Game.GetEnemyMotherships()[0].Location));
+
+                int scale = Pirate.PushDistance * 4;
+                foreach (Pirate pirate in enemiesByDistanceFromEnemyBase)
+                {
+                    //Checks if the any of the pirates has capsule in the distance
+                    //of the mothership has a capsule
+                    if (pirate.Distance(GameSettings.Game.GetEnemyMotherships()[0]) < scale && pirate.Capsule != null)
+                        return pirate;
+                }
+            }
+            else if (enemyCarriers.Count > 2)
+            {
+                Mothership closestMothership = FieldAnalyzer.GetClosestEnemyMothership(pirate);
+                enemyCarriers.OrderBy(Pirate => Pirate.GetLocation().Distance(closestMothership));
+                return enemyCarriers[1];
+            }
+
             return null;
         }
 
@@ -54,6 +73,7 @@ namespace MyBot
             Pirate enemyCarrier = null;
             Location guardLocation;
 
+            GameSettings.Game.Debug("Front WhereToDefend ==> " + WhereToDefend);
             if (WhereToDefend == null)
             {
                 foreach (Pirate enemy in GameSettings.Game.GetEnemyLivingPirates())
@@ -88,7 +108,6 @@ namespace MyBot
             }
 
             return WhereToDefend;
-
         }
 
         /// <summary>
@@ -109,35 +128,43 @@ namespace MyBot
                 }
             }
 
-            if (PirateToPush == null)
+            if (PirateToPush != null && WhereToPush != null)
             {
-                foreach (Pirate enemy in GameSettings.Game.GetEnemyLivingPirates())
+                if (pirate.CanPush(PirateToPush))
                 {
-                    // Check if the pirate can push the enemy.
-                    if (Pirate.CanPush(enemy) && enemy.HasCapsule())
+                    pirate.Push(PirateToPush, WhereToPush);
+                    return true;
+                }
+            }
+
+            GameSettings.Game.Debug("Front WhereToPush " + WhereToDefend);
+            foreach (Pirate enemy in GameSettings.Game.GetEnemyLivingPirates())
+            {
+                // Check if the pirate can push the enemy.
+                if (Pirate.CanPush(enemy) && enemy.HasCapsule())
+                {
+                    //Changed
+                    //Push enemy!
+                    Location outOfBorder = FieldAnalyzer.GetCloseEnoughToBorder(enemy, Pirate.PushRange);
+                    if (outOfBorder != null)
                     {
-                        //Changed
-                        //Push enemy!
-                        Location outOfBorder = FieldAnalyzer.GetCloseEnoughToBorder(enemy, Pirate.PushRange);
-                        if (outOfBorder != null)
-                        {
-                            Pirate.Push(enemy, outOfBorder);
-                            return true;
-                        }
-                        else
-                        {
-                            Location oppositeSide = enemy.GetLocation().Subtract(GameSettings.Game.GetEnemyMotherships()[0].GetLocation());
-                            //Vector: the distance (x,y) you need to go through to go from the mothership to the enemy
-                            oppositeSide = enemy.GetLocation().Towards(enemy.GetLocation().Add(oppositeSide), 600);
-                            Pirate.Push(enemy, oppositeSide);
-                            //Print a message.
-                            GameSettings.Game.Debug("defender " + Pirate + " pushes " + enemy + " towards " + enemy.InitialLocation);
-                            //Did push.
-                            return true;
-                        }
+                        Pirate.Push(enemy, outOfBorder);
+                        return true;
+                    }
+                    else
+                    {
+                        Location oppositeSide = enemy.GetLocation().Subtract(GameSettings.Game.GetEnemyMotherships()[0].GetLocation());
+                        //Vector: the distance (x,y) you need to go through to go from the mothership to the enemy
+                        oppositeSide = enemy.GetLocation().Towards(enemy.GetLocation().Add(oppositeSide), 600);
+                        Pirate.Push(enemy, oppositeSide);
+                        //Print a message.
+                        GameSettings.Game.Debug("defender " + Pirate + " pushes " + enemy + " towards " + enemy.InitialLocation);
+                        //Did push.
+                        return true;
                     }
                 }
             }
+            
 
             foreach (Wormhole wormhole in GameSettings.Game.GetAllWormholes())
             {

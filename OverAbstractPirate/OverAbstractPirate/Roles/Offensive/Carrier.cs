@@ -23,13 +23,13 @@ namespace MyBot
         /// </summary>
         public void HoldYourPosition()
         {
-            if (!this.AttackersTryPush())
+           if(!this.AttackersTryPush())
             {
-                foreach (Wormhole w in GameSettings.Game.GetInactiveWormholes())
+                foreach(Wormhole w in GameSettings.Game.GetInactiveWormholes())
                 {
-                    if (this.Pirate.InRange(w, w.WormholeRange))
+                    if(this.Pirate.InRange(w,w.WormholeRange))
                     {
-                        this.Pirate.Sail(w.Location.Towards(Destination, w.WormholeRange));
+                        this.Pirate.Sail(w.Location.Towards(Destination,w.WormholeRange));
                     }
                 }
             }
@@ -38,45 +38,34 @@ namespace MyBot
         {
             HoldYourPosition();
         }
-
-
+        
+        
 
         public override void ExecuteCommand()
         {
-            if (fieldAnalyzer.UnderThreat(this.Pirate, 1200, this.Destination).Count == 0)
+           if(fieldAnalyzer.UnderThreat(this.Pirate,1200, this.Destination).Count == 0)
+           {
+            if(fieldAnalyzer.IsFormationGuardsCloseToTheCarrier(myform,this))
             {
-                //   if(this.Pirate.StateName.Equals("normal"))
+                if(FormationComplete)
                 {
-                    if (fieldAnalyzer.IsFormationGuardsCloseToTheCarrier(myform, this))
-                    {
-
-                        if (FormationComplete)
-                        {
-                            this.SailToTarget();
-                        }
-                        else
-                        {
-                            this.HoldYourPosition();
-                        }
-                    }
-
-                    else
-                    {
-
-                        this.SailToTarget();
-                    }
+                    this.SailToTarget();
                 }
-                //   else
-                //   {
-                //       //code that switches this state with a normal state ... see SwapStatesWithAVacantDefender in FieldAnalyzer...
-
-                //   }
+                else
+                {
+                    this.HoldYourPosition();
+                }
             }
             else
             {
-                this.SailToTarget();
+                this.SailToTarget();    
             }
-
+           }
+           else
+           {
+               this.SailToTarget();
+           }
+            
         }
 
     }

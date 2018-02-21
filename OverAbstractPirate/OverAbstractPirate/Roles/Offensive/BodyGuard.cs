@@ -20,17 +20,17 @@ namespace MyBot
         public void assignCarrier(Carrier c)
         {
             GuardedCarrier = c;
-
+           
             GameSettings.Game.Debug("Guarded carrier is ===> " + c.Pirate.Id);
         }
 
         public override void ExecuteCommand()
         {
-            if (this.TargetEnemy == null)
+            if(this.TargetEnemy == null)
             {
                 if (FormationComplete)
                 {
-                    GameSettings.Game.Debug("Formation Clomlete lets sail to the target ==> " + this.Destination);
+                    GameSettings.Game.Debug("Formation Clomlete lets sail to the target ==> "+ this.Destination);
                     this.SailToTarget();
                 }
                 else
@@ -43,14 +43,13 @@ namespace MyBot
             {
                 this.TargetedPushing(GuardedCarrier);
             }
-
         }
 
         protected override void SailToPosition()
         {
             if (!this.AttackersTryPush())
-            {
-                if (PositionInFormation == this.Destination)
+            { 
+                if(PositionInFormation == this.Destination)
                 {
                     this.SailToTarget();
                 }

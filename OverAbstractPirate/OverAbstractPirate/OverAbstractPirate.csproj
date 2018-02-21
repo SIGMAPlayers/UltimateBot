@@ -32,7 +32,7 @@
   <ItemGroup>
     <Reference Include="PirateGame, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Downloads\PirateGame.dll</HintPath>
+      <HintPath>..\PirateGame.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -46,12 +46,10 @@
   <ItemGroup>
     <Compile Include="AsteroidHandler.cs" />
     <Compile Include="BaseClasses\BaseCommand.cs" />
-    <Compile Include="Communicator.cs" />
     <Compile Include="FieldInfo\Calculator.cs" />
     <Compile Include="FieldInfo\Communicator.cs" />
     <Compile Include="FieldInfo\FieldAnalyzer.cs" />
     <Compile Include="Roles\Defensive\DeathBallDefeneder.cs" />
-    <Compile Include="Roles\Offensive\DeathBallAttacker.cs" />
     <Compile Include="Strategies\DeathBall.cs" />
     <Compile Include="Strategies\FireWall.cs" />
     <Compile Include="Strategies\Formation.cs" />

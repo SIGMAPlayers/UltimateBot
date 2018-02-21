@@ -46,21 +46,20 @@ namespace MyBot
             this.Participants = list;
             
         }
-
-        public override List<Pirate> PiratesPrioritization(List<Pirate> pirates)
-        {
-            List<Pirate> orderedPirates = pirates.OrderBy(Pirate => Pirate.Distance(GameSettings.Game.GetMyCapsules()[0].Location)).ToList();
-            return orderedPirates;
-        }
         
         public override void BeforeExecute()
         {
             ExecuteStrategy();
         }
 
+        public override List<Pirate> PiratesPrioritization(List<Pirate> pirates)
+        {
+            List<Pirate> orderedPirates = pirates.OrderBy(Pirate => Pirate.Distance(GameSettings.Game.GetMyCapsules()[0].Location)).ToList();
+            return orderedPirates;
+        }
+
         public override void ExecuteStrategy()
         {
-            
             foreach(BaseAttacker BA in Participants.Cast<BaseAttacker>().ToList())
             {
                 GameSettings.Game.Debug("Formation" + BA.Pirate.Id);
@@ -109,15 +108,6 @@ namespace MyBot
                 {
                     PiratesInPosition++;
                 }
-            }
-            if(Participants.OfType<Carrier>().ToList().Count > 0)
-            {
-                GameSettings.Game.Debug("GOD YOU ARE HERE");
-                if(FieldAnalyzer.GuardiansOnCarrier(Participants.OfType<Carrier>().ToList()[0], Participants.Cast<BaseAttacker>().ToList()))
-                 {
-                     GameSettings.Game.Debug("GO ALREADY!!!!!!!!");
-                     return true;
-                 }
             }
 
             if (PiratesInPosition == PiratesInFormation)

@@ -71,19 +71,28 @@ namespace MyBot
         public override void ExecuteStrategy()
         {
             
-            foreach(BaseDefender BD in Participants.Cast<BaseDefender>().ToList())
-            {
-                GameSettings.Game.Debug("FireWall" + BD.Pirate.Id);
-            }
+            //foreach(BaseDefender BD in Participants.Cast<BaseDefender>().ToList())
+            //{
+            //    GameSettings.Game.Debug("FireWall" + BD.Pirate.Id);
+            //}
             
             List<BaseDefender> baseDefenders = new List<BaseDefender>();
 
             if (Participants != null)
             {
                 baseDefenders = Participants.Cast<BaseDefender>().ToList();
-                GameSettings.Game.Debug("FireWall Participants.Count: "+Participants.Count);
+                //GameSettings.Game.Debug("FireWall Participants.Count: "+Participants.Count);
             }
-            
+
+            List<BaseDefender> frontList = new List<BaseDefender>();
+            foreach(BaseDefender defender in baseDefenders)
+            {
+                if(defender is Front)
+                {
+                    frontList.Add(defender);
+                }
+            }
+
             foreach(BaseDefender defender in baseDefenders)
             {
                 //Backup backup = defender as Backup;
@@ -101,13 +110,14 @@ namespace MyBot
                 else
                 { 
                     List<Pirate> threatingEnemies = FieldAnalyzer.GetClosestEnemyPiratesToMothership(defender);
-
-                    List<BaseDefender> defenderToSend = new List<BaseDefender> { defender };
-                    List<BaseDefender> multipleDefendersCanPushIt = FieldAnalyzer.CheckHowManyDefendrsCanPushEnemyCarrier(GameSettings.Game.GetEnemyLivingPirates().ToList(), defenderToSend);
-                    if(multipleDefendersCanPushIt.Count > 1)
+                    List<BaseDefender> defenderToSend = frontList;
+                    List<Pirate> multipleDefendersCanPushIt = FieldAnalyzer.HowManyCarriersNearCityCanBeDoublePushed(defenderToSend);
+                    // GameSettings.Game.Debug("multipleDefendersCanPushIt.Count ==>" + multipleDefendersCanPushIt.Count);
+                    if (multipleDefendersCanPushIt.Count >= 1)
                     {
-                        defender.PirateToPush = multipleDefendersCanPushIt[0].Pirate;
+                        defender.PirateToPush = multipleDefendersCanPushIt[0];
                         defender.WhereToPush = FieldAnalyzer.DefendersWhereToPush(defender.PirateToPush, defender.Pirate.PushDistance);
+                        //GameSettings.Game.Debug("Front WhereToPush " + defender.WhereToDefend);
                     }
                 }
 
