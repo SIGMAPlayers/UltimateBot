@@ -9,6 +9,7 @@ namespace MyBot
     {
         protected List<MapObject> bestWay;
         protected FieldAnalyzer FA;
+        protected AsteroidHandler asteroidHandler = new AsteroidHandler();
 
         public BaseCommand()
         {
@@ -21,6 +22,18 @@ namespace MyBot
         public virtual Location FindBestWay(Pirate pirate, MapObject des)
         {
             GameSettings.Game.Debug("Got to BaseCommand");
+            Location location;
+            if (GameSettings.Game.Turn>2)
+            {
+                foreach (Asteroid asteroid in GameSettings.Game.GetLivingAsteroids())
+                {
+                    location = asteroidHandler.AvoidAsteroid(pirate, asteroid);
+                    if (location != null)
+                    {
+                        return location;
+                    }
+                }
+            }
             return FA.GetBestHoles(pirate, des).Last().GetLocation();
 
         }

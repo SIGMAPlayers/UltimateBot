@@ -32,6 +32,21 @@ namespace MyBot
             return (int)(radAngle * (180 / System.Math.PI));
         }
 
+        public Location GetTheVectorForAstreroid (Asteroid asteroid)
+        {
+            return asteroid.GetLocation().Subtract(GameSettings.LastGameLivingAsteroids[asteroid.Id]);
+        }
+
+        public Location GetTheVectorTangent (Location location)
+        {
+            int x, y;
+            Location U = location;
+            y = (int)System.Math.Sqrt((999999999999 ^ 2) / ((U.Row ^ 2) / U.Col ^ 2) + 1);
+            x = ((-1) * U.Row * y) / (U.Col);
+            Location V = new Location(x, y);
+            return V;
+        }
+
         /// <summary>
         /// takes the carrier as the perspective to calculate the Location of all the other guardiens 
         /// </summary>
@@ -179,6 +194,41 @@ namespace MyBot
             
             
 
+        }
+
+        /// <summary>
+        /// Returns the number of turns it will take to an asteroid to cross the map
+        /// </summary>
+        /// <param name="asteroid"></param>
+        /// <returns></returns>
+        public int HowManyTurnsWillAsteroidCrossTheMap (Asteroid asteroid)
+        {
+            int vertical = GameSettings.Game.Cols / asteroid.Speed;
+            int horizontal = GameSettings.Game.Rows / asteroid.Speed;
+
+            return System.Math.Max(vertical, horizontal);
+
+        }
+
+        /// <summary>
+        /// Returns the number of turns it will take to an asteroid to arrive to a certain location
+        /// </summary>
+        /// <param name="asteroid"></param>
+        /// <param name="location"></param>
+        /// <returns></returns>
+        public int HowManyTurnsWillAsteroidArriveToLocation (Asteroid asteroid, Location location)
+        {
+            int turnsToCrossMap = HowManyTurnsWillAsteroidCrossTheMap(asteroid);
+            int size = asteroid.Size * 2;
+
+            for (int i = 0; i < turnsToCrossMap; i++)
+            {
+                if (PredictLocationByMovement(asteroid as SpaceObject, i).InRange(location, size))
+                {
+                    return i;
+                }
+            }
+            return 0;
         }
 
         /// <summary>

@@ -52,7 +52,12 @@ namespace MyBot
             }
             return false;
         }
-        
+
+        public Location DirectionOfAsteroid(Asteroid asteroid)
+        {
+            return this.calculator.GetTheVectorTangent(this.calculator.GetTheVectorForAstreroid(asteroid));
+        }
+
         #region AssignFormationLocations
         /// <summary>
         ///     when called, the function evaluates the locations of the guardiens according to the formation shape using vectors
@@ -593,6 +598,11 @@ namespace MyBot
             }
 
             return minMothership;
+        }
+
+        public int TurnsForAsteroidToArriveToALocation (Asteroid asteroid, Location location)
+        {
+            return calculator.HowManyTurnsWillAsteroidArriveToLocation(asteroid, location);
         }
 
     }

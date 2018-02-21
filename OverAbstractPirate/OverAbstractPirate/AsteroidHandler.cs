@@ -10,12 +10,12 @@ namespace MyBot
     {
         FieldAnalyzer fieldAnalyzer = new FieldAnalyzer();
         int asteroidSize = GameSettings.Game.AsteroidSize;
-        
+        int turnsToPassBy = GameSettings.Game.AsteroidSize * 2 / GameSettings.Game.PirateMaxSpeed;
+
         /// <summary>
         /// Check the most crowded place to push the astroid to
         /// </summary>
         /// <returns></returns>
-        
         public Location FindBestLocationToPushTo(Pirate Push1)
         {
             // GameSettings.Game.Debug("FindBestLocationToPushTo");
@@ -167,6 +167,28 @@ namespace MyBot
                     */
             
             
+        }
+
+
+        /// <summary>
+        /// The method gets a pirate, and asteroid, and trying to avoid it
+        /// </summary>
+        /// <param name="pirate"></param>
+        /// <param name="asteroid"></param>
+        /// <returns></returns>
+        public Location AvoidAsteroid (Pirate pirate, Asteroid asteroid)
+        {
+            int turnsToArrive = fieldAnalyzer.TurnsForAsteroidToArriveToALocation(asteroid, pirate.GetLocation());
+            if (turnsToArrive> pirate.PushReloadTurns) // Will I be able to push until he arrives?
+            {
+                return null;
+            }
+
+            else if (turnsToArrive + 1 >= turnsToPassBy)
+            {
+                return pirate.GetLocation().Add(fieldAnalyzer.DirectionOfAsteroid(asteroid));
+            }
+            return null;
         }
     }
 }
