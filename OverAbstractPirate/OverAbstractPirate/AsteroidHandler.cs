@@ -179,16 +179,38 @@ namespace MyBot
         public Location AvoidAsteroid (Pirate pirate, Asteroid asteroid)
         {
             int turnsToArrive = fieldAnalyzer.TurnsForAsteroidToArriveToALocation(asteroid, pirate.GetLocation());
-            if (turnsToArrive> pirate.PushReloadTurns) // Will I be able to push until he arrives?
+            if (turnsToArrive> pirate.PushReloadTurns) // Will I be able to push while he arrives?
             {
                 return null;
             }
 
-            else if (turnsToArrive + 1 >= turnsToPassBy)
+            else if (turnsToArrive + 1 > turnsToPassBy)
             {
+                GameSettings.Game.Debug("GOOOOO");
                 return pirate.GetLocation().Add(fieldAnalyzer.DirectionOfAsteroid(asteroid));
             }
             return null;
+        }
+
+        /// <summary>
+        /// The method takes a location, and an asteroid, and passing it by the right direction
+        /// </summary>
+        /// <param name="location"></param>
+        /// <param name="asteroid"></param>
+        public void PassAsteroid (Location location, Asteroid asteroid)
+        {
+            if (asteroid.GetLocation().InRange(location, asteroidSize*2))
+            {
+                bool ColOrRow = fieldAnalyzer.ShouldAddToColOrRow(asteroid, location);
+                if (ColOrRow)
+                {
+                    location.Col = location.Col + asteroidSize*2;
+                }
+                else
+                {
+                    location.Row = location.Row + asteroidSize * 2;
+                }
+            }
         }
     }
 }

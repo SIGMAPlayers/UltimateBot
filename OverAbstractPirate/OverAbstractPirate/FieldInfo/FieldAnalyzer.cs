@@ -605,6 +605,42 @@ namespace MyBot
             return calculator.HowManyTurnsWillAsteroidArriveToLocation(asteroid, location);
         }
 
+        /// <summary>
+        /// Checks a location relativity to an asteroid. True is to modify Col, false is to modify Row.
+        /// </summary>
+        /// <param name="asteroid"></param>
+        /// <param name="pass"></param>
+        /// <returns></returns>
+        public bool ShouldAddToColOrRow (Asteroid asteroid, Location location)
+        {
+            int minDistance = 0;
+
+            Location up = new Location(0,0);
+            up.Col = asteroid.GetLocation().Col;
+            up.Row = asteroid.GetLocation().Row + asteroid.Size;
+
+            Location down = new Location(0, 0);
+            up.Col = asteroid.GetLocation().Col;
+            up.Row = asteroid.GetLocation().Row - asteroid.Size;
+
+            Location left = new Location(0, 0);
+            up.Col = asteroid.GetLocation().Col - asteroid.Size;
+            up.Row = asteroid.GetLocation().Row;
+
+            Location right = new Location(0, 0);
+            up.Col = asteroid.GetLocation().Col + asteroid.Size;
+            up.Row = asteroid.GetLocation().Row;
+
+            minDistance = System.Math.Min(location.Distance(up), location.Distance(down));
+            minDistance = System.Math.Min(minDistance, location.Distance(right));
+            minDistance = System.Math.Min(minDistance, location.Distance(left));
+            if (minDistance == location.Distance(up) || minDistance == location.Distance(down))
+            {
+                return true;
+            }
+            return false;
+        }
+
     }
 }
 
